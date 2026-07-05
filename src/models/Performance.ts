@@ -5,10 +5,8 @@ export type PerformanceType = {
         details: {
             category: string;
             description: string;
-            duration: string;
-            durationMs: number;
-            durationFromStart: string;
-            durationFromStartMs: number;
+            duration: number;
+            durationFromStart: number;
         }[];
     };
 };

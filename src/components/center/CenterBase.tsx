@@ -1,21 +1,20 @@
-import { JSX, lazy, useContext, useEffect, useState } from 'react';
-import SessionContext from '~/context/sessionContext';
+import { JSX, lazy, useEffect, useState } from 'react';
 import { GenericActionEnum, ICenterBase } from '~/types/centerType';
 import appTool from '~/helpers/appTool';
 import useResources from '~/hooks/useResources';
-import stylesResources from '~/resources/stylesResources';
 import AppCenterSearch from './AppCenterSearch';
-import { Bold } from '../common/Text';
+import { Bold, Bolder, Regular } from '../common/Text';
 import AppAlert from '../common/AppAlert';
 import { LevelAccessEnum } from '~/models/Session';
 import useNavigation from '~/hooks/useNavigation';
 import { Link } from 'react-router-dom';
 import NavigationResource from '~/resources/navigationResources';
-import MuiLink from '@mui/material/Link';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
-import Typography from '@mui/material/Typography';
+import { Chip, Grid, Paper } from '@mui/material';
+import useSessionContext from '~/context/sessionContext';
+import ContentLayout from '../layout/ContentLayout';
+import useCenterContext from '~/context/centerContext';
 const AppIcon = lazy(() => import('~/components/common/AppIcon'));
 /**
  *
@@ -23,12 +22,8 @@ const AppIcon = lazy(() => import('~/components/common/AppIcon'));
  * @returns Center layout
  */
 export default function CenterBase(props: ICenterBase): JSX.Element {
-    const { levelNew = LevelAccessEnum.ADMIN } = props;
     const [isTemplateDisabled, setIsTemplateDisabled] = useState<boolean>(false);
-
-    const Resources = useResources();
-    const Ses = useContext(SessionContext);
-
+    const { state } = useCenterContext();
     const buildTitle = (): string => {
         switch (props.action) {
             case GenericActionEnum.UPDATE:
@@ -40,7 +35,6 @@ export default function CenterBase(props: ICenterBase): JSX.Element {
                 return `${props.grammar?.plural}`;
         }
     };
-
     useEffect(() => {
         if (props.action === GenericActionEnum.TABLE) {
             appTool.changeTitle(props.grammar?.plural ?? '');
@@ -58,52 +52,99 @@ export default function CenterBase(props: ICenterBase): JSX.Element {
     }, [isTemplateDisabled]);
 
     return (
-        <Box>
-            <Box display="flex" alignItems="center" className="mb-2">
-                {props.icon && <AppIcon name={props.icon} sx={{ fontSize: '3.3rem' }} className="me-2" color="primary" />}
-                <Typography variant="h3" color={stylesResources.theme.palette.primary.main} component="h2">
-                    {buildTitle()}
-                </Typography>
-            </Box>
-            {props.action === GenericActionEnum.TABLE && (
-                <Box marginBottom={1}>
-                    <Box display={'flex'} marginBottom={{ xs: 1, md: 0 }} flexWrap={'wrap'} justifyContent={'space-between'}>
-                        <AppCenterSearch grammar={props.grammar} onSubmitSearchForm={props.onSubmitSearchForm} searchFormStruct={props.searchForm} />
-                    </Box>
-                    {levelNew >= LevelAccessEnum.VISITOR && levelNew <= Ses.accessLevel && (
-                        <Box className="d-flex align-items-center justify-content-center">
-                            <MuiLink component={Link} to={`${NavigationResource.routesPath.center}/${props.entity}/new`}>
-                                <Bold>
-                                    {Resources.translate('common.add')} {props.grammar?.singular.toLowerCase()}
-                                </Bold>
-                            </MuiLink>
-                        </Box>
-                    )}
-                    <Typography>
-                        <b>{props.totalCount}</b> {props.totalCount > 1 ? (props.grammar?.plural ?? '') : (props.grammar?.singular ?? '')}
-                    </Typography>
-                </Box>
-            )}
-            <Divider className="mb-2" />
-            <AppAlert onClose={props.onCloseAlert} isVisible={props.isAlertVisible} severity={props.alertContent?.severity ?? 'error'} title={props.alertContent?.title ?? ''} subtitle={props.alertContent?.subtitle ?? ''} />
-            <Box>
-                <>
-                    {/* <AppFullPageLoader isLoading={props.isSearchLoading} message={`Recherche ${props.prefix.endsWith("'") ? props.prefix : props.prefix + ' '}${(props.grammar?.plural ?? '').toLocaleLowerCase()} en cours...`} /> */}
-                    {props.children}
-                </>
-            </Box>
+        <ContentLayout
+            title={buildTitle()}
+            icon={props.icon}
+            actions={
+                state.config.overrideLayoutAction ? (
+                    <state.config.overrideLayoutAction data={state.datas} action={props.action} />
+                ) : props.action === GenericActionEnum.TABLE ? (
+                    <DBCount {...props} />
+                ) : null
+            }
+        >
+            {props.action === GenericActionEnum.TABLE && <Filters {...props} />}
+            <AppAlert
+                onClose={props.onCloseAlert}
+                isVisible={props.isAlertVisible}
+                severity={props.alertContent?.severity ?? 'error'}
+                title={props.alertContent?.title ?? ''}
+                subtitle={props.alertContent?.subtitle ?? ''}
+            />
+            {props.children}
             {props.action === GenericActionEnum.VIEW && <SubmitSubFooter />}
+        </ContentLayout>
+    );
+}
+
+function DBCount(props: ICenterBase): JSX.Element {
+    const { translate } = useResources();
+    return (
+        <Paper variant="outlined" className="rounded px-3 py-2 d-flex flex-column" sx={{ minWidth: '180px', gap: '0.05rem' }}>
+            <Regular component="span" fontSize="0.76rem">
+                {translate('center.search.updateSearch')}
+            </Regular>
+            <Bolder sx={{ lineHeight: 1 }} variant="h5">
+                {props.totalDbCount}
+            </Bolder>
+            <Regular component="span" fontSize="0.76rem">
+                {translate('center.search.ref', {
+                    entity: props.grammar[props.totalDbCount > 1 ? 'plural' : 'singular'].toLowerCase(),
+                    fem: props.grammar.isFem ? 'e' : '',
+                    plural: props.totalDbCount > 1 ? 's' : '',
+                })}
+            </Regular>
+        </Paper>
+    );
+}
+
+function Filters(props: ICenterBase): JSX.Element {
+    return (
+        <Box marginBottom={0}>
+            <Box display={'flex'} marginBottom={{ xs: 1, md: 0 }} flexWrap={'wrap'} justifyContent={'space-between'}>
+                <AppCenterSearch grammar={props.grammar} onSubmitSearchForm={props.onSubmitSearchForm} searchFormStruct={props.searchForm} />
+            </Box>
+            <FilterFooter {...props} />
         </Box>
     );
 }
 
+function FilterFooter(props: ICenterBase): JSX.Element {
+    const { levelNew = LevelAccessEnum.ADMIN } = props;
+    const { translate } = useResources();
+    const { accessLevel } = useSessionContext();
+    return (
+        <Grid container component={Box}>
+            <Grid component={Box} size={3} className="d-flex align-items-center">
+                {levelNew >= LevelAccessEnum.VISITOR && levelNew <= accessLevel && (
+                    <Box className="d-flex align-items-center justify-content-center">
+                        <Button variant="outlined" startIcon={<AppIcon name="AddRounded" />} component={Link} to={`${props.basePath ?? `${NavigationResource.routesPath.center}/${props.entity}`}/new`}>
+                            {translate('common.add')} {props.grammar?.singular.toLowerCase()}
+                        </Button>
+                    </Box>
+                )}
+            </Grid>
+            <Grid size={7} component={Box} />
+            <Grid size={2} component={Box} className="d-flex align-items-center justify-content-end">
+                <Chip
+                    label={
+                        <Bold>
+                            <b>{props.totalCount}</b> {props.totalCount > 1 ? (props.grammar?.plural ?? '') : (props.grammar?.singular ?? '')}
+                        </Bold>
+                    }
+                />
+            </Grid>
+        </Grid>
+    );
+}
+
 function SubmitSubFooter(): JSX.Element {
-    const navigation = useNavigation();
-    const Resources = useResources();
+    const { goBack } = useNavigation();
+    const { translate } = useResources();
     return (
         <Box display="flex" justifyContent="center">
-            <Button variant="contained" className="ms-3" color="secondary" onClick={() => navigation.goBack()}>
-                {Resources.translate('common.back')}
+            <Button variant="contained" className="ms-3" color="secondary" onClick={() => goBack()}>
+                {translate('common.back')}
             </Button>
         </Box>
     );

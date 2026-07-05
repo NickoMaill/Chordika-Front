@@ -1,6 +1,6 @@
-import { Dispatch, SetStateAction, createContext } from 'react';
+import { Dispatch, SetStateAction, createContext, useContext } from 'react';
 import { AppTableStructure } from '~/components/common/AppTable';
-import { FormMakerContentType, FormMakerPartEnum } from '~/types/FormMakerCoreTypes';
+import { FormMakerType, FormMakerPartEnum } from '~/types/FormMakerCoreTypes';
 
 export interface ISearchContext {
     filters: SearchField[];
@@ -15,9 +15,9 @@ export interface ISearchContext {
     buildSorter: () => string;
     buildSearchURL: (entity: string) => string;
     /* eslint-disable @typescript-eslint/no-explicit-any*/
-    parseSearchURL?: (tableStructure: AppTableStructure<any>, formTemplate: FormMakerContentType<FormMakerPartEnum>[]) => void;
+    parseSearchURL?: (tableStructure: AppTableStructure<any>, formTemplate: FormMakerType<FormMakerPartEnum>) => void;
     setSort?: <T>(s: string, tableStructure: AppTableStructure<T>) => void;
-    buildBackURL?: (entity: string) => string;
+    buildBackURL?: (entity: string, basePath?: string) => string;
 }
 
 const initialContext: ISearchContext = {
@@ -42,6 +42,10 @@ export type SortField = {
     order: 'asc' | 'desc';
 };
 
-const SearchContext = createContext<ISearchContext>(initialContext);
+export const SearchContext = createContext<ISearchContext>(initialContext);
+export default function useSearchContext(): ISearchContext {
+    const context = useContext(SearchContext);
+    if (!context) throw new Error('useSearchContext must be used within a SearchProvider');
 
-export default SearchContext;
+    return context as ISearchContext;
+}

@@ -29,7 +29,7 @@ export function LogActivities({ data }: ILogActivities): JSX.Element {
     };
 
     const header: AppSimpleTableColStructType<LogsApiModel>[] = [
-        { field: 'entryDate', label: 'Date', valueFormatter: (v: LogsApiModel): string => dayjs(v.entryDate).format('DD/MM/YYYY HH:mm:ss') },
+        { field: 'addedAt', label: 'Date', valueFormatter: (v: LogsApiModel): string => dayjs(v.addedAt).format('DD/MM/YYYY HH:mm:ss') },
         { field: 'action', label: 'Action', valueFormatter: (v: LogsApiModel): string => v.action },
         { field: 'proxy', label: 'Proxy' },
         { field: 'ipAddress', label: 'Adresse IP' },
@@ -45,7 +45,18 @@ export function LogActivities({ data }: ILogActivities): JSX.Element {
         }
     }, [currentPage, data]);
 
-    return <AppSimpleTable<LogsApiModel> id="LogActivities" isLoading={isLoading} sm columns={header} rows={logs?.records} currentPage={currentPage} totalPages={Math.ceil(logs?.totalRecords / logs?.limit)} onPageChange={handlePageChange} />;
+    return (
+        <AppSimpleTable<LogsApiModel>
+            id="LogActivities"
+            isLoading={isLoading}
+            sm
+            columns={header}
+            rows={logs?.records}
+            currentPage={currentPage}
+            totalPages={Math.ceil(logs?.totalRecords / logs?.limit)}
+            onPageChange={handlePageChange}
+        />
+    );
 }
 
 interface ILogActivities {

@@ -8,7 +8,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 // #region SINGLETON --> ////////////////////////////////////
 // #endregion SINGLETON --> /////////////////////////////////
 
-export default function InputRadioField({ disabled, id, onChange, value, options, row }: IInputRadioField): JSX.Element {
+export default function InputRadioField({ disabled, id, onChange, value, options }: IInputRadioField): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
     // #endregion STATE --> ////////////////////////////////////
 
@@ -24,7 +24,7 @@ export default function InputRadioField({ disabled, id, onChange, value, options
     // #region RENDER --> //////////////////////////////////////
     return (
         <>
-            <RadioGroup row={row} id={id} name={id} defaultValue={value} onChange={onChange}>
+            <RadioGroup id={id} name={id} value={value || options[0]?.value} onChange={onChange}>
                 {options.map((option, i) => {
                     return <FormControlLabel disabled={disabled} key={i} value={option.value} control={<Radio disabled={disabled} />} label={option.label} />;
                 })}
@@ -37,6 +37,5 @@ export default function InputRadioField({ disabled, id, onChange, value, options
 // #region IPROPS -->  /////////////////////////////////////
 interface IInputRadioField extends InputBaseType {
     options: RadioOptionsType[];
-    row?: boolean;
 }
 // #endregion IPROPS --> //////////////////////////////////

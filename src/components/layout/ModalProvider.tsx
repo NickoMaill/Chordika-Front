@@ -5,14 +5,15 @@ import AppFullPageModal from '../common/AppFullPageModal';
 import useResources from '~/hooks/useResources';
 
 export default function ModalProvider({ children }): JSX.Element {
-    const Resources = useResources();
+    const { translate } = useResources();
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [title, setTitle] = useState<string>('');
     const [content, setContent] = useState<ReactNode>(null);
     const [options, setOptions] = useState<AppModalProperty>({ size: 'md', scroll: 'paper', persistant: false, fullPage: false });
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [modalActionOptions, setModalActionOptions] = useState<ModalActionType>(null);
-    const [dismissLabel, setDismissLabel] = useState<string>(Resources.translate('common.close') as string);
+    const [dismissLabel] = useState<string>(translate('common.close') as string);
 
     const value = {
         isOpen,
@@ -25,8 +26,8 @@ export default function ModalProvider({ children }): JSX.Element {
         setOptions,
         modalActionOptions,
         setModalActionOptions,
-        dismissLabel,
-        setDismissLabel,
+        isLoading,
+        setIsLoading,
     };
     const handleClose = (): void => {
         setIsOpen(false);
@@ -38,7 +39,21 @@ export default function ModalProvider({ children }): JSX.Element {
             {options.fullPage ? (
                 <AppFullPageModal children={content} isOpen={isOpen} onClose={handleClose} modalTitle={title} />
             ) : (
-                <Modal dismissLabel={dismissLabel} modalAction={modalActionOptions?.modalAction} modalActionLabel={modalActionOptions?.modalActionLabel} isModalActionLoading={modalActionOptions?.modalActionLoading} maxWidth={options.size} scroll={options.scroll} persistant={options.persistant} children={content} closable isOpen={isOpen} onClose={handleClose} modalTitle={title} />
+                <Modal
+                    dismissLabel={modalActionOptions?.modalDismissLabel ?? dismissLabel}
+                    modalAction={modalActionOptions?.modalAction}
+                    modalActionLabel={modalActionOptions?.modalActionLabel}
+                    isModalActionLoading={modalActionOptions?.modalActionLoading}
+                    isModalLoading={isLoading}
+                    maxWidth={options.size}
+                    scroll={options.scroll}
+                    persistant={options.persistant}
+                    children={content}
+                    closable
+                    isOpen={isOpen}
+                    onClose={handleClose}
+                    modalTitle={title}
+                />
             )}
         </ModalContext.Provider>
     );

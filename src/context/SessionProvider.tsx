@@ -2,9 +2,9 @@
 import { JSX, ReactNode, useRef, useState } from 'react';
 import { LevelAccessEnum } from '~/models/Session';
 import { LangType } from '~/types/i18nTypes';
-import SessionContext from './sessionContext';
-import { UserApiModel } from '~/models/Users';
+import { UserApiModel, UserPreferences, UserSessionApiModel } from '~/models/Users';
 import dayjs, { Dayjs } from 'dayjs';
+import { SessionContext } from './sessionContext';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
@@ -14,7 +14,7 @@ export default function SessionProvider({ children }: ISessionProvider): JSX.Ele
     // #region STATE --> ///////////////////////////////////////
     const [username, setUsername] = useState<string>(null);
     const [fullName, setFullName] = useState<string>(null);
-    const [id, setId] = useState<number>(null);
+    const [userId, setUserId] = useState<number>(null);
     const [email, setEmail] = useState<string>(null);
     const [accessLevel, setAccessLevel] = useState<LevelAccessEnum>(LevelAccessEnum.NOBODY);
     const [phone, setPhone] = useState<string>(null);
@@ -26,7 +26,8 @@ export default function SessionProvider({ children }: ISessionProvider): JSX.Ele
     const [isPushActive, setIsPushActive] = useState<boolean>(false);
     const [maxRows, setMaxRows] = useState<number>(50);
     const [needMfa, setNeedMfa] = useState<boolean>(null);
-    const [proxyList, setProxyList] = useState<UserApiModel[]>();
+    const [proxyList, setProxyList] = useState<UserApiModel[]>([]);
+    const [preferences, setPreferences] = useState<UserPreferences>(null);
     const tokenRef = useRef<string>(null);
     const setToken = (t: string | null): void => {
         setTokenState(t);
@@ -34,14 +35,44 @@ export default function SessionProvider({ children }: ISessionProvider): JSX.Ele
     };
 
     const getToken = (): string => tokenRef.current;
+    const setSession = (user?: UserSessionApiModel): void => {
+        if (user) {
+            setUserId(user.id);
+            setUsername(user.name);
+            setEmail(user.email);
+            setAccessLevel(user.levelAccess);
+            setFullName(user.firstName + ' ' + user.lastName);
+            setPhone(user.mobile);
+            setIp(user.ip);
+            setNeedMfa(user.needMFA);
+            setIsPushActive(user.isPushActive);
+            setMaxRows(user.maxRows);
+            setProxyList(user.proxies);
+            setPreferences(user.preferences);
+        } else {
+            setUserId(null);
+            setUsername(null);
+            setEmail(null);
+            setAccessLevel(0);
+            setToken(null);
+            setTokenExpire(null);
+            setIp(null);
+            setFullName(null);
+            setPhone(null);
+            setNeedMfa(null);
+            setIsPushActive(false);
+            setProxyList([]);
+            setPreferences(null);
+        }
+    };
 
     const sessionValue = {
         username,
         setUsername,
         fullName,
         setFullName,
-        id,
-        setId,
+        userId,
+        setUserId,
         email,
         setEmail,
         phone,
@@ -66,7 +97,10 @@ export default function SessionProvider({ children }: ISessionProvider): JSX.Ele
         setNeedMfa,
         proxyList,
         setProxyList,
+        preferences,
+        setPreferences,
         getToken,
+        setSession,
     };
     // #endregion STATE --> ////////////////////////////////////
 

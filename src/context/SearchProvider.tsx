@@ -1,14 +1,13 @@
 // #region IMPORTS -> /////////////////////////////////////
-import React, { ReactNode, useContext, useState } from 'react';
-import SearchContext, { SearchField, SortField } from './searchContext';
+import { ReactNode, useState } from 'react';
+import { SearchField, SortField, SearchContext } from './searchContext';
 import useStorage from '~/hooks/useStorage';
-import { FormMakerContentType, FormMakerPartEnum } from '~/types/FormMakerCoreTypes';
+import { FormMakerType, FormMakerPartEnum } from '~/types/FormMakerCoreTypes';
 import appTool from '~/helpers/appTool';
-import SessionContext from './sessionContext';
 import { AppTableStructure } from '~/components/common/AppTable';
 import NavigationResource from '~/resources/navigationResources';
 import { JSX } from 'react';
-import AppContext from './appContext';
+import useAppContext from './appContext';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
@@ -23,16 +22,15 @@ export default function SearchProvider({ children }: ISearchProvider): JSX.Eleme
     // #endregion STATE --> ////////////////////////////////////
 
     // #region HOOKS --> ///////////////////////////////////////
-    const Storage = useStorage();
-    const Ses = useContext(SessionContext);
-    const App = useContext(AppContext);
+    const { isItemExist, getParsedItem } = useStorage();
+    const { perfMode } = useAppContext()
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////
     const clear = (): void => {
         setFilters([]);
         setSortedBy(null);
-        setMaxRows(Storage.isItemExist('maxRows') ? Storage.getParsedItem<number>('maxRows') : 50);
+        setMaxRows(isItemExist('maxRows') ? getParsedItem<number>('maxRows') : 50);
         setPage(0);
     };
 
@@ -54,19 +52,19 @@ export default function SearchProvider({ children }: ISearchProvider): JSX.Eleme
         if (sortedBy) {
             query.append('sort', buildSorter());
         }
-        if (maxRows !== 50) {
+        if (maxRows && maxRows !== 50) {
             query.append('maxRows', maxRows.toString());
         }
         if (page) {
             query.append('page', (page + 1).toString());
         }
-        if (App.perfMode) {
+        if (perfMode) {
             query.append('perf', '1');
         }
         return query.toString();
     };
 
-    const parseSearchURL = <T,>(tableStructure: AppTableStructure<T>, formTemplate: FormMakerContentType<FormMakerPartEnum>[]): void => {
+    const parseSearchURL = <T,>(tableStructure: AppTableStructure<T>, formTemplate: FormMakerType<FormMakerPartEnum>): void => {
         clear();
         const searchContent = appTool.ParseSearchUrl(formTemplate);
         const urlSearch = new URLSearchParams(window.location.search);
@@ -78,7 +76,7 @@ export default function SearchProvider({ children }: ISearchProvider): JSX.Eleme
             const r = parseInt(urlSearch.get('maxRows'));
             setMaxRows(r);
         } else {
-            setMaxRows(Ses.maxRows);
+            setMaxRows(50);
         }
 
         if (urlSearch.has('page') && !isNaN(Number(urlSearch.get('page')))) {
@@ -111,7 +109,7 @@ export default function SearchProvider({ children }: ISearchProvider): JSX.Eleme
             });
         }
     };
-    const buildBackURL = (entity: string): string => {
+    const buildBackURL = (entity: string, basePath?: string): string => {
         const query = new URLSearchParams();
         if (filters?.length > 0) {
             filters.forEach((f) => {
@@ -129,7 +127,7 @@ export default function SearchProvider({ children }: ISearchProvider): JSX.Eleme
         if (page) {
             query.append('page', (page + 1).toString());
         }
-        return `${NavigationResource.routesPath.center}/${entity}` + (query.toString() ? `?${query.toString()}` : '');
+        return `${basePath ?? `${NavigationResource.routesPath.center}/${entity}`}` + (query.toString() ? `?${query.toString()}` : '');
     };
     // #endregion METHODS --> //////////////////////////////////
 

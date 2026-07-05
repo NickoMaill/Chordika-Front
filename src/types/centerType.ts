@@ -1,5 +1,5 @@
 import { AppTableStructure } from '~/components/common/AppTable';
-import { FormMakerContentType, FormMakerPartEnum } from './FormMakerCoreTypes';
+import { FormMakerType, FormMakerFocusErrorType, FormMakerPartEnum } from './FormMakerCoreTypes';
 import { LevelAccessEnum } from '~/models/Session';
 import { AppError } from '../core/appError';
 import { ApiErrorType } from '~/models/Error';
@@ -23,6 +23,8 @@ export interface ICenter<T> {
     parentField?: string;
     isSubCenter?: boolean;
     parentId?: string;
+    parents?: CenterParentType[];
+    basePath?: string;
     // #endregion -> /////////////////////////////////////////////////
 
     // #region DISPLAYING THE LIST -> ////////////////////////////////
@@ -72,8 +74,6 @@ export interface ICenter<T> {
 
     // #region element -> /////////////////////////////////////////////
     // #endregion -> /////////////////////////////////////////////////
-    viewComponent?: (data: T, deleteMode?: boolean, onDelete?: (id: string) => Promise<void>) => JSX.Element;
-    deleteComponent?: (props: ICustomView<T>) => JSX.Element;
     getData?: (data: T) => void;
     handleFormStruct?: (config: ICenterConfig<T>) => void;
     handleTableStruct?: (config: ICenterConfig<T>) => void;
@@ -85,6 +85,21 @@ export type CenterHandlerConfigType<T> = {
     handleFormStruct?: (config: ICenterConfig<T>) => void;
     handleTableStruct?: (config: ICenterConfig<T>) => void;
     handleSearchFormStruct?: (config: ICenterConfig<T>) => void;
+};
+
+export type CenterParentType = {
+    entity: string;
+    id: string;
+    parentField?: string;
+};
+
+export type CenterRouteContextType = {
+    entity: string;
+    id?: string;
+    action: GenericActionEnum;
+    parents: CenterParentType[];
+    basePath: string;
+    currentPath: string;
 };
 
 export interface ICenterBase {
@@ -109,10 +124,12 @@ export interface ICenterBase {
      */
     prefix?: string;
     totalCount?: number;
+    totalDbCount?: number;
     action: GenericActionEnum;
     id: string;
     entity: string;
-    searchForm?: FormMakerContentType<FormMakerPartEnum>[];
+    basePath?: string;
+    searchForm?: FormMakerType<FormMakerPartEnum>;
     levelUpdate?: LevelAccessEnum;
     levelNew?: LevelAccessEnum;
     levelDelete?: LevelAccessEnum;
@@ -188,8 +205,8 @@ export interface ICenterConfig<T> {
         pluralArticle: string;
         isFem: boolean;
     };
-    formTemplate: FormMakerContentType<FormMakerPartEnum>[];
-    searchFormTemplate: FormMakerContentType<FormMakerPartEnum>[];
+    formTemplate: FormMakerType<FormMakerPartEnum>;
+    searchFormTemplate: FormMakerType<FormMakerPartEnum>;
     tableStructure: AppTableStructure<T>;
     icon: IconNameType;
     searchFieldDefault: string;
@@ -205,6 +222,10 @@ export interface ICenterConfig<T> {
     levelBulkNew: LevelAccessEnum;
     levelBulkUpdate: LevelAccessEnum;
     levelBulkDelete: LevelAccessEnum;
+    updateUrlFallback?: string;
+    overrideLayoutAction?: (props: { data?: QueryResult<T>, action?: GenericActionEnum }) => JSX.Element
+    viewComponent?: ({ data }: { data: T }) => JSX.Element;
+    deleteComponent?: ({ data }: { data: T }) => JSX.Element;
 }
 
 export interface ICustomView<T> {
@@ -218,7 +239,6 @@ export interface CenterState<T> {
     handlersLoaded: boolean;
     datas: QueryResult<T> | null;
     data: T | null;
-    centerAction: GenericActionEnum;
     alertContent: AlertContextType | null;
     isLoading: boolean;
     isMiniLoading: boolean;
@@ -240,7 +260,7 @@ export interface CenterState<T> {
     isSearchLoading: boolean;
 
     validateModalContent: { title: string; message: string } | null;
-    focusOnError: string[];
+    focusOnError: FormMakerFocusErrorType[];
     miniFormModal: boolean;
     miniFormLoading: boolean;
     miniFormModalOptions: ModalOptions;
@@ -256,7 +276,6 @@ export type CenterStateAction<T> =
     | { type: 'SET_REFRESH'; payload: boolean }
     | { type: 'SET_DATAS'; payload: QueryResult<T> }
     | { type: 'SET_DATA'; payload: T }
-    | { type: 'SET_CENTER_ACTION'; payload: GenericActionEnum }
     | { type: 'SET_ALERT'; payload: AlertContextType | null }
     | { type: 'SET_LOADING'; payload: boolean }
     | { type: 'SET_MINI_LOADING'; payload: boolean }
@@ -271,13 +290,12 @@ export type CenterStateAction<T> =
     | { type: 'SET_SUBMIT_LOADING'; payload: boolean }
     | { type: 'SET_SEARCH_LOADING'; payload: boolean }
     | { type: 'SET_VAL_MOD_VISIBLE'; payload: boolean }
-    | { type: 'SET_GOT_QUERY'; payload: boolean }
     | { type: 'SET_ALERT_VISIBLE'; payload: boolean }
     | { type: 'SET_ALL_ROWS_SEL'; payload: boolean }
     | { type: 'SET_TABLE_ERROR'; payload: boolean }
     | { type: 'SET_TABLE_LOADING'; payload: boolean }
     | { type: 'SET_VAL_MOD_CONTENT'; payload: { title: string; message: string } }
-    | { type: 'SET_FOCUS_ERROR'; payload: string }
+    | { type: 'SET_FOCUS_ERROR'; payload: FormMakerFocusErrorType[] }
     | { type: 'CLEAR_FOCUS_ERROR' }
     | { type: 'SET_MINI_FORM_MOD'; payload: boolean }
     | { type: 'SET_MINI_FORM_OPT'; payload: ModalOptions }

@@ -8,6 +8,7 @@ export type StorageType = {
     lang: string;
     darkMode: string;
     maxRows: number;
+    'mui-mode': string;
 };
 
 export type SessionStorageType = {
@@ -24,22 +25,22 @@ export default function useStorage(): IUseStorage {
 
     // #region METHODS --> /////////////////////////////////////
     const getItem = (key: RecursiveKeyOf<StorageType>): string => {
-        const item = window.localStorage.getItem(key);
+        const item = window.localStorage.getItem(key as string);
         return item;
     };
 
     const getSessionItem = (key: RecursiveKeyOf<SessionStorageType>): string => {
-        const item = window.sessionStorage.getItem(key);
+        const item = window.sessionStorage.getItem(key as string);
         return item;
     };
 
     const setItem = (key: RecursiveKeyOf<StorageType>, value): boolean => {
-        window.localStorage.setItem(key, value.toString());
+        window.localStorage.setItem(key as string, value.toString());
         return true;
     };
 
     const setSessionItem = (key: RecursiveKeyOf<SessionStorageType>, value: string): boolean => {
-        window.localStorage.setItem(key, value);
+        window.sessionStorage.setItem(key as string, value);
         return true;
     };
 
@@ -70,12 +71,12 @@ export default function useStorage(): IUseStorage {
     };
 
     const removeItem = (key: RecursiveKeyOf<StorageType>): boolean => {
-        window.localStorage.removeItem(key);
+        window.localStorage.removeItem(key as string);
         return true;
     };
 
     const removeSessionItem = (key: RecursiveKeyOf<SessionStorageType>): boolean => {
-        window.sessionStorage.removeItem(key);
+        window.sessionStorage.removeItem(key as string);
         return true;
     };
 

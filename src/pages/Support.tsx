@@ -178,7 +178,7 @@ export function Monitor(): JSX.Element {
         { label: 'Processors', value: monitor.processors },
         { label: 'Process Memory', value: monitor.processMemory },
         { label: 'User', value: monitor.user },
-        { label: '.NET Version', value: monitor.dotNetVersion },
+        { label: 'NodeJS Version', value: monitor.nodeVersion },
         { label: 'BigIP HTTP Insert', value: monitor.bigIPHTTPInsert },
     ];
 

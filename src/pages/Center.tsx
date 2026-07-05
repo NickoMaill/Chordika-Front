@@ -1,15 +1,16 @@
-import { lazy, ReactNode, startTransition, Suspense, useEffect, useMemo, useState } from 'react';
+// #region IMPORTS -> /////////////////////////////////////
+import { JSX, lazy } from 'react';
+import { Container } from '@mui/material';
+import { ReactNode, startTransition, Suspense, useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import AppFullPageLoader from '~/components/common/AppFullPageLoader';
 import CenterProvider from '~/context/CenterProvider';
 import SearchProvider from '~/context/SearchProvider';
 import { AppError, ErrorTypeEnum } from '~/core/appError';
-import { JSX } from 'react';
-import Container from '@mui/material/Container';
-const AppCenter = lazy(() => import('~/components/center/AppCenter'));
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
+const AppCenter = lazy(() => import('~/components/center/AppCenter'));
 let key = 0;
 // #endregion SINGLETON --> /////////////////////////////////
 

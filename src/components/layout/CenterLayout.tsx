@@ -1,10 +1,11 @@
 // #region IMPORTS -> /////////////////////////////////////
 import React, { JSX } from 'react';
-import { Outlet, useParams } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import CenterProvider from '~/context/CenterProvider';
 import SearchProvider from '~/context/SearchProvider';
 import AuthMiddleware from '~/router/AuthMiddleware';
 import Box from '@mui/material/Box';
+import centerRouteHelper from '~/helpers/centerRouteHelper';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
@@ -12,7 +13,8 @@ import Box from '@mui/material/Box';
 
 export default function CenterLayout(): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
-    const { tableName } = useParams();
+    const { pathname } = useLocation();
+    const centerRoute = centerRouteHelper.parse(pathname);
     // #endregion STATE --> ////////////////////////////////////
 
     // #region HOOKS --> ///////////////////////////////////////
@@ -27,7 +29,7 @@ export default function CenterLayout(): JSX.Element {
     // #region RENDER --> //////////////////////////////////////
     return (
         <AuthMiddleware>
-            <CenterProvider key={tableName}>
+            <CenterProvider key={centerRoute?.basePath ?? pathname} centerTableName={centerRoute?.entity}>
                 <SearchProvider>
                     <Box className="container-fluid">
                         <Outlet />

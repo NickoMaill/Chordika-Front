@@ -5,10 +5,10 @@ import useResources from '~/hooks/useResources';
 import { JSX } from 'react';
 
 export default function Text({ iText, iArgs, weight = 'Regular', ...props }: IText): JSX.Element {
-    const Resources = useResources();
+    const { translate } = useResources();
     return (
         <Typography {...props} fontWeight={weight}>
-            {Resources.translate(iText, iArgs)}
+            {translate(iText, iArgs)}
         </Typography>
     );
 }

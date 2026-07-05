@@ -13,8 +13,8 @@ interface IModalContext {
     setOptions?: Dispatch<SetStateAction<AppModalProperty>>;
     modalActionOptions: ModalActionType;
     setModalActionOptions?: Dispatch<SetStateAction<ModalActionType>>;
-    dismissLabel: string;
-    setDismissLabel?: Dispatch<SetStateAction<string>>;
+    isLoading: boolean;
+    setIsLoading?: Dispatch<SetStateAction<boolean>>;
 }
 
 const initialContext: IModalContext = {
@@ -22,7 +22,7 @@ const initialContext: IModalContext = {
     title: '',
     content: null,
     modalActionOptions: null,
-    dismissLabel: '',
+    isLoading: false,
     options: { size: 'md', scroll: 'paper', persistant: false },
 };
 
@@ -37,6 +37,7 @@ export type ModalActionType = {
     modalAction: () => void;
     modalActionLabel: string;
     modalActionLoading: boolean;
+    modalDismissLabel?: string;
 };
 
 const ModalContext = createContext<IModalContext>(initialContext);

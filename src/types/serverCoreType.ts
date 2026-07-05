@@ -17,13 +17,14 @@ export enum ResultStatusEnum {
 
 export type ServiceResponse<T = null> = {
     success: boolean;
-    message: string;
+    message?: string;
     data?: T | T[];
 };
 
 export type QueryResult<T> = {
     records: T[];
     totalRecords: number;
+    totalAllRecords: number;
     offset: number;
     limit: number;
 };

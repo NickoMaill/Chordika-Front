@@ -3,14 +3,10 @@ import { Route, Routes } from 'react-router-dom';
 import navigationResources from '~/resources/navigationResources';
 import AuthMiddleware from './AuthMiddleware';
 import NotFound from '~/pages/NotFound';
-import { JSX } from 'react';
+import { Fragment, JSX } from 'react';
 import { RouterDescription } from '~/types/route';
 import CenterLayout from '~/components/layout/CenterLayout';
-import CenterTable from '~/pages/Center/CenterTable';
-import CenterNew from '~/pages/Center/CenterNew';
-import CenterUpdate from '~/pages/Center/CenterUpdate';
-import CenterDelete from '~/pages/Center/CenterDelete';
-import CenterView from '~/pages/Center/CenterView';
+import CenterRoute from '~/pages/Center/CenterRoute';
 import DashboardLayout from '~/components/layout/dashboard/DashboardLayout';
 // #endregion IMPORTS -> //////////////////////////////////
 
@@ -30,17 +26,22 @@ export default function AppRouter(): JSX.Element {
     // #region USEEFFECT --> ///////////////////////////////////
     function renderRoutes(routes: RouterDescription[]): JSX.Element[] {
         return routes.map((route, i) => {
-            const element = route.element ? <route.element /> : <></>;
-            const wrappedElement = route.isAuthRequired ? <AuthMiddleware>{element}</AuthMiddleware> : element;
+            const Element = route.element ? route.element : Fragment;
+            const wrappedElement = route.isAuthRequired ? <AuthMiddleware key={i}>{<Element />}</AuthMiddleware> : <Element key={i} />;
+
             if (route.isIndex) {
                 return <Route key={i} index element={wrappedElement} />;
-            } else if (route.children) {
-                <Route key={i} path={route.path} element={wrappedElement}>
-                    {route.children && renderRoutes(route.children)}
-                </Route>;
-            } else {
-                return <Route key={i} path={route.path} element={wrappedElement} />;
             }
+
+            if (route.children) {
+                return (
+                    <Route key={i} path={route.path} element={wrappedElement}>
+                        {renderRoutes(route.children)}
+                    </Route>
+                );
+            }
+
+            return <Route key={i} path={route.path} element={wrappedElement} />;
         });
     }
     // #endregion USEEFFECT --> ////////////////////////////////
@@ -50,12 +51,8 @@ export default function AppRouter(): JSX.Element {
         <Routes>
             <Route path="/" element={<DashboardLayout />}>
                 {renderRoutes(navigationResources.routes)}
-                <Route path="/center/:tableName" element={<CenterLayout />}>
-                    <Route index element={<CenterTable />} />
-                    <Route path="new" element={<CenterNew />} />
-                    <Route path=":id/update" element={<CenterUpdate />} />
-                    <Route path=":id/delete" element={<CenterDelete />} />
-                    <Route path=":id" element={<CenterView />} />
+                <Route path="/center" element={<CenterLayout />}>
+                    <Route path="*" element={<CenterRoute />} />
                 </Route>
                 <Route path="*" element={<NotFound />} />
             </Route>

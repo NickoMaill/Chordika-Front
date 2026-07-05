@@ -4,6 +4,7 @@ import { inputLabelClasses } from '@mui/material/InputLabel';
 import { outlinedInputClasses } from '@mui/material/OutlinedInput';
 import { formHelperTextClasses } from '@mui/material/FormHelperText';
 import { iconButtonClasses } from '@mui/material/IconButton';
+import { pickersInputBaseClasses } from '@mui/x-date-pickers';
 import { brand } from '../themePrimitives';
 
 export const formInputCustomizations: Components<Theme> = {
@@ -25,11 +26,23 @@ export const formInputCustomizations: Components<Theme> = {
                 '& .MuiPickersInputBase-root': {
                     marginTop: 6,
                     border: `1px solid ${(theme.vars || theme).palette.divider}`,
+                    borderRadius: (theme.vars || theme).shape.borderRadius,
+                    transition: 'border-color 120ms ease-in, background-color 120ms ease-in, outline-color 120ms ease-in',
                     ' .MuiPickersInputBase-sectionsContainer': {
                         padding: '10px 0',
                     },
                     ' .MuiPickersOutlinedInput-notchedOutline': {
                         border: 'none',
+                    },
+                    [`&.${pickersInputBaseClasses.error}`]: {
+                        borderColor: (theme.vars || theme).palette.error.main,
+                        backgroundColor: alpha((theme.vars || theme).palette.error.main, 0.04),
+                        ' .MuiPickersOutlinedInput-notchedOutline': {
+                            border: 'none',
+                        },
+                        [` .${iconButtonClasses.root}`]: {
+                            color: (theme.vars || theme).palette.error.main,
+                        },
                     },
                     [`&.MuiPickersOutlinedInput-root.Mui-focused`]: {
                         border: `1px solid ${(theme.vars || theme).palette.divider}`,
@@ -38,6 +51,10 @@ export const formInputCustomizations: Components<Theme> = {
                         ' .MuiPickersOutlinedInput-notchedOutline': {
                             border: 'none',
                         },
+                    },
+                    [`&.${pickersInputBaseClasses.error}.Mui-focused`]: {
+                        borderColor: (theme.vars || theme).palette.error.main,
+                        outline: `3px solid ${alpha((theme.vars || theme).palette.error.main, 0.18)}`,
                     },
                     [` .${iconButtonClasses.root}`]: {
                         border: 'none',

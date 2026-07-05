@@ -4,7 +4,14 @@ import { menuItemClasses } from '@mui/material/MenuItem';
 import { pickersDayClasses, yearCalendarClasses } from '@mui/x-date-pickers';
 import { gray, brand } from '../themePrimitives';
 
-export const datePickersCustomizations: PickerComponents<Theme> & PickerComponents<Theme> = {
+export const datePickersCustomizations: PickerComponents<Theme> = {
+    MuiPickersInputBase: {
+        styleOverrides: {
+            root: ({ theme }) => ({
+                backgroundColor: (theme.vars || theme).palette.background.default,
+            }),
+        },
+    },
     MuiPickerPopper: {
         styleOverrides: {
             paper: ({ theme }) => ({

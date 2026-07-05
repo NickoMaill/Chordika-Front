@@ -1,10 +1,9 @@
 import { JSX } from 'react';
 import { ParsedUrlQuery } from 'querystring';
 import { RecursiveKeyOf } from './custom';
-import { OverridableComponent } from '@mui/material/OverridableComponent';
-import { SvgIconTypeMap } from '@mui/material/SvgIcon';
 import { LevelAccessEnum } from '~/models/Session';
 import { TranslationResourcesType } from './i18nTypes';
+import { IconNameType } from '~/components/common/AppIcon';
 
 export type RouterDescription = {
     name: RecursiveKeyOf<RouteNameReference>;
@@ -23,7 +22,6 @@ export type RouteNameReference = {
     Users;
     Error;
     Login;
-    Register;
     Reset;
     Center;
     CenterTable;
@@ -36,33 +34,23 @@ export type RouteNameReference = {
     NotFound;
     SQLTest;
     Monitor;
-    Pivot;
-    Setup;
     Scores;
     Editor;
     ScoreImport;
     ScoreAdd;
+    Register;
+    Notifications;
 };
 
 export type RootHeaderlinkType = {
     name: RecursiveKeyOf<TranslationResourcesType> | 'divider';
-    Icon: OverridableComponent<SvgIconTypeMap<object, 'svg'>> & {
-        muiName: string;
-    };
+    icon?: IconNameType;
     levelAccess?: LevelAccessEnum;
-    wildcard?: boolean;
     [key: string]: unknown;
+    isFolder?: boolean;
 };
 
-export type HeaderLinkType =
-    | (RootHeaderlinkType & {
-          link: string;
-          redirect: true;
-      })
-    | (RootHeaderlinkType & {
-          redirect: false;
-          method: string;
-      })
-    | {
-          name: 'divider';
-      };
+export type HeaderLinkType = RootHeaderlinkType & {
+    link?: string;
+    method?: string;
+};

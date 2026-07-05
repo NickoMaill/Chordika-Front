@@ -1,121 +1,370 @@
 {
     "common": {
         "title": "Title",
-        "yes": "yes",
-        "no": "no",
-        "send": "send",
+        "yes": "Yes",
+        "no": "No",
+        "send": "Send",
         "noResultDb": "No results in the database",
         "changeLang": "Change language",
-        "sendMessage": "Send Message",
-        "openMenu": "Open Menu",
-        "search": "Search",
-        "emailAddress": "Email address",
+        "sendMessage": "Send a message",
+        "openMenu": "Open menu",
+        "search": "To research",
+        "emailAddress": "E-mail address",
         "password": "Password",
         "welcome": "Welcome",
         "resend": "Resend",
         "add": "Add",
-        "update": "Update",
-        "delete": "Delete",
-        "dismiss": "Dismiss",
+        "update": "To modify",
+        "dismiss": "Cancel",
+        "delete": "DELETE",
+        "import": "Import",
+        "addedAt": "Created on",
+        "addedAtFem": "Created on",
+        "updatedAt": "Updated on",
         "youAdd": "Add",
-        "youUpdate": "Update",
-        "youDismiss": "Dismiss",
-        "adding": "Add",
-        "updating": "Update",
-        "deleting": "Delete",
+        "youUpdate": "Edit",
+        "youDismiss": "Cancel",
+        "youDelete": "Delete",
+        "adding": "Creation",
+        "updating": "Edit",
+        "deleting": "Deletion",
         "back": "Back",
-        "filter": "Filter",
-        "filters": "Filters",
+        "filter": "Filtered",
+        "filters": "Active Filters",
         "details": "Details",
         "close": "Close",
-        "mainInfo": "Main Information",
-        "description": "Description",
+        "period": "Period",
         "name": "Name",
+        "informations": "Information",
+        "mainInfo": "Main information",
+        "description": "Description",
+        "lastUpd": "Last modification.",
+        "lastUpdate": "Last modification",
+        "resume": "Summary",
+        "text": "Text",
+        "date": "Date",
+        "status": "Status",
+        "progress": "Progress",
+        "event": "Event",
+        "loading": "Loading...",
+        "state": "State",
+        "dark": "Dark",
+        "light": "Clear",
+        "overview": "Overview",
+        "importCSV": "Import a CSV file",
         "specifiers": {
-            "singularApos": "The",
-            "singularFem": "The",
-            "singularMasc": "The",
-            "plural": "The"
+            "singularApos": "L'",
+            "singularFem": "There",
+            "singularMasc": "THE",
+            "plural": "THE"
         },
         "table": {
             "columns": {
                 "showAll": "Show all",
                 "hideAll": "Hide all",
-                "placeholder": "Label",
-                "search": "Search columns",
+                "placeholder": "Wording",
+                "search": "Find a column",
                 "singular": "Column",
                 "plural": "Columns",
-                "density": "Density",
-                "comfortable": "Spaced",
-                "skinny": "Thin",
-                "regular": "Regular",
-                "selectedLines": "selected line{{isPlural}}"
+                "density": "Thickness",
+                "comfortable": "Space",
+                "skinny": "Compact",
+                "regular": "Normal",
+                "selectedLines": "line{{isPlural}} selected"
             },
             "nav": {
-                "resultPerPage": "Results per page"
+                "resultPerPage": "Results by pages"
             },
             "filter": {
-                "sortAsc": "Sort by ASC",
-                "sortDesc": "Sort by DESC",
+                "sortAsc": "Sort in ascending order",
+                "sortDesc": "Sort in descending order",
                 "hideColumns": "Hide column",
-                "manageColumns": "Manage columns",
+                "manageColumns": "Column management",
                 "label": "Filters"
             }
         }
     },
+    "businessTerms": {
+        "event": "Event"
+    },
+    "entity": {
+        "user": "User",
+        "users": "Users",
+        "log": "Activity log",
+        "company": "Company",
+        "companies": "Companies",
+        "project": "Project",
+        "projects": "Projects",
+        "planning": "Backplanning",
+        "plannings": "Backplannings",
+        "category": "Category",
+        "categories": "Categories",
+        "subCategory": "Subcategory",
+        "subCategories": "Subcategories",
+        "task": "Stain",
+        "tasks": "Tasks"
+    },
     "login": {
         "rememberMe": "Remember me",
-        "forgotPassword": "Forgot password?",
-        "pleaseConnect": "Please connect",
-        "connect": "Connect",
-        "reset": "New password",
-        "wrongCredentials": "Invalid email or password",
-        "expiredSession": "Session expired, please reconnect",
-        "expiredMfa": "Your code has expired, please resend another one",
+        "forgotPassword": "Forgotten password?",
+        "pleaseConnect": "Please log in",
+        "connect": "Connection",
+        "wrongCredentials": "Invalid identifiers",
+        "expiredSession": "Session expired, please log back in",
+        "expiredMfa": "Your code has expired, please send another one",
         "requiredEmail": "Email is required",
         "requiredPassword": "Password is required",
-        "resetTitle": "Login help",
+        "resetTitle": "Connection help",
         "resetMessage": "Once your account is identified, a message will be sent to you to reset your password.",
         "resetDetails": "Please enter your email address",
-        "resetLabel": "Reset password",
+        "resetLabel": "Reset Password",
         "MfaTitle": "Secure access",
         "MfaSubtitle": "Multi-factor authentication",
-        "MfaRegister": "Welcome <b>{{username}}</b>. To continue, you need to set up an <b>authenticator</b> to enable Multi-Factor Authentication.<br />To configure it, please follow the steps below:<br />",
-        "MfaDetails": "Welcome <b>{{username}}</b>. To continue, enter the 6-digit verification code sent to your phone number ending in <b>{{phoneNumber}}</b>.",
-        "resendMfa": "Did not receive a code?"
+        "MfaDetails": "Welcome <b>{{username}}</b>.  <b>{{phoneNumber}}</b>.",
+        "resendMfa": "Didn't receive a code?"
     },
     "profile": {
-        "title": "Access Profile"
+        "title": "Profile",
+        "mainInfo": "Main information",
+        "intro": "This page brings together information related to your profile.<br />Other information will be added later.",
+        "username": "User name",
+        "name": "Full name",
+        "firstName": "First name",
+        "lastName": "Name",
+        "email": "E-mail",
+        "levelAccess": "Access level",
+        "lastCon": "Last connection",
+        "addedAt": "Created on",
+        "history": "Activity History",
+        "colors": {
+            "needSelect": "You must select a color",
+            "saved": "Color saved successfully",
+            "deleted": "Color removed successfully",
+            "savedColor": "Saved colors",
+            "noSaved": "No colors saved"
+        }
+    },
+    "proxy": {
+        "title": "Log in as...",
+        "message": "Log in as another user to test or prepare for that person's access.",
+        "search": "Search by name or email address",
+        "choose": "Choose the profile to use",
+        "noProxy": "No proxy found..."
     },
     "nav": {
-        "profile": "Access Profile",
-        "myScore": "My CHord Grids",
+        "profile": "Manage profile",
         "users": "Users",
-        "adverts": "Annonces",
         "setup": "Settings",
-        "activity": "Activity Log",
+        "companies": "Companies",
+        "activity": "Activity log",
         "schedules": "Scheduled Tasks",
-        "proxy": "Proxy as",
-        "logout": "Logout"
+        "logout": "Disconnect",
+        "projects": "Projects",
+        "proxy": "Log in as",
+        "notFound": "No pages found"
+    },
+    "home": {
+        "welcome": "Welcome to Aven"
+    },
+    "logs": {
+        "singular": "Activity",
+        "plural": "Activities",
+        "proxy": "Inasmuch as",
+        "action": "Action",
+        "addedAt": "Date",
+        "info": "Info"
+    },
+    "categories": {
+        "singular": "Category",
+        "plural": "Categories"
+    },
+    "user": {
+        "singular": "User",
+        "plural": "Users",
+        "username": "User name",
+        "name": "Full name",
+        "firstName": "First name",
+        "lastName": "Name",
+        "email": "E-mail",
+        "levelAccess": "Access level",
+        "admin": "Administrator",
+        "password": "Password"
+    },
+    "schedule": {
+        "singular": "Scheduled task",
+        "plural": "Scheduled tasks",
+        "freq": "Frequency",
+        "isActive": "Active?",
+        "lastExec": "Last execution",
+        "startedAt": "Started at",
+        "endedAt": "Completed at",
+        "nextExec": "Next Execution",
+        "method": "Method",
+        "monitoring": "Monitoring",
+        "monitoringLoading": "Monitoring while loading...",
+        "history": "Execution history",
+        "error": "Error",
+        "timeout": "Timeout",
+        "ongoing": "In progress",
+        "standby": "StandBy",
+        "ended": "Completed"
+    },
+    "company": {
+        "singular": "Company",
+        "plural": "Companies",
+        "name": "Name",
+        "shortName": "Short name",
+        "type": "Kind",
+        "client": "Customer",
+        "supplier": "Supplier",
+        "provider": "Provider",
+        "agency": "Agency",
+        "logoPath": "Logo",
+        "role": "Role"
+    },
+    "project": {
+        "singular": "Project",
+        "plural": "Projects",
+        "edit": "Edit a project",
+        "create": "Create a project",
+        "new": "New project",
+        "search": "Search for a project",
+        "status": {
+            "incoming": "Future",
+            "ongoing": "In progress",
+            "ended": "Completed"
+        },
+        "priority": {
+            "title": "Priority",
+            "normal": "Normal",
+            "high": "High",
+            "critical": "Critical"
+        },
+        "dates": {
+            "start": "Start of project",
+            "end": "End of project",
+            "startEvent": "Start of event",
+            "endEvent": "End of event",
+            "startSetup": "Start of assembly",
+            "endSetup": "End of assembly",
+            "startTeardown": "Start of dismantling",
+            "endTeardown": "End of disassembly"
+        },
+        "teams": {
+            "singular": "Team",
+            "plural": "Teams",
+            "import": {
+                "action": "Import Participants",
+                "importLabel": "Import an existing file to quickly create your teams and participants within the project.",
+                "list": {
+                    "l1": "Download the model",
+                    "l2": "Fill out the template with the correct information",
+                    "l3": "Export model to CSV format (UTF-8 encoding)",
+                    "l4": "Drag/Drop your file into the area provided for this purpose",
+                    "l5": "Click \"Import\""
+                },
+                "advertMessage": "If a participant is already present in the database for this project, it will be modified",
+                "downloadTemplate": "Download the Model"
+            },
+            "add": {
+                "action": "Add Team",
+                "addManual": "Add manually",
+                "addLabel": "Add your teams and structure their participants directly from the application."
+            },
+            "noTeam": "No speakers have been added yet",
+            "teamHelpText": "Teams allow you to organize the people involved in your project and manage the information needed to prepare and monitor them.",
+            "endText": "Once your teams have been created, you will be able to complete and follow all the information associated with the project."
+        },
+        "actionMessage": {
+            "root": {
+                "updated": "Project modified successfully",
+                "update": "Edit project",
+                "dismiss": "Undo changes",
+                "dismissConfirm": "Yes, Cancel",
+                "dismissReject": "No, keep"
+            },
+            "company": {
+                "add": "Add a company",
+                "added": "Company added successfully",
+                "update": "Edit company",
+                "updated": "Company successfully modified",
+                "delete": "Delete company",
+                "deleted": "Company successfully deleted",
+                "defineRole": "Role to be defined"
+            }
+        }
+    },
+    "planning": {
+        "singular": "Backplanning",
+        "plural": "Backplannings",
+        "who": "WHO ?",
+        "what": "WHAT ?",
+        "color": "Color",
+        "fontColor": "Font color",
+        "colorPreview": "Color preview",
+        "colorPlaceholder": "YOUR CATEGORY WILL BE RATED LIKE THIS",
+        "category": {
+            "add": "Add a subcategory",
+            "update": "Edit category",
+            "delete": "Delete category"
+        },
+        "subCategory": {
+            "add": "Add a task",
+            "update": "Edit subcategory",
+            "delete": "Delete subcategory"
+        },
+        "task": {
+            "update": "!!!>>> Unexpected token '<', \"<html lang\"... is not valid JSON <<<!!!",
+            "delete": "!!!>>> Unexpected token '<', \"<html lang\"... is not valid JSON <<<!!!",
+            "status": {
+                "ongoing": "In progress",
+                "incoming": "Future",
+                "waiting": "On hold",
+                "ended": "Do"
+            }
+        },
+        "promptDelete": {
+            "placeholder": "This action will permanently remove {{target}}.",
+            "category": {
+                "title": "You are about to delete this category",
+                "message": "All subcategories and associated tasks will also be deleted. ",
+                "target": "the selected category"
+            },
+            "subCategory": {
+                "title": "You are about to delete this subcategory",
+                "message": "All associated tasks will also be deleted. ",
+                "target": "the selected subcategory"
+            },
+            "task": {
+                "title": "You are about to delete this task",
+                "message": "All assignments to this task will also be deleted. ",
+                "target": "the selected task"
+            },
+            "company": {
+                "title": "You are about to delete this company",
+                "message": "All task assignments will also be deleted. ",
+                "target": "the selected company"
+            }
+        }
     },
     "error": {
         "common": {
-            "error": "An error occurred"
+            "error": "An error has occurred"
         },
         "errorMessage": "Oops, an error occurred... Please reload the application",
         "errorBoundary": {
-            "sorry": "Sorry, an error occurred.",
-            "firstErrorMessage": "Please use the form below to contact the",
-            "supportEmail": "mailto:",
+            "sorry": "Sorry, an error has occurred.",
+            "firstErrorMessage": "Please use the form below to contact",
+            "supportEmail": "",
             "technicalStaff": "technical support",
-            "thanks": "We will work to fix the problem as soon as possible. Please accept our apologies for the inconvenience caused.",
+            "thanks": "We will work to correct the issue as soon as possible. ",
             "toSendMessage": "To send a message to technical support,",
-            "pleaseSend": "please briefly describe the problem in the area below,",
+            "pleaseSend": "please briefly describe the problem in the box below,",
             "thenClick": "then click on:",
             "errorReport": "Error Report",
-            "diag": "Diagnostic",
+            "diag": "Diagnosis",
             "source": "Source",
-            "at": "at",
+            "at": "has",
             "trace": "Trace",
             "page": "Page",
             "clockDate": "Date/Time",
@@ -124,18 +373,10 @@
             "linkForward": " Link from"
         },
         "noAccess": {
-            "title": "Access not granted",
             "intro": "You do not have access to the requested page.",
             "please": "Please use the options available in the menu.",
-            "expired": "It is also possible that your session has <b>expired</b>.",
-            "login": "In this case, please <link>log in</link> again."
-        },
-        "notFound": {
-            "title": "Resource not found",
-            "intro": "The resource you requested could not be found.",
-            "please": "Please use the available options in the menu to continue browsing.",
-            "advise": "The resource may also be <b>temporarily unavailable</b>.",
-            "goBack": "You can click 'Back' to return to the previous page or use the menu to access another resource."
+            "expired": "It is also possible that your session is <b>expired</b>.",
+            "login": "In this case, please <link>identify</link> again."
         }
     },
     "center": {
@@ -143,74 +384,29 @@
             "newSearch": "New search",
             "updateSearch": "Change criteria",
             "filters": "Filters",
-            "nothing": "None (entire base).",
-            "orderBy": "Order by"
+            "nothing": "No filter applied.",
+            "orderBy": "Sort:",
+            "total": "Total volume",
+            "ref": "{{entity}} reference{{fem}}{{plural}}"
         },
         "bulk": {
-            "bulkUpdate": "Bulk updates",
-            "bulkAdd": "Bulk adds",
-            "bulkDelete": "Bulk deletions",
-            "downloadTemplate": "Download template",
+            "bulkUpdate": "Bulk changes",
+            "bulkAdd": "Bulk Adds",
+            "downloadTemplate": "Download the model",
             "importXlsx": "Import your .xlsx file here",
-            "bulkAddMessage": "{{action}} multiple {{grammar}} at once by uploading a CSV file containing the new information of the {{grammar}}. <br /><b>Check that the data in the file is correct before uploading it.</b><br /><br /> For more information on the correct formatting of the CSV file, click on the <b>Download Template</b> button.",
-            "bulkTitle": "{{action}} {{grammar}}",
-            "exportXls": "Export CSV format",
-            "exportCSV": "Export Excel format"
+            "exportXlsx": "Export to excel format",
+            "exportCSV": "Export in csv format",
+            "bulkAddMessage": "{{action}} several {{grammar}} both by loading a CSV file containing the new information of the {{grammar}}. <br /><b>Verify that the file data is correct before loading it.</b><br /><br /> For more information on correctly formatting the CSV file, click the button <b>Download the model</b>.",
+            "bulkTitle": "{{action}} of the {{grammar}}"
         },
         "update": {
-            "success": "{{entity}} modified successfully"
+            "success": "{{entity}} amended{{fem}} successfully"
         },
         "create": {
-            "success": "{{entity}} created successfully"
+            "success": "{{entity}} created{{fem}} successfully"
+        },
+        "delete": {
+            "success": "{{entity}} deleted{{fem}} successfully"
         }
-    },
-    "user": {
-        "singular": "User",
-        "plural": "Users",
-        "username": "Username",
-        "name": "Full Name",
-        "firstName": "First Name",
-        "lastName": "Last Name",
-        "email": "Email",
-        "levelAccess": "Access Level",
-        "lastCon": "Last connection date",
-        "logHistory": "Logs Activities",
-        "mobile": "Mobile",
-        "admin": "Administrator",
-        "password": "Password",
-        "userId": "Id d'Utilisateur"
-    },
-    "logs": {
-        "singular": "Log",
-        "plural": "Logs",
-        "proxy": "Proxy",
-        "action": "Action",
-        "entryDate": "Date",
-        "info": "Infos"
-    },
-    "schedule": {
-        "singular": "Schedule",
-        "plural": "Schedules",
-        "freq": "Interval",
-        "isActive": "Is active ?",
-        "lastExec": "Last execution",
-        "startedAt": "Started at",
-        "endedAt": "Ended at",
-        "nextExec": "Next Execution",
-        "method": "Method",
-        "monitoring": "Monitoring",
-        "monitoringLoading": "Monitoring's loading...",
-        "history": "Execution History",
-        "error": "Error",
-        "timeout": "Timeout",
-        "ongoing": "Ongoing",
-        "standby": "StandBy",
-        "ended": "OK"
-    },
-    "adverts": {
-        "singular": "Advert",
-        "plural": "Adverts",
-        "expires": "Expires",
-        "createdBy": "Created by"
     }
 }

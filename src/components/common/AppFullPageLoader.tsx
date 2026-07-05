@@ -36,7 +36,12 @@ export default function AppFullPageLoader({ isLoading, handleClose, counting = f
     return (
         <>
             {show && (
-                <Backdrop sx={{ backgroundColor: Storage.getItem('darkMode') === 'true' ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.9)', zIndex: (theme) => theme.zIndex.drawer + 1 }} className="d-flex flex-column" open={isLoading} onClick={handleClose}>
+                <Backdrop
+                    sx={{ backgroundColor: Storage.getItem('mui-mode') === 'dark' ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.9)', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                    className="d-flex flex-column"
+                    open={isLoading}
+                    onClick={handleClose}
+                >
                     <CircularProgress color="primary" size={70} />
                     {message && (
                         <Bold variant="h5" className="mt-3">

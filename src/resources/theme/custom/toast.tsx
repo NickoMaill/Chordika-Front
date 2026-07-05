@@ -11,11 +11,14 @@ const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
     },
     '&.notistack-MuiContent-warning': {
         backgroundColor: stylesResources.theme.palette.warning.contrastTextChannel,
-        // color: stylesResources.theme.palette.text.secondary
     },
     '&.notistack-MuiContent-info': {
         backgroundColor: stylesResources.theme.palette.primary.main,
     },
+    '&.notistack-MuiContent-default': {
+        backgroundColor: stylesResources.theme.palette.background.paper,
+        color: "inherit"
+    }
 }));
 
 export default {

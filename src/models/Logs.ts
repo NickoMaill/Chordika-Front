@@ -4,7 +4,6 @@ export type LogsApiModel = {
     name: string;
     proxyId: number;
     proxy: string;
-    entryDate: string;
     ipAddress: string;
     action: string;
     info: string;
@@ -13,4 +12,5 @@ export type LogsApiModel = {
     stamp: string;
     targetId: number;
     target: string;
+    addedAt: Date;
 };

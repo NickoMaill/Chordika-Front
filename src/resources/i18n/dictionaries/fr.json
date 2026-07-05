@@ -1,5 +1,6 @@
 {
     "common": {
+        "homepage": "Accueil",
         "title": "Titre",
         "yes": "Oui",
         "no": "Non",
@@ -17,6 +18,10 @@
         "update": "Modifier",
         "dismiss": "Annuler",
         "delete": "Supprimer",
+        "import": "Importer",
+        "addedAt": "Créé le",
+        "addedAtFem": "Créée le",
+        "updatedAt": "Mis à jour le",
         "youAdd": "Ajoutez",
         "youUpdate": "Modifiez",
         "youDismiss": "Annulez",
@@ -26,14 +31,32 @@
         "deleting": "Suppression",
         "back": "Retour",
         "filter": "Filtre",
-        "filters": "Filtres",
+        "filters": "Filtres Actifs",
         "details": "Détails",
         "close": "Fermer",
+        "period": "Période",
         "name": "Nom",
+        "informations": "Informations",
         "mainInfo": "Informations principales",
         "description": "Description",
+        "lastUpd": "Dernière modif.",
+        "lastUpdate": "Dernière modification",
+        "resume": "Résumé",
         "text": "Texte",
         "date": "Date",
+        "status": "Statut",
+        "progress": "Progression",
+        "event": "Évènement",
+        "loading": "Chargement en cours...",
+        "state": "État",
+        "dark": "Sombre",
+        "light": "Clair",
+        "overview": "Vue d'ensemble",
+        "importCSV": "Importer un fichier CSV",
+        "contact": "Contact",
+        "action": "Action",
+        "actions": "Actions",
+        "ok": "Ok",
         "specifiers": {
             "singularApos": "L'",
             "singularFem": "La",
@@ -58,20 +81,33 @@
                 "resultPerPage": "Résultats par pages"
             },
             "filter": {
-                "sortAsc": "Trier par order croissant",
-                "sortDesc": "Trier par order décroissant",
+                "sortAsc": "Trier par ordre croissant",
+                "sortDesc": "Trier par ordre décroissant",
                 "hideColumns": "Masquer la colonne",
                 "manageColumns": "Gestion des colonnes",
                 "label": "Filtres"
             }
         }
     },
+    "businessTerms": {
+        "event": "Évènement"
+    },
     "entity": {
         "user": "Utilisateur",
         "users": "Utilisateurs",
         "log": "Journal d'activité",
-        "client": "Client",
-        "clients": "Clients"
+        "company": "Société",
+        "companies": "Sociétés",
+        "project": "Projet",
+        "projects": "Projets",
+        "planning": "Rétroplanning",
+        "plannings": "Rétroplannings",
+        "category": "Catégorie",
+        "categories": "Catégories",
+        "subCategory": "Sous - catégorie",
+        "subCategories": "Sous - catégories",
+        "task": "Tâche",
+        "tasks": "Tâches"
     },
     "login": {
         "rememberMe": "Se souvenir de moi",
@@ -79,7 +115,7 @@
         "pleaseConnect": "Veuillez vous connecter",
         "connect": "Connexion",
         "reset": "Nouveau mot de passe",
-        "wrongCredentials": "Email ou mot de passe invalide",
+        "wrongCredentials": "Identifiants invalides",
         "expiredSession": "Session expirée, veuillez vous reconnecter",
         "expiredMfa": "Votre code a expiré, veuillez en renvoyer un autre",
         "requiredEmail": "L'email est requis",
@@ -90,118 +126,79 @@
         "resetLabel": "Réinitialiser le mot de passe",
         "MfaTitle": "Accès sécurisé",
         "MfaSubtitle": "Authentification multi-facteurs",
-        "MfaRegister": "Bienvenue <b>{{username}}</b>. Pour continuer, vous devez configurer un <b>authenticator</b> pour bénéficier de l’authentification à deux facteurs.<br />Pour vous enregistrer veuillez procéder comme suit : <br/>",
-        "MfaDetails": "Bienvenue <b>{{username}}</b>. Pour continuer, saisissez le code de vérification à 6 chiffres généré par votre application d'authentification.",
+        "MfaDetails": "Bienvenue <b>{{username}}</b>. Pour continuer, saisissez le code de vérification à 6 chiffres envoyé à votre numéro de téléphone se terminant par <b>{{phoneNumber}}</b>.",
         "resendMfa": "Vous n’avez pas reçu de code ?"
     },
     "profile": {
-        "title": "Profil d'accès"
-    },
-    "nav": {
-        "profile": "Profil d'accès",
-        "myScore": "Mes grilles",
-        "scoreAdd": "Ajouter une grille",
-        "scoreImport": "Importer une grille",
-        "users": "Utilisateurs",
-        "adverts": "Annonces",
-        "setup": "Réglages",
-        "activity": "Journal d'activité",
-        "schedules": "Tâche planifiées",
-        "proxy": "Se connecter en tant que",
-        "logout": "Déconnexion"
-    },
-    "error": {
-        "common": {
-            "error": "Une erreur est survenue"
-        },
-        "errorMessage": "Oups, une erreur est survenue... Veuillez recharger l'application",
-        "errorBoundary": {
-            "sorry": "Désolé, une erreur est survenue.",
-            "firstErrorMessage": "Merci d'utiliser le formulaire ci-dessous pour contacter le",
-            "supportEmail": "mailto:",
-            "technicalStaff": "support technique",
-            "thanks": "Nous travaillerons à corriger le problème dès que possible. Veuillez nous excuser pour le dérangement causé.",
-            "toSendMessage": "Pour envoyer un message au support technique,",
-            "pleaseSend": "veuillez décrire brièvement le problème dans la zone ci-dessous,",
-            "thenClick": "puis cliquer sur :",
-            "errorReport": "Rapport d'erreur",
-            "diag": "Diagnostic",
-            "source": "Source",
-            "at": "à",
-            "trace": "Trace",
-            "page": "Page",
-            "clockDate": "Date/Heure",
-            "browser": "Navigateur",
-            "address": "Adresse",
-            "linkForward": " Lien depuis"
-        },
-        "noAccess": {
-            "title": "Accès Refusé",
-            "intro": "Vous n'avez pas accès à la page demandée.",
-            "please": "Merci d'utiliser les options disponibles dans le menu.",
-            "expired": "Il est également possible que votre session soit <b>expirée</b>.",
-            "login": "Dans ce cas, veuillez vous <link>identifier</link> à nouveau."
-        },
-        "notFound": {
-            "title": "Ressource introuvable",
-            "intro": "La ressource que vous avez demandée est introuvable.",
-            "please": "Merci d’utiliser les options disponibles dans le menu pour poursuivre votre navigation.",
-            "advise": "Il est également possible que la ressource soit <b>temporairement indisponible</b>.",
-            "goBack": "Vous pouvez cliquer sur « Retour » pour revenir à la page précédente ou utiliser le menu pour accéder à une autre ressource."
-        }
-    },
-    "center": {
-        "search": {
-            "newSearch": "Nouvelle recherche",
-            "updateSearch": "Changer les critères",
-            "filters": "Filtres",
-            "nothing": "Aucun (base entière).",
-            "orderBy": "Tri par"
-        },
-        "bulk": {
-            "bulkUpdate": "Modifications groupées",
-            "bulkAdd": "Ajouts groupés",
-            "bulkDelete": "Suppressions groupée",
-            "downloadTemplate": "Télécharger le modèle",
-            "importXlsx": "Importer votre fichier .xlsx ici",
-            "bulkAddMessage": "{{action}} plusieurs {{grammar}} à la fois en chargeant un fichier CSV contenant les nouvelles informations des {{grammar}}. <br /><b>Vérifiez que les données du fichier soient correctes avant de le charger.</b><br /><br /> Pour plus d'informations sur le formatage correct du fichier CSV, cliquez sur le bouton <b>Télécharger le modèle</b>.",
-            "bulkTitle": "{{action}} des {{grammar}}",
-            "exportXls": "Export au format CSV",
-            "exportCSV": "Export au format Excel"
-        },
-        "update": {
-            "success": "{{entity}} modifié{{fem}} avec succès"
-        },
-        "create": {
-            "success": "{{entity}} créé{{fem}} avec succès"
-        },
-        "delete": {
-            "success": "{{entity}} supprimé{{fem}} avec succès"
-        }
-    },
-    "user": {
-        "singular": "Utilisateur",
-        "plural": "Utilisateurs",
-        "username": "Identifiant",
+        "title": "Profil",
+        "mainInfo": "Informations principales",
+        "intro": "Cette page regroupe les informations liées à votre profil.<br />D'autres informations seront ajoutées par la suite.",
+        "username": "Nom d'utilisateur",
         "name": "Nom complet",
         "firstName": "Prénom",
         "lastName": "Nom",
         "email": "Email",
         "levelAccess": "Niveau d'accès",
         "lastCon": "Dernière connexion",
-        "logHistory": "Historique d'activité",
-        "mobile": "Téléphone",
-        "admin": "Administrateur",
-        "password": "Mot de passe",
-        "userId": "ID utilisateur"
+        "addedAt": "Créé le",
+        "history": "Historique d'activité",
+        "colors": {
+            "needSelect": "Vous devez sélectionner une couleur",
+            "saved": "Couleur sauvegardée avec succès",
+            "deleted": "Couleur supprimée avec succès",
+            "savedColor": "Couleurs sauvegardées",
+            "noSaved": "Aucune couleurs sauvegardée"
+        }
+    },
+    "proxy": {
+        "title": "Se connecter en tant que...",
+        "message": "Connectez-vous en tant qu'un autre utilisateur afin de tester ou préparer l'accès de cette personne.",
+        "search": "Recherche par nom ou par adresse mail",
+        "choose": "Choisissez le profile a utiliser",
+        "noProxy": "Aucun proxy trouvé..."
+    },
+    "nav": {
+        "profile": "Gérer le profile",
+        "users": "Utilisateurs",
+        "setup": "Réglages",
+        "companies": "Sociétés",
+        "activity": "Journal d'activité",
+        "schedules": "Tâche planifiées",
+        "logout": "Déconnexion",
+        "projects": "Projets",
+        "proxy": "Se connecter en tant que",
+        "notFound": "Aucune page trouvé",
+        "myScore": "Mes grilles",
+        "scoreAdd": "Ajouter une grille",
+        "scoreImport": "Importer une grille",
+        "adverts": "Annonces"
+    },
+    "home": {
+        "welcome": "Bienvenue sur Aven"
     },
     "logs": {
         "singular": "Activité",
         "plural": "Activités",
         "proxy": "En tant que",
         "action": "Action",
-        "entryDate": "Date",
+        "addedAt": "Date",
         "info": "Infos"
+    },
+    "categories": {
+        "singular": "Catégorie",
+        "plural": "Catégories"
+    },
+    "user": {
+        "singular": "Utilisateur",
+        "plural": "Utilisateurs",
+        "username": "Nom d'utilisateur",
+        "name": "Nom complet",
+        "firstName": "Prénom",
+        "lastName": "Nom",
+        "email": "Email",
+        "levelAccess": "Niveau d'accès",
+        "admin": "Administrateur",
+        "password": "Mot de passe"
     },
     "schedule": {
         "singular": "Tâche planifiée",
@@ -222,10 +219,236 @@
         "standby": "StandBy",
         "ended": "Terminée"
     },
-    "adverts": {
-        "singular": "Annonce",
-        "plural": "Annonces",
-        "expires": "Expire le",
-        "createdBy": "Créer par"
+    "company": {
+        "singular": "Société",
+        "plural": "Sociétés",
+        "name": "Nom",
+        "shortName": "Nom court",
+        "type": "Type",
+        "client": "Client",
+        "supplier": "Fournisseur",
+        "provider": "Prestataire",
+        "agency": "Agence",
+        "logoPath": "Logo",
+        "role": "Rôle"
+    },
+    "project": {
+        "singular": "Projet",
+        "plural": "Projets",
+        "edit": "Éditer un projet",
+        "create": "Créer un projet",
+        "new": "Nouveau projet",
+        "search": "Rechercher un projet",
+        "status": {
+            "incoming": "À venir",
+            "ongoing": "En cours",
+            "ended": "Terminée"
+        },
+        "priority": {
+            "title": "Priorité",
+            "normal": "Normale",
+            "high": "Haute",
+            "critical": "Critique"
+        },
+        "dates": {
+            "start": "Début projet",
+            "end": "Fin projet",
+            "startEvent": "Début évènement",
+            "endEvent": "Fin évènement",
+            "startSetup": "Début montage",
+            "endSetup": "Fin montage",
+            "startTeardown": "Début démontage",
+            "endTeardown": "Fin démontage"
+        },
+        "teams": {
+            "singular": "Équipe",
+            "plural": "Équipes",
+            "import": {
+                "action": "Importer Participants",
+                "importLabel": "Importez un fichier existant afin de créer rapidement vos équipes et ses participants au sein du projet.",
+                "list": {
+                    "l1": "Télécharger le modèle",
+                    "l2": "Remplissez le modèle avec les bonnes informations",
+                    "l3": "Exporter le modèle au format CSV (encodage UTF-8)",
+                    "l4": "Glissez / Déposez votre fichier dans la zone prévue à cet effet",
+                    "l5": "Cliquez sur \"Importer\""
+                },
+                "advertMessage": "Si un intervenants est déjà présent dans la base pour ce projet, il sera modifié",
+                "downloadTemplate": "Télécharger le Modèle"
+            },
+            "add": {
+                "action": "Ajouter Équipe",
+                "addManual": "Ajouter manuellement",
+                "addLabel": "Ajoutez vos équipes et structurez leur participants directement depuis l'application."
+            },
+            "update": {
+                "action": "Modifier Équipe"
+            },
+            "delete": {
+                "action": "Supprimer Équipe",
+                "title": "Attention : suppression définitive",
+                "advert": "Vous êtes sur le point de supprimer cet élément.",
+                "consequences": "Cette action est irréversible et entraînera la suppression définitive de toutes les données associées.",
+                "noRecover": "Les informations supprimées ne pourront pas être récupérées.",
+                "shouldContinue": "Êtes-vous sûr de vouloir continuer ?"
+            },
+            "noTeam": "Aucun intervenant n'a encore été ajouté",
+            "teamHelpText": "Les équipes vous permettent d'organiser les personnes impliquées dans votre projet et de gérer les informations nécessaires à leur préparation et à leur suivi.",
+            "endText": "Une fois vos équipes créés, vous pourrez compléter et suivre l'ensemble des informations associées au projet."
+        },
+        "member": {
+            "singular": "Intervenant",
+            "plural": "Intervenants",
+            "job": "Poste",
+            "toComplete": "À compléter",
+            "toConfirm": "À Confirmer",
+            "complete": "Complétées",
+            "partials": "Partielles",
+            "listTitle": "Liste des intervenants",
+            "listSubtitle": "Vue opérationnelle de l'équipe sélectionné",
+            "searchPlaceholder": "Rechercher par nom, information ou commentaire",
+            "manageResources": "Gestion des Resources",
+            "allStatus": "Tout les status",
+            "allStates": "Tout les états",
+            "add": {
+                "action": "Ajouter Intervenant"
+            },
+            "update": {
+                "action": "Modifier Intervenant"
+            }
+        },
+        "actionMessage": {
+            "root": {
+                "updated": "Projet modifié avec succès",
+                "update": "Modifier le projet",
+                "dismiss": "Annuler les modifications",
+                "dismissConfirm": "Oui, Annuler",
+                "dismissReject": "Non, conserver"
+            },
+            "company": {
+                "add": "Ajouter une société",
+                "added": "Société ajoutée avec succès",
+                "update": "Modifier la société",
+                "updated": "Société modifiée avec succès",
+                "delete": "Supprimer la société",
+                "deleted": "Société supprimée avec succès",
+                "defineRole": "Role à définir"
+            }
+        }
+    },
+    "planning": {
+        "singular": "Rétroplanning",
+        "plural": "Rétroplannings",
+        "who": "QUI ?",
+        "what": "QUOI ?",
+        "color": "Couleur",
+        "fontColor": "Couleur de la police",
+        "colorPreview": "Aperçu de la couleur",
+        "colorPlaceholder": "VOTRE CATÉGORIE SERA NOTÉE COMME CECI",
+        "category": {
+            "add": "Ajouter une sous-catégorie",
+            "update": "Modifier la catégorie",
+            "delete": "Supprimer la catégorie"
+        },
+        "subCategory": {
+            "add": "Ajouter une tâche",
+            "update": "Modifier la sous-catégorie",
+            "delete": "Supprimer la sous-catégorie"
+        },
+        "task": {
+            "update": "Modifier la tâche",
+            "delete": "Supprimer la tâche",
+            "status": {
+                "ongoing": "En cours",
+                "incoming": "À venir",
+                "waiting": "En attente",
+                "ended": "Fait"
+            }
+        },
+        "promptDelete": {
+            "placeholder": "Cette action supprimera définitivement {{target}}.",
+            "category": {
+                "title": "Vous êtes sur le point de supprimer cette catégorie",
+                "message": "Toutes les sous-catégories ainsi que les tâches associées seront également supprimées. Cette opération est irréversible et les données ne pourront pas être récupérées.",
+                "target": "la catégorie sélectionnée"
+            },
+            "subCategory": {
+                "title": "Vous êtes sur le point de supprimer cette sous-catégorie",
+                "message": "Toutes les tâches associées seront également supprimées. Cette opération est irréversible et les données ne pourront pas être récupérées.",
+                "target": "la sous-catégorie sélectionnée"
+            },
+            "task": {
+                "title": "Vous êtes sur le point de supprimer cette tâche",
+                "message": "Toutes les assignations a cette tâche seront également supprimées. Cette opération est irréversible et les données ne pourront pas être récupérées.",
+                "target": "la tâche sélectionnée"
+            },
+            "company": {
+                "title": "Vous êtes sur le point de supprimer cette société",
+                "message": "Toutes les assignations au tâches seront également supprimées. Cette opération est irréversible et les données ne pourront pas être récupérées.",
+                "target": "la société sélectionnée"
+            }
+        }
+    },
+    "error": {
+        "common": {
+            "error": "Une erreur est survenue"
+        },
+        "errorMessage": "Oups, une erreur est survenue... Veuillez recharger l'application",
+        "errorBoundary": {
+            "sorry": "Désolé, une erreur est survenue.",
+            "firstErrorMessage": "Merci d'utiliser le formulaire ci-dessous pour contacter le",
+            "supportEmail": "",
+            "technicalStaff": "support technique",
+            "thanks": "Nous travaillerons à corriger le problème dès que possible. Veuillez nous excuser pour le dérangement causé.",
+            "toSendMessage": "Pour envoyer un message au support technique,",
+            "pleaseSend": "veuillez décrire brièvement le problème dans la zone ci-dessous,",
+            "thenClick": "puis cliquer sur :",
+            "errorReport": "Rapport d'erreur",
+            "diag": "Diagnostic",
+            "source": "Source",
+            "at": "à",
+            "trace": "Trace",
+            "page": "Page",
+            "clockDate": "Date/Heure",
+            "browser": "Navigateur",
+            "address": "Adresse",
+            "linkForward": " Lien depuis"
+        },
+        "noAccess": {
+            "intro": "Vous n'avez pas accès à la page demandée.",
+            "please": "Merci d'utiliser les options disponibles dans le menu.",
+            "expired": "Il est également possible que votre session soit <b>expirée</b>.",
+            "login": "Dans ce cas, veuillez vous <link>identifier</link> à nouveau."
+        }
+    },
+    "center": {
+        "search": {
+            "newSearch": "Nouvelle recherche",
+            "updateSearch": "Changer les critères",
+            "filters": "Filtres",
+            "nothing": "Aucun filtre appliqué.",
+            "orderBy": "Tri :",
+            "total": "Volume total",
+            "ref": "{{entity}} référencé{{fem}}{{plural}}"
+        },
+        "bulk": {
+            "bulkUpdate": "Modifications groupées",
+            "bulkAdd": "Ajouts groupés",
+            "downloadTemplate": "Télécharger le modèle",
+            "importXlsx": "Importer votre fichier .xlsx ici",
+            "exportXlsx": "Export au format excel",
+            "exportCSV": "Export au format csv",
+            "bulkAddMessage": "{{action}} plusieurs {{grammar}} à la fois en chargeant un fichier CSV contenant les nouvelles informations des {{grammar}}. <br /><b>Vérifiez que les données du fichier soient correctes avant de le charger.</b><br /><br /> Pour plus d'informations sur le formatage correct du fichier CSV, cliquez sur le bouton <b>Télécharger le modèle</b>.",
+            "bulkTitle": "{{action}} des {{grammar}}"
+        },
+        "update": {
+            "success": "{{entity}} modifié{{fem}} avec succès"
+        },
+        "create": {
+            "success": "{{entity}} créé{{fem}} avec succès"
+        },
+        "delete": {
+            "success": "{{entity}} supprimé{{fem}} avec succès"
+        }
     }
 }

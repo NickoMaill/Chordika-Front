@@ -1,7 +1,8 @@
+// #region IMPORTS -> /////////////////////////////////////
+import { JSX } from 'react';
+import { CssBaseline, StyledEngineProvider, ThemeProvider } from '@mui/material';
 import stylesResources from './resources/stylesResources';
 import AppRouter from './router/AppRouter';
-import '@fontsource/roboto/latin.css';
-import '@fontsource/montserrat/latin.css';
 import '~/resources/i18n/i18n';
 import './styles/global.scss';
 import './styles/web.scss';
@@ -11,63 +12,54 @@ import { SnackbarProvider } from 'notistack';
 import ModalProvider from './components/layout/ModalProvider';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '~/resources/i18n/i18n';
-import SessionProvider from './context/SessionProvider';
 import AppProvider from './context/AppProvider';
 import { BrowserRouter } from 'react-router-dom';
+import SessionProvider from './context/SessionProvider';
 import configManager from './managers/configManager';
-import { JSX, useEffect } from 'react';
-import useIndexedDb from './hooks/useIndexedDb';
-import CssBaseline from '@mui/material/CssBaseline';
-import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
+import NotistackStyle from './resources/theme/custom/toast';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
-import dayOfYear from 'dayjs/plugin/dayOfYear';
-import timezone from 'dayjs/plugin/timezone';
-import utc from 'dayjs/plugin/utc';
-import dayjs from 'dayjs';
-import toast from './resources/theme/custom/toast';
-
-dayjs.extend(dayOfYear);
-dayjs.extend(utc);
-dayjs.extend(timezone);
-
 // #endregion SINGLETON --> /////////////////////////////////
 
 export default function App(): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
+    // #region SessionContext //////////////////////////////////
     // #endregion /////////////////////////////////////////////
 
-    // #endregion /////////////////////////////////////////////
     // #endregion STATE --> ////////////////////////////////////
 
     // #region HOOKS --> ///////////////////////////////////////
-    const IndexedDB = useIndexedDb();
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////
     // #endregion METHODS --> //////////////////////////////////
 
     // #region USEEFFECT --> ///////////////////////////////////
-    useEffect(() => {
-        if (!IndexedDB.isSupported()) {
-            window.alert("Votre navigateur ne supporte pas une version stable d'IndexedDB. Quelques fonctionnalités ne seront pas disponibles.");
-        }
-    }, []);
     // #endregion USEEFFECT --> ////////////////////////////////
 
     // #region RENDER --> //////////////////////////////////////
     return (
         <I18nextProvider i18n={i18n}>
             <StyledEngineProvider injectFirst>
-                <ThemeProvider theme={stylesResources.theme}>
+                <ThemeProvider defaultMode="dark" theme={stylesResources.theme}>
                     <CssBaseline />
-                    <BrowserRouter basename={configManager.getConfig.EXTRA_BASEURL}>
+                    <BrowserRouter basename={configManager.getConfig.BASE_PATH}>
                         <SessionProvider>
                             <ModalProvider>
                                 <AppProvider>
-                                    <SnackbarProvider Components={toast}>
-                                        <AppRouter />
+                                    <SnackbarProvider
+                                        Components={{
+                                            default: NotistackStyle.default,
+                                            success: NotistackStyle.success,
+                                            error: NotistackStyle.error,
+                                            warning: NotistackStyle.warning,
+                                            info: NotistackStyle.info,
+                                        }}
+                                    >
+                                        <ModalProvider>
+                                            <AppRouter />
+                                        </ModalProvider>
                                     </SnackbarProvider>
                                 </AppProvider>
                             </ModalProvider>
@@ -81,4 +73,4 @@ export default function App(): JSX.Element {
 }
 
 // #region IPROPS -->  /////////////////////////////////////
-// #endregion IPROPS --> ///////////////////////////////////
+// #endregion IPROPS --> //////////////////////////////////

@@ -10,7 +10,7 @@ $viteArgs = $args -join " "
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 Write-Host ""
-Write-Host "[FORMAT] Running code formatter..."
+Write-Host "[FORMAT] Running code formatter..." 
 npm run format
 
 Write-Host ""
@@ -32,5 +32,5 @@ if ($LASTEXITCODE -ne 0) {
 Write-Host "[OK] ESLint passed." -ForegroundColor Green
 
 Write-Host ""
-Write-Host "[START] Starting Vite server..." -ForegroundColor Purple
+Write-Host "[START] Starting Vite server..." -ForegroundColor Magenta
 vite --port 3000 $viteArgs

@@ -25,10 +25,9 @@ import {
     gridClasses,
 } from '@mui/x-data-grid';
 import { QueryResult } from '~/types/serverCoreType';
-import { lazy, MouseEvent, MouseEventHandler, ReactElement, useContext, useEffect, useRef, useState } from 'react';
+import { isValidElement, lazy, MouseEvent, MouseEventHandler, ReactElement, ReactNode, useEffect, useRef, useState } from 'react';
 import useNavigation from '~/hooks/useNavigation';
 import { LevelAccessEnum } from '~/models/Session';
-import SearchContext from '~/context/searchContext';
 import useResources from '~/hooks/useResources';
 import { Bold } from './Text';
 import NoData from '~/assets/svg/no-data.svg';
@@ -54,11 +53,15 @@ import dayjs from 'dayjs';
 import { startProgress } from '~/helpers/progressHelper';
 import HTMLParser from './HTMLParser';
 import { Theme } from '@emotion/react';
+import useSearchContext from '~/context/searchContext';
+import { ICenterBase } from '~/types/centerType';
 const AppIcon = lazy(() => import('~/components/common/AppIcon'));
 // #endregion IMPORTS -> //////////////////////////////////
-
+export type OverrideListPropsType<T> = { baseProps?: ICenterBase; tableProps?: IAppTable<T> };
 //#region Types
 export type AppTableStructure<T = object> = {
+    OverrideComponent?: (props?: OverrideListPropsType<T>) => JSX.Element;
+    SideComponent?: () => JSX.Element;
     colStruct: AppGridColDef<T>[];
     actions?: (ActionsType | CustomActionsDef<T>)[];
     actionToShow?: (e: GridRowParams<T>) => number[];
@@ -125,6 +128,7 @@ export default function AppTable<T>({
     onBulkDeleteClick,
     additionalTableAction = [],
     isMini = false,
+    basePath,
     // onRowClick,
 }: IAppTable<T>): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
@@ -132,27 +136,27 @@ export default function AppTable<T>({
     // #endregion STATE --> ////////////////////////////////////
 
     // #region SINGLETON --> ////////////////////////////////////
-    const Resources = useResources();
+    const { translate } = useResources();
     const tableLocalText: Partial<GridLocaleText> = {
-        columnMenuShowColumns: Resources.translate('common.table.columns.showAll'),
-        columnsManagementNoColumns: Resources.translate('common.table.columns.hideAll') as string,
-        filterPanelInputPlaceholder: Resources.translate('common.table.columns.placeholder') as string,
-        filterPanelInputLabel: Resources.translate('common.table.columns.search') as string,
-        toolbarColumns: Resources.translate('common.table.columns.plural'),
-        toolbarDensity: Resources.translate('common.table.columns.density'),
-        toolbarDensityComfortable: Resources.translate('common.table.columns.comfortable') as string,
-        toolbarDensityCompact: Resources.translate('common.table.columns.skinny') as string,
-        toolbarDensityStandard: Resources.translate('common.table.columns.regular') as string,
-        toolbarDensityLabel: Resources.translate('common.table.columns.density') as string,
+        columnMenuShowColumns: translate('common.table.columns.showAll'),
+        columnsManagementNoColumns: translate('common.table.columns.hideAll') as string,
+        filterPanelInputPlaceholder: translate('common.table.columns.placeholder') as string,
+        filterPanelInputLabel: translate('common.table.columns.search') as string,
+        toolbarColumns: translate('common.table.columns.plural'),
+        toolbarDensity: translate('common.table.columns.density'),
+        toolbarDensityComfortable: translate('common.table.columns.comfortable') as string,
+        toolbarDensityCompact: translate('common.table.columns.skinny') as string,
+        toolbarDensityStandard: translate('common.table.columns.regular') as string,
+        toolbarDensityLabel: translate('common.table.columns.density') as string,
         footerRowSelected: (count) => {
             const linesCount = isAllRowSelected ? rows.totalRecords : count;
-            return `${linesCount} ${Resources.translate('common.table.columns.selectedLines', { isPlural: linesCount > 1 ? 's' : '' })}`;
+            return `${linesCount} ${translate('common.table.columns.selectedLines', { isPlural: linesCount > 1 ? 's' : '' })}`;
         },
-        columnMenuSortAsc: Resources.translate('common.table.filter.sortAsc'),
-        columnMenuSortDesc: Resources.translate('common.table.filter.sortDesc'),
-        columnMenuFilter: Resources.translate('common.table.filter.label'),
-        columnMenuHideColumn: Resources.translate('common.table.filter.hideColumns'),
-        columnMenuManageColumns: Resources.translate('common.table.filter.manageColumns'),
+        columnMenuSortAsc: translate('common.table.filter.sortAsc'),
+        columnMenuSortDesc: translate('common.table.filter.sortDesc'),
+        columnMenuFilter: translate('common.table.filter.label'),
+        columnMenuHideColumn: translate('common.table.filter.hideColumns'),
+        columnMenuManageColumns: translate('common.table.filter.manageColumns'),
         columnsManagementSearchTitle: 'Rechercher',
         columnsManagementReset: 'Réinitialiser',
         paginationRowsPerPage: 'Résultats par pages',
@@ -164,17 +168,90 @@ export default function AppTable<T>({
 
     // #region HOOKS --> ///////////////////////////////////////
     const Nav = useNavigation();
-    const Search = useContext(SearchContext);
+    const { sortedBy, setSortedBy } = useSearchContext();
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////
     const getSortModel = (): GridSortModel => {
-        if (Search.sortedBy?.sortField) {
-            return [{ field: Search.sortedBy?.sortField, sort: Search.sortedBy?.order }];
+        if (sortedBy?.sortField) {
+            return [{ field: sortedBy?.sortField, sort: sortedBy?.order }];
         } else {
             return [];
         }
     };
+
+    const getGridColumnType = (type: AppTableColType): GridColType => {
+        switch (type) {
+            case 'date':
+            case 'dateTime':
+            case 'number':
+            case 'string':
+                return type;
+            default:
+                return 'string';
+        }
+    };
+
+    const getDefaultFormattedValue = (col: AppGridColDef<T>, value: unknown): string => {
+        const dateValue = value as string | number | Date | null | undefined;
+
+        switch (col.type) {
+            case 'date': {
+                if ((value ?? '') === '') {
+                    return '';
+                }
+
+                if (col.format) {
+                    return dayjs(dateValue).format(col.format);
+                }
+
+                return dayjs(dateValue).format('DD/MM/YYYY');
+            }
+            case 'dateTime': {
+                return (value ?? '') === '' ? '' : dayjs(dateValue).format('DD/MM/YYYY HH:mm:ss');
+            }
+            default: {
+                return value === null || value === undefined ? '' : String(value);
+            }
+        }
+    };
+
+    const getDefaultCellContent = (col: AppGridColDef<T>, value: unknown): ReactNode => {
+        switch (col.type) {
+            case 'rating': {
+                return <Rating value={Number(value) / 2} readOnly />;
+            }
+            case 'html': {
+                return <HTMLParser>{String(value ?? '')}</HTMLParser>;
+            }
+            case 'picture': {
+                return value ? (
+                    <Box className="d-flex align-items-center h-100">
+                        <AppImage
+                            src={`${col.pictureUrl}/${value}`}
+                            alt="image"
+                            title={String(value)}
+                            sx={{
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'contain',
+                            }}
+                        />
+                    </Box>
+                ) : (
+                    '-'
+                );
+            }
+            case 'boolean':
+            case 'checkbox': {
+                return value ? <AppIcon name="CheckBoxRounded" /> : <AppIcon name="CheckBoxOutlineBlankRounded" />;
+            }
+            default: {
+                return getDefaultFormattedValue(col, value);
+            }
+        }
+    };
+
     const mapToGridColDef = (columns: AppGridColDef<T>[]): GridColDef[] => {
         const gotHtml = columns.findIndex((c) => c.type === 'html') > -1;
         const cols = columns.map((col) => {
@@ -185,7 +262,8 @@ export default function AppTable<T>({
                 flex: isMini ? null : col.width ? null : 1,
                 width: col.width ? col.width : null,
                 minWidth: col.minWidth ? col.minWidth : col.width ? null : 150,
-                type: col.type,
+                type: getGridColumnType(col.type),
+                display: 'text',
                 headerClassName: col.headerClassName,
                 cellClassName: col.cellClassName,
                 align: col.align ? col.align : 'left',
@@ -193,84 +271,41 @@ export default function AppTable<T>({
                 editable: col.isEditable,
                 filterable: false,
                 renderHeader: (): JSX.Element => <Bold>{col.headerLabel}</Bold>,
-                valueFormatter: (e): unknown => {
+                valueFormatter: (e): string => {
                     if (col.valueFormatter) {
                         if (col.type === 'date' && new Date(e).getFullYear() === 1) {
                             return ' ';
                         } else {
-                            return col.valueFormatter(e);
+                            const formattedValue = col.valueFormatter(e);
+                            return typeof formattedValue === 'string' ? formattedValue : '';
                         }
                     } else {
-                        switch (col.type) {
-                            case 'boolean': {
-                                return e ? <p>Oui</p> : <p>Non</p>;
-                            }
-                            case 'date': {
-                                if ((e ?? '') === '') {
-                                    return '';
-                                } else {
-                                    if (col.format) {
-                                        return dayjs(e).format(col.format);
-                                    } else {
-                                        return dayjs(e).format('DD/MM/YYYY');
-                                    }
-                                }
-                            }
-                            case 'dateTime': {
-                                return (e ?? '') === '' ? '' : dayjs(e).format('DD/MM/YYYY HH:mm:ss');
-                            }
-                            case 'rating': {
-                                return <Rating value={e / 2} />;
-                            }
-                            case 'html': {
-                                return <HTMLParser>{e}</HTMLParser>;
-                            }
-                            case 'picture': {
-                                return e ? (
-                                    <Box className="d-flex align-items-center h-100">
-                                        <AppImage
-                                            src={`${col.pictureUrl}/${e}`}
-                                            alt="image"
-                                            title={e}
-                                            sx={{
-                                                width: '100%',
-                                                height: '100%',
-                                                objectFit: 'contain',
-                                            }}
-                                        />
-                                    </Box>
-                                ) : (
-                                    '-'
-                                );
-                            }
-                            case 'checkbox': {
-                                const ok = Boolean(e);
-                                return ok ? <AppIcon name="CheckBoxRounded" /> : <AppIcon name="CheckBoxOutlineBlankRounded" />;
-                            }
-                            default: {
-                                return e;
-                            }
-                        }
+                        return getDefaultFormattedValue(col, e);
                     }
                 },
                 renderCell: (e): JSX.Element => {
                     if (col.customCell) {
                         return <col.customCell {...e} />;
                     } else {
+                        const customFormattedValue = col.valueFormatter?.(e.value);
+                        const content =
+                            customFormattedValue !== undefined
+                                ? isValidElement(customFormattedValue)
+                                    ? customFormattedValue
+                                    : customFormattedValue || e.formattedValue || e.value
+                                : getDefaultCellContent(col, e.value);
                         const stylesCell: SxProps<Theme> = {
                             ...col.cellSx,
                         };
-                        if (gotHtml) {
-                            stylesCell['height'] = '100%';
-                            stylesCell['display'] = 'flex';
-                            stylesCell['alignItems'] = 'center';
-                            stylesCell['justifyContent'] = 'flex-start';
-                            stylesCell['whiteSpace'] = 'normal';
-                            stylesCell['ligneHeight'] = 1.4;
-                        }
+                        stylesCell['height'] = '100%';
+                        stylesCell['display'] = 'flex';
+                        stylesCell['alignItems'] = 'center';
+                        stylesCell['justifyContent'] = 'flex-start';
+                        stylesCell['whiteSpace'] = 'nowrap';
+                        stylesCell['ligneHeight'] = 1.4;
                         return (
                             <Box className={col.cellClassName ?? '' + (gotHtml ? ' p-1' : '')} sx={{ ...stylesCell }}>
-                                {e.formattedValue ? e.formattedValue : e.value}
+                                {content}
                             </Box>
                         );
                     }
@@ -301,7 +336,7 @@ export default function AppTable<T>({
                     }
                     return act.map((a) => {
                         if (typeof a === 'string') {
-                            return <ActionTable type={a as ActionsType} entity={entity} id={e.row.id} />;
+                            return <ActionTable type={a as ActionsType} entity={entity} id={e.row.id} basePath={basePath} key={e.row.id} />;
                         } else {
                             const rowId = e.row.id;
                             const loading = loadingMap[rowId] || false;
@@ -309,9 +344,9 @@ export default function AppTable<T>({
                                 <Tooltip className="mx-1" title={a.title}>
                                     <IconButton
                                         outline="true"
-                                        className="p-0"
+                                        className="p-1"
                                         loading={loading}
-                                        size="small"
+                                        size="large"
                                         color="inherit"
                                         onClick={async () => {
                                             setLoadingMap((prev) => ({ ...prev, [rowId]: true }));
@@ -322,7 +357,7 @@ export default function AppTable<T>({
                                             }
                                         }}
                                     >
-                                        <AppIcon name={a.icon} size="small" />
+                                        <AppIcon size="small" name={a.icon} />
                                     </IconButton>
                                 </Tooltip>
                             );
@@ -345,16 +380,26 @@ export default function AppTable<T>({
 
     // #region RENDER --> //////////////////////////////////////
     return (
-        <Box sx={{ mt: 2, flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <Box
+            sx={{
+                mt: 2,
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                width: '100%',
+                minHeight: isMini ? 320 : 520,
+            }}
+        >
             <DataGrid
                 sx={{
                     '--DataGrid-overlayHeight': '100px',
                     flex: 1,
+                    minHeight: '100%',
                     '.MuiDataGrid-cell:focus': {
                         outline: 'none',
                     },
                     '& .MuiDataGrid-row:hover': {
-                        cursor: isMini ? 'default' : 'pointer',
+                        cursor: isMini ? 'inherit' : 'pointer',
                     },
                     '.MuiDataGrid-actionsCell': {
                         gridGap: 0,
@@ -384,7 +429,7 @@ export default function AppTable<T>({
                         zIndex: 'auto',
                     },
                     [`& .${gridClasses.row}:hover`]: {
-                        cursor: 'pointer',
+                        cursor: isMini ? 'auto' : 'cursor',
                     },
                 }}
                 rows={!isTableLoading && rows ? rows.records : []}
@@ -392,27 +437,38 @@ export default function AppTable<T>({
                 columns={mapToGridColDef(columns.colStruct)}
                 rowCount={!isTableLoading && rows ? rows.totalRecords : 0}
                 loading={isTableLoading}
-                onRowClick={isMini ? null : (e): void => (actions.includes('update') ? Nav.navigateByPath(`/center/${entity}/${e.id}/update`) : Nav.navigateByPath(`/center/${entity}/${e.id}`))}
+                onRowClick={
+                    isMini
+                        ? null
+                        : (e): void =>
+                              actions.includes('update')
+                                  ? Nav.navigateByPath(`${basePath ?? `/center/${entity}`}/${e.id}/update`)
+                                  : Nav.navigateByPath(`${basePath ?? `/center/${entity}`}/${e.id}`)
+                }
                 sortingMode="server"
                 getRowHeight={() => (columns.colStruct.findIndex((c) => c.type === 'html') > -1 ? 'auto' : undefined)}
                 filterMode="server"
                 paginationMode="server"
                 disableRowSelectionOnClick
                 sortingOrder={['asc', 'desc']}
-                showToolbar
+                showToolbar={!isMini}
                 sortModel={getSortModel()}
                 onSortModelChange={(e) => {
                     if (e.length > 0) {
                         onSort(e[0].field + ' ' + e[0].sort.toUpperCase());
                         columns.colStruct.forEach((col) => {
-                            if ((col.headerField as string).toLocaleLowerCase() === e[0].field.toLocaleLowerCase()) Search.setSortedBy({ sortField: e[0].field, sortLabel: col.headerLabel, order: e[0].sort });
+                            if ((col.headerField as string).toLocaleLowerCase() === e[0].field.toLocaleLowerCase()) {
+                                setSortedBy({ sortField: e[0].field, sortLabel: col.headerLabel, order: e[0].sort });
+                            }
                         });
                     }
                 }}
                 pagination
                 slots={{
                     noRowsOverlay: () => CustomNoRowsOverlay({ isError, errorMessage }),
-                    toolbar: isMini ? null : (): JSX.Element => CustomToolBar({ onExportClick, allowExport, onBulkAddClick, onBulkUpdateClick, onBulkDeleteClick, additionalActions: additionalTableAction }),
+                    toolbar: isMini
+                        ? null
+                        : (): JSX.Element => CustomToolBar({ onExportClick, allowExport, onBulkAddClick, onBulkUpdateClick, onBulkDeleteClick, additionalActions: additionalTableAction }),
                 }}
                 localeText={tableLocalText}
                 initialState={{
@@ -437,7 +493,7 @@ export default function AppTable<T>({
                         },
                     },
                     pagination: {
-                        labelRowsPerPage: Resources.translate('common.table.nav.resultPerPage'),
+                        labelRowsPerPage: translate('common.table.nav.resultPerPage'),
                         labelDisplayedRows: () => null,
                     },
                     baseCheckbox: {
@@ -487,6 +543,7 @@ export interface IAppTable<T> {
     onBulkDeleteClick?: () => void;
     additionalTableAction?: CustomTableAction[];
     isMini?: boolean;
+    basePath?: string;
 }
 
 export type CustomActionsDef<T> = {
@@ -535,7 +592,7 @@ function CustomNoRowsOverlay({ isError = false, errorMessage }: { isError?: bool
     );
 }
 
-function ActionTable({ type, id, entity }: IActionTable): JSX.Element {
+function ActionTable({ type, id, entity, basePath }: IActionTable): JSX.Element {
     const getLabel = (): { label: string; icon: IconNameType } => {
         switch (type) {
             case 'delete':
@@ -548,8 +605,16 @@ function ActionTable({ type, id, entity }: IActionTable): JSX.Element {
     };
     return (
         <Tooltip className="mx-1" title={getLabel().label}>
-            <IconButton outline="true" className="p-0" size="small" component={Link} onClick={startProgress} to={`/center/${entity}/${id}/${type !== 'view' ? type : ''}`} color="inherit">
-                <AppIcon name={getLabel().icon} />
+            <IconButton
+                outline="true"
+                size="large"
+                className="p-1"
+                component={Link}
+                onClick={startProgress}
+                to={`${basePath ?? `/center/${entity}`}/${id}${type !== 'view' ? `/${type}` : ''}`}
+                color="inherit"
+            >
+                <AppIcon size="small" name={getLabel().icon} />
             </IconButton>
         </Tooltip>
     );
@@ -558,6 +623,8 @@ interface IActionTable {
     type: ActionsType;
     id: string | number;
     entity: string;
+    isMini?: boolean;
+    basePath?: string;
 }
 //#endregion
 //#endregion
@@ -571,8 +638,8 @@ function CustomToolBar({ onExportClick, allowExport, onBulkAddClick, onBulkUpdat
             {onBulkAddClick && <BulkAddTooltip onClick={onBulkAddClick} />}
             {onBulkUpdateClick && <BulkUpdateTooltip onClick={onBulkUpdateClick} />}
             {onBulkDeleteClick && <BulkDeleteTooltip onClick={onBulkDeleteClick} />}
-            {additionalActions.map((a) => (
-                <Button startIcon={<AppIcon name={a.icon} />} color="primary" variant="text" onClick={a.onClick}>
+            {additionalActions.map((a, i) => (
+                <Button startIcon={<AppIcon name={a.icon} />} key={i} color="primary" variant="text" onClick={a.onClick}>
                     {a.label}
                 </Button>
             ))}
@@ -629,7 +696,17 @@ function DensityTooltip(): JSX.Element {
 
     return (
         <>
-            <Tooltip enterDelay={1000} className="mx-1" onClick={() => setIsMenuOpen(true)} ref={triggerRef} aria-haspopup="true" aria-controls="density-menu" id="density-menu-trigger" aria-expanded={isMenuOpen ? 'true' : undefined} title="Densité">
+            <Tooltip
+                enterDelay={1000}
+                className="mx-1"
+                onClick={() => setIsMenuOpen(true)}
+                ref={triggerRef}
+                aria-haspopup="true"
+                aria-controls="density-menu"
+                id="density-menu-trigger"
+                aria-expanded={isMenuOpen ? 'true' : undefined}
+                title="Densité"
+            >
                 <ToolbarButton size="small" render={<IconButton outline="true" />}>
                     <AppIcon name="TableRows" />
                 </ToolbarButton>
@@ -670,11 +747,20 @@ function DensityTooltip(): JSX.Element {
 function ExportTooltip({ onClick }: { onClick: (e: 'csv' | 'xlsx') => void }): JSX.Element {
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
     const triggerRef = useRef<HTMLButtonElement>(null);
-    const Resources = useResources();
+    const { translate } = useResources();
 
     return (
         <>
-            <Tooltip className="mx-1" onClick={() => setIsMenuOpen(true)} ref={triggerRef} aria-haspopup="true" aria-controls="export-menu" id="export-menu-trigger" aria-expanded={isMenuOpen ? 'true' : undefined} title="Densité">
+            <Tooltip
+                className="mx-1"
+                onClick={() => setIsMenuOpen(true)}
+                ref={triggerRef}
+                aria-haspopup="true"
+                aria-controls="export-menu"
+                id="export-menu-trigger"
+                aria-expanded={isMenuOpen ? 'true' : undefined}
+                title="Densité"
+            >
                 <ToolbarButton size="small" render={<IconButton outline="true" />}>
                     <AppIcon name="Download" />
                 </ToolbarButton>
@@ -696,13 +782,13 @@ function ExportTooltip({ onClick }: { onClick: (e: 'csv' | 'xlsx') => void }): J
                     <ListItemIcon>
                         <AppIcon name={'FileExcel'} />
                     </ListItemIcon>
-                    <ListItemText>{Resources.translate('center.bulk.exportCSV')}</ListItemText>
+                    <ListItemText>{translate('center.bulk.exportCSV')}</ListItemText>
                 </MenuItem>
                 <MenuItem onClick={() => onClick('csv')}>
                     <ListItemIcon>
                         <AppIcon name={'FileCsv'} />
                     </ListItemIcon>
-                    <ListItemText>{Resources.translate('center.bulk.exportXls')}</ListItemText>
+                    <ListItemText>{translate('center.bulk.exportXlsx')}</ListItemText>
                 </MenuItem>
             </Menu>
         </>

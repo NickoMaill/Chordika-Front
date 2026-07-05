@@ -1,38 +1,33 @@
-import { ChangeEvent, lazy, useContext, useEffect, useState, JSX } from 'react';
+import { ChangeEvent, lazy, useEffect, useState, JSX } from 'react';
 import { InputBaseType } from '~/types/FormMakerCoreTypes';
 import cronstrue from 'cronstrue/i18n';
 import { Regular } from '~/components/common/Text';
-import SessionContext from '~/context/sessionContext';
 import Box from '@mui/material/Box';
 import InputAdornment from '@mui/material/InputAdornment';
 import OutlinedInput from '@mui/material/OutlinedInput';
+import useSessionContext from '~/context/sessionContext';
 const AppIcon = lazy(() => import('~/components/common/AppIcon'));
 // #endregion IMPORTS -> //////////////////////////////////
 
-// #region SINGLETON --> ////////////////////////////////////
-// #endregion SINGLETON --> /////////////////////////////////
-
-export default function InputCronField({ style, disabled, required, error, id, icon, value = '', placeholder }: IInputCronField): JSX.Element {
-    // #region STATE --> ///////////////////////////////////////
+export default function InputCronField({ style, disabled, required, error, id, icon, value = '', placeholder, onChange }: IInputCronField): JSX.Element {
     const [monitor, setMonitor] = useState<string>('');
     const [isError, setIsError] = useState<boolean>(false);
     const [isSuccess, setIsSuccess] = useState<boolean>(false);
     const [val, setVal] = useState<string>((value as string) ?? '');
-    // #endregion STATE --> ////////////////////////////////////
 
-    // #region HOOKS --> ///////////////////////////////////////
-    const Ses = useContext(SessionContext);
-    // #endregion HOOKS --> ////////////////////////////////////
+    const { lang } = useSessionContext();
 
-    // #region METHODS --> /////////////////////////////////////
     const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
         setVal(e.target.value);
         checkCron(e.target.value);
+        if (onChange) {
+            onChange(e);
+        }
     };
 
     const checkCron = (v: string): void => {
         try {
-            const str = cronstrue.toString(v, { locale: Ses.lang });
+            const str = cronstrue.toString(v, { locale: lang });
             setIsSuccess(true);
             setIsError(false);
             setMonitor(str);
@@ -42,16 +37,12 @@ export default function InputCronField({ style, disabled, required, error, id, i
             setIsSuccess(false);
         }
     };
-    // #endregion METHODS --> //////////////////////////////////
 
-    // #region USEEFFECT --> ///////////////////////////////////
     useEffect(() => {
         checkCron((value as string) ?? '');
         setVal((value as string) ?? '');
     }, [value]);
-    // #endregion USEEFFECT --> ////////////////////////////////
 
-    // #region RENDER --> //////////////////////////////////////
     return (
         <Box className="position-relative">
             <OutlinedInput
@@ -85,7 +76,6 @@ export default function InputCronField({ style, disabled, required, error, id, i
                         <AppIcon name="CheckCircle" color="success" />
                     ) : null
                 }
-                sx={{ backgroundColor: disabled ? '#e8e5e5' : 'transparent' }}
                 slotProps={{
                     input: {
                         placeholder: placeholder,
@@ -97,9 +87,6 @@ export default function InputCronField({ style, disabled, required, error, id, i
             </Regular>
         </Box>
     );
-    // #endregion RENDER --> ///////////////////////////////////
 }
 
-// #region IPROPS -->  /////////////////////////////////////
 interface IInputCronField extends InputBaseType {}
-// #enderegion IPROPS --> //////////////////////////////////

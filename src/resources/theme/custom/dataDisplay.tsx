@@ -4,7 +4,7 @@ import { typographyClasses } from '@mui/material/Typography';
 import { buttonBaseClasses } from '@mui/material/ButtonBase';
 import { chipClasses } from '@mui/material/Chip';
 import { iconButtonClasses } from '@mui/material/IconButton';
-import { gray, red, green } from '../themePrimitives';
+import { gray, red, green, orange, brand } from '../themePrimitives';
 import { tableCellClasses } from '@mui/material/TableCell';
 
 export const dataDisplayCustomizations: Components<Theme> = {
@@ -174,6 +174,56 @@ export const dataDisplayCustomizations: Components<Theme> = {
                         },
                     },
                     {
+                        props: {
+                            color: 'warning',
+                        },
+                        style: {
+                            borderColor: orange[100],
+                            backgroundColor: orange[50],
+                            [`& .${chipClasses.label}`]: {
+                                color: orange[500],
+                            },
+                            [`& .${chipClasses.icon}`]: {
+                                color: orange[500],
+                            },
+                            ...theme.applyStyles('dark', {
+                                borderColor: orange[800],
+                                backgroundColor: orange[900],
+                                [`& .${chipClasses.label}`]: {
+                                    color: orange[200],
+                                },
+                                [`& .${chipClasses.icon}`]: {
+                                    color: orange[300],
+                                },
+                            }),
+                        },
+                    },
+                    {
+                        props: {
+                            color: 'primary',
+                        },
+                        style: {
+                            borderColor: brand[100],
+                            backgroundColor: brand[50],
+                            [`& .${chipClasses.label}`]: {
+                                color: brand[500],
+                            },
+                            [`& .${chipClasses.icon}`]: {
+                                color: brand[500],
+                            },
+                            ...theme.applyStyles('dark', {
+                                borderColor: brand[800],
+                                backgroundColor: brand[900],
+                                [`& .${chipClasses.label}`]: {
+                                    color: brand[200],
+                                },
+                                [`& .${chipClasses.icon}`]: {
+                                    color: brand[300],
+                                },
+                            }),
+                        },
+                    },
+                    {
                         props: { size: 'small' },
                         style: {
                             maxHeight: 20,
@@ -233,9 +283,16 @@ export const dataDisplayCustomizations: Components<Theme> = {
     MuiTable: {
         styleOverrides: {
             root: ({ theme }) => ({
-                [`& .${tableCellClasses.root}`]: {
-                    borderBottom: `1px solid ${(theme.vars || theme).palette.grey[200]}`,
-                },
+                ...theme.applyStyles('dark', {
+                    [`& .${tableCellClasses.root}`]: {
+                        borderBottom: `1px solid ${(theme.vars || theme).palette.grey[700]}`,
+                    },
+                }),
+                ...theme.applyStyles('light', {
+                    [`& .${tableCellClasses.root}`]: {
+                        borderBottom: `1px solid ${(theme.vars || theme).palette.grey[200]}`,
+                    },
+                }),
             }),
         },
     },

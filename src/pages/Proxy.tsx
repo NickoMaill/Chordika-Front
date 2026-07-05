@@ -3,14 +3,17 @@ import { LoadingButton } from '@mui/lab';
 import Box from '@mui/material/Box';
 import { FormEvent, JSX, lazy, useState } from 'react';
 import ContentLayout from '~/components/layout/ContentLayout';
-const AppIcon = lazy(() => import('~/components/common/AppIcon'));
 import Modal from '~/components/common/Modal';
 import { Regular } from '~/components/common/Text';
 import useSessionService from '~/hooks/services/useSessionService';
+import useResources from '~/hooks/useResources';
+import InputBase from '~/components/formMaker/elements/InputBase';
+import { Button, Grid } from '@mui/material';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
 const InputTextField = lazy(() => import('../components/formMaker/elements/InputTextField'));
+const AppIcon = lazy(() => import('~/components/common/AppIcon'));
 // #endregion SINGLETON --> /////////////////////////////////
 
 export default function Proxy(): JSX.Element {
@@ -23,6 +26,7 @@ export default function Proxy(): JSX.Element {
 
     // #region HOOKS --> ///////////////////////////////////////
     const SessionService = useSessionService();
+    const { translate } = useResources();
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////
@@ -60,20 +64,23 @@ export default function Proxy(): JSX.Element {
 
     // #region RENDER --> //////////////////////////////////////
     return (
-        <ContentLayout icon="Person" title="Se connecter en tant que...">
-            <Box className="mt-2" width="40%">
-                <Regular>Connectez-vous en tant qu'un autre utilisateur afin de tester ou préparer l'accès de cette personne.</Regular>
-                <Regular fontSize={16} className="my-1 d-flex align-items-center">
-                    Recherche par <AppIcon size="large" name="PersonOutlined" /> nom ou par adresse
-                </Regular>
-                <Box onSubmit={getProxy} component="form">
-                    <InputTextField required id="search" placeholder="Nom ou adresse" icon="Person" />
-                    <LoadingButton loading={isLoading} type="submit" startIcon={<AppIcon name="Search" />} fullWidth variant="contained">
-                        Rechercher
-                    </LoadingButton>
+        <ContentLayout icon="Person" title={translate("nav.proxy") as string + "..."}>
+            <Box className="mt-2">
+                <Regular>{translate('proxy.message')}</Regular>
+                <Box onSubmit={getProxy} component="form" className="mt-3">
+                    <Grid container className="d-flex align-items-end" spacing={2}>
+                        <InputBase size={6} id="search" label={translate('proxy.search') as string}>
+                            <InputTextField className="mb-2" required id="search" placeholder="Nom ou adresse" icon="Person" />
+                        </InputBase>
+                        <InputBase showLabel={false} id="submit" size={3}>
+                            <Button loading={isLoading} type="submit" startIcon={<AppIcon name="Search" />} fullWidth variant="contained">
+                                {translate('common.search')}
+                            </Button>
+                        </InputBase>
+                    </Grid>
                 </Box>
             </Box>
-            <Modal closable modalTitle="Choisissez le profile a utiliser" onClose={openCloseModal} isOpen={isVisible}>
+            <Modal closable modalTitle={translate('proxy.choose') as string} onClose={openCloseModal} isOpen={isVisible}>
                 <Box minWidth="500px" className="d-flex flex-column justify-content-center align-items-center">
                     {proxies && proxies.length > 0 ? (
                         proxies.map((u, i) => (
@@ -82,7 +89,7 @@ export default function Proxy(): JSX.Element {
                             </LoadingButton>
                         ))
                     ) : (
-                        <Regular>Aucun proxy trouvé...</Regular>
+                        <Regular>{translate('proxy.noProxy')}</Regular>
                     )}
                 </Box>
             </Modal>

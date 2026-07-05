@@ -28,11 +28,16 @@ export default function useNavigation(): IUseNavigation {
     }, [location.pathname]);
 
     const navigate = useCallback(
-        (name: RecursiveKeyOf<RouteNameReference>, params?: string, replace?: boolean): void => {
+        (name: RecursiveKeyOf<RouteNameReference>, pathParams?: Record<string, unknown>, params?: string, replace?: boolean): void => {
             const loadedRoutes = routes.length > 0 ? routes : navigationResources.routes;
             const indexRoute: number = loadedRoutes.findIndex((item) => item.name === name);
             if (indexRoute > -1) {
                 const routesData = loadedRoutes[indexRoute];
+                if (pathParams) {
+                    for (const p in pathParams) {
+                        routesData.path = routesData.path.replace(`:${p}`, String(pathParams[p]));
+                    }
+                }
                 // const isParamsCompatible = routesData.path.includes(':');
 
                 const route: Path = { pathname: routesData.path, search: params, hash: null };
@@ -45,8 +50,8 @@ export default function useNavigation(): IUseNavigation {
     );
 
     const navigateByPath = useCallback(
-        (path: string, replace?: boolean) => {
-            navigateTo(path, { replace, relative: 'path' });
+        (path: string, replace?: boolean, state?: unknown) => {
+            navigateTo(path, { replace, relative: 'path', state });
         },
         [navigateTo]
     );
@@ -73,7 +78,7 @@ export default function useNavigation(): IUseNavigation {
             if (route) {
                 return route;
             } else {
-                return { name: 'NotFound', element: NotFound, path: '*', title: 'Chordika', isAuthRequired: false, levelAccess: LevelAccessEnum.NOBODY } as RouterDescription;
+                return { name: 'NotFound', element: NotFound, path: '*', title: 'Aven', isAuthRequired: false, levelAccess: LevelAccessEnum.NOBODY } as RouterDescription;
             }
         },
         [location.pathname]
@@ -121,7 +126,7 @@ export default function useNavigation(): IUseNavigation {
 }
 
 export interface IUseNavigation {
-    navigate: (name: RecursiveKeyOf<RouteNameReference>, params?: string, replace?: boolean) => void;
+    navigate: (name: RecursiveKeyOf<RouteNameReference>, pathParams?: Record<string, unknown>, params?: string, replace?: boolean) => void;
     externalNavigate: (url: string) => void;
     goBack: () => void;
     reload: () => void;
@@ -131,7 +136,7 @@ export interface IUseNavigation {
     currentRoute: RouterDescription | null;
     logCurrentRoute: () => void;
     query: ParsedUrlQuery;
-    navigateByPath: (path: string, replace?: boolean) => void;
+    navigateByPath: (path: string, replace?: boolean, state?: unknown) => void;
     location: Location;
     search: string;
     getCurrentRoute: () => RouterDescription;

@@ -1,7 +1,6 @@
-import { JSX, lazy, useContext, useEffect, useState } from 'react';
+import { JSX, lazy, useEffect, useState } from 'react';
 import { FallbackProps } from 'react-error-boundary';
 import { Regular } from '~/components/common/Text';
-import SessionContext from '~/context/sessionContext';
 import useResources from '~/hooks/useResources';
 import '~/styles/ErrorBondaryStyles.scss';
 import nProgress from 'nprogress';
@@ -14,15 +13,17 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import dayjs from 'dayjs';
+import { Card, TableContainer } from '@mui/material';
+import useSessionContext from '~/context/sessionContext';
 
 const InputTextAreaField = lazy(() => import('../components/formMaker/elements/InputTextAreaField'));
 
 export default function ErrorHandler({ error }: FallbackProps): JSX.Element {
-    const Ses = useContext(SessionContext);
+    const { ip, gear, email } = useSessionContext();
     const isAppError = error instanceof AppError;
     const [_source, setSource] = useState<string>('');
     const [_code, setCode] = useState<string>('');
-    const Resources = useResources();
+    const { translate } = useResources();
 
     const errorDetails = isAppError
         ? [
@@ -34,8 +35,8 @@ export default function ErrorHandler({ error }: FallbackProps): JSX.Element {
               { label: 'Page', data: window.location.href },
           ]
         : [
-              { label: 'Erreur technique', data: error.message },
-              { label: 'Stack', data: error.stack },
+              { label: 'Erreur technique', data: (error as Error).message },
+              { label: 'Stack', data: (error as Error).stack },
               { label: 'Page', data: window.location.href },
           ];
 
@@ -74,78 +75,85 @@ export default function ErrorHandler({ error }: FallbackProps): JSX.Element {
 
     useEffect(() => {
         console.error('error handled', error);
-        getErrorContext(error);
+        getErrorContext(error as Error);
         nProgress.done();
     }, []);
 
     return (
-        <>
-            <Box className="errortext" sx={{ backgroundColor: '#DDDDDD', borderRadius: 1 }} minWidth="500px" width="60%" margin={1}>
-                <Box>
-                    <Box>
-                        <Box className="errortext" padding={2}>
-                            <Box component="form" action="SQLError.aspx" method="post" style={{ maxWidth: 800 }}>
-                                <Regular fontSize={13} textAlign={'center'}>
-                                    <b>{Resources.translate('error.errorBoundary.sorry')}</b> {Resources.translate('error.errorBoundary.firstErrorMessage')}{' '}
-                                    <b style={{ textDecoration: 'underline', color: 'blue' }}>
-                                        <a href={Resources.translate('error.errorBoundary.supportEmail') as string}>{Resources.translate('error.errorBoundary.technicalStaff')}</a>
-                                    </b>
-                                    <br />
-                                    {Resources.translate('error.errorBoundary.thanks')}
-                                    <br />
-                                    <br />
-                                    {Resources.translate('error.errorBoundary.toSendMessage')}
-                                    <br />
-                                    <Regular fontSize={13} fontWeight={'bold'} component={'span'} color={'#E00'}>
-                                        {Resources.translate('error.errorBoundary.pleaseSend')}
-                                    </Regular>{' '}
-                                    {Resources.translate('error.errorBoundary.thenClick')} "<b>{Resources.translate('common.sendMessage')}</b>"
-                                    <br />
-                                </Regular>
-                                <InputTextAreaField sx={{ width: '100%' }} showLabel={false} rows={5} id="Body" label="message" />
-                                <br />
-                                <input type="hidden" defaultValue={Ses.email} name="From" />
-                                <Box display="flex" alignItems="center" justifyContent="center" marginBottom={1}>
-                                    <Button type="submit" variant="contained" style={{ fontWeight: 'bold' }} sx={{ width: '30%', minWidth: 200, alignItems: 'center', backgroundColor: '#6599CC' }} name="Submit" className="button">
-                                        {Resources.translate('common.sendMessage')}
-                                    </Button>
-                                </Box>
-                                <input type="hidden" defaultValue={error.message} name="Diagnostic" />
-                                <input type="hidden" defaultValue={error.stack} name="Source" />
-                                <input type="hidden" defaultValue={error.stack} name="TableRowace" />
-                                <input type="hidden" defaultValue={window.location.href} name="Page" />
-                                <input type="hidden" defaultValue={dayjs().format('DD MMMM YYYY HH:mm:ss')} name="DateTime" />
-                                <input type="hidden" defaultValue={Ses.gear} name="Browser" />
-                                <input type="hidden" defaultValue={Ses.ip} name="Address" />
-                                <input type="hidden" defaultValue={window.location.href} name="Referer" />
-                            </Box>
+        <Card sx={{ margin: 1, maxWidth: '800px' }}>
+            <Box>
+                <Box padding={2}>
+                    <Box component="form" method="POST" style={{ maxWidth: 800 }}>
+                        <Regular fontSize={13} textAlign={'center'}>
+                            <b>{translate('error.errorBoundary.sorry')}</b> {translate('error.errorBoundary.firstErrorMessage')}{' '}
+                            <b style={{ textDecoration: 'underline', color: 'blue' }}>
+                                <a href={translate('error.errorBoundary.supportEmail') as string}>{translate('error.errorBoundary.technicalStaff')}</a>
+                            </b>
+                            <br />
+                            {translate('error.errorBoundary.thanks')}
+                            <br />
+                            <br />
+                            {translate('error.errorBoundary.toSendMessage')}
+                            <br />
+                            <Regular fontSize={13} fontWeight={'bold'} component={'span'} color={'#E00'}>
+                                {translate('error.errorBoundary.pleaseSend')}
+                            </Regular>{' '}
+                            {translate('error.errorBoundary.thenClick')} "<b>{translate('common.sendMessage')}</b>"
+                            <br />
+                        </Regular>
+                        <InputTextAreaField sx={{ width: '100%' }} showLabel={false} rows={5} id="Body" label="message" />
+                        <br />
+                        <input type="hidden" defaultValue={email} name="From" />
+                        <Box display="flex" alignItems="center" justifyContent="center" marginBottom={1}>
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                style={{ fontWeight: 'bold' }}
+                                sx={{ width: '30%', minWidth: 200, alignItems: 'center', backgroundColor: '#6599CC' }}
+                                name="Submit"
+                                className="button"
+                            >
+                                {translate('common.sendMessage')}
+                            </Button>
                         </Box>
-                    </Box>
-                    <Box>
-                        <Box style={{ padding: 0 }}>
-                            <Table sx={{ border: 'solid', borderWidth: 1 }} className="error" cellSpacing={0} cellPadding={0} width="20%">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell sx={{ padding: 0.5 }} colSpan={2}>
-                                            {Resources.translate('error.errorBoundary.errorReport')}
-                                        </TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {errorDetails.map((err, i) => (
-                                        <TableRow key={i} sx={{ border: 'solid', borderWidth: 1 }}>
-                                            <TableCell sx={{ border: 'solid', padding: 0.5, borderWidth: 1 }} className="t">
-                                                {err.label}
-                                            </TableCell>
-                                            <TableCell sx={{ border: 'solid', padding: 0.5, borderWidth: 1 }} dangerouslySetInnerHTML={{ __html: `<pre><code>${err.data}</code></pre>` }} style={{ fontSize: 12 }} />
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </Box>
+                        <input type="hidden" defaultValue={(error as Error).message} name="Diagnostic" />
+                        <input type="hidden" defaultValue={(error as Error).stack} name="Source" />
+                        <input type="hidden" defaultValue={(error as Error).stack} name="TableRowace" />
+                        <input type="hidden" defaultValue={window.location.href} name="Page" />
+                        <input type="hidden" defaultValue={dayjs().format('DD MMMM YYYY HH:mm:ss')} name="DateTime" />
+                        <input type="hidden" defaultValue={gear} name="Browser" />
+                        <input type="hidden" defaultValue={ip} name="Address" />
+                        <input type="hidden" defaultValue={window.location.href} name="Referer" />
                     </Box>
                 </Box>
             </Box>
-        </>
+            <Box>
+                <Box sx={{ padding: 0 }} className="w-100">
+                    <TableContainer>
+                        <Table className="rounded w-100" width={'fit-content'} cellSpacing={0} cellPadding={0}>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell sx={{ padding: 0.5, cursor: 'pointer' }} align="left" colSpan={2}>
+                                        {translate('error.errorBoundary.errorReport')}
+                                    </TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {errorDetails.map((err, i) => (
+                                    <TableRow key={i}>
+                                        <TableCell sx={{ padding: 1 }}>{err.label}</TableCell>
+                                        <TableCell sx={{ padding: 1 }}>
+                                            <pre className="m-0">
+                                                <code>{err.data}</code>
+                                            </pre>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Box>
+            </Box>
+        </Card>
     );
 }

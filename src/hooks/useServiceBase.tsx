@@ -1,18 +1,17 @@
 // #region IMPORTS -> /////////////////////////////////////
-import { useContext } from 'react';
 import { AppError, ErrorTypeEnum } from '~/core/appError';
 import { ApiErrorType } from '~/models/Error';
 import { ResultStatusEnum } from '~/types/serverCoreType';
-import SessionContext from '~/context/sessionContext';
 import useService from './useService';
 import appTool from '~/helpers/appTool';
-import AppContext from '~/context/appContext';
 import useNavigation from './useNavigation';
 import useModal, { ModalOptions } from './useModal';
 import StandardError from '~/components/common/StandardError';
 import dayjs from 'dayjs';
 import Box from '@mui/material/Box';
 import { Bold, Regular } from '~/components/common/Text';
+import useSessionContext from '~/context/sessionContext';
+import useAppContext from '~/context/appContext';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
@@ -25,11 +24,11 @@ export default function useServiceBase(): IUseServiceBase {
     // #endregion STATE --> ////////////////////////////////////
 
     // #region HOOKS --> ///////////////////////////////////////
-    const Ses = useContext(SessionContext);
-    const AppCtx = useContext(AppContext);
-    const Service = useService();
-    const Navigation = useNavigation();
-    const Modal = useModal();
+    const { setNeedMfa, setToken, setTokenExpire } = useSessionContext();
+    const { setBoxOptions, setIsNoAccess, setNoServer } = useAppContext();
+    const { get } = useService();
+    const { pathname, search, navigateByPath } = useNavigation();
+    const { openModal } = useModal();
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////
@@ -48,16 +47,16 @@ export default function useServiceBase(): IUseServiceBase {
                     if (refreshed) {
                         return await requestFn(); // ✅ relance propre avec le nouveau token
                     } else {
-                        const target = Navigation.pathname + Navigation.search;
+                        const target = pathname + search;
                         const url = target !== '/' && location.pathname !== 'login' ? `/login?target=${encodeURIComponent(target)}` : `/login`;
-                        Navigation.navigateByPath(url);
+                        navigateByPath(url);
                         return reject<T>(error);
                     }
                 }
             }
 
             if (error.code === 'need_mfa') {
-                Ses.setNeedMfa(true);
+                setNeedMfa(true);
                 console.info(error);
                 return reject<T>(error);
             }
@@ -72,12 +71,12 @@ export default function useServiceBase(): IUseServiceBase {
                             content: <StandardError error={error} />,
                             size: 'lg',
                         };
-                        Modal.openModal(modalOption);
+                        openModal(modalOption);
                         return Promise.reject<T>(error);
                     }
                     case 'xss_attack': {
                         const target = error.detailedMessage.includes('form') || error.detailedMessage.includes('body') ? 'le formulaire' : "l'url";
-                        AppCtx.setBoxOptions({
+                        setBoxOptions({
                             title: "Suspicion d'attaque XSS",
                             text: (
                                 <Box>
@@ -93,7 +92,7 @@ export default function useServiceBase(): IUseServiceBase {
                         return Promise.reject<T>(error);
                     }
                     case 'no_access_granted':
-                        AppCtx.setIsNoAccess(true);
+                        setIsNoAccess(true);
                         break;
                     default:
                         return Promise.reject<T>(error);
@@ -110,7 +109,7 @@ export default function useServiceBase(): IUseServiceBase {
     const reject = <TResult,>(error): Promise<TResult> => {
         if (error && error.type) return Promise.reject(error);
         if (appTool.fetchDispatcher(error.message) === 'failed_request') {
-            AppCtx.setNoServer(true);
+            setNoServer(true);
             return Promise.reject(new AppError(ErrorTypeEnum.Technical, error.message, appTool.fetchDispatcher(error.message)));
         }
         if (!error.status) return Promise.reject(new AppError(ErrorTypeEnum.Technical, error.message, appTool.fetchDispatcher(error.message)));
@@ -140,10 +139,10 @@ export default function useServiceBase(): IUseServiceBase {
 
     const refreshSession = async (): Promise<boolean> => {
         try {
-            const request = await Service.get<{ token: string; expires: string } | ApiErrorType>('auth/refresh');
+            const request = await get<{ token: string; expires: string } | ApiErrorType>('auth/refresh');
             const response = request as { token: string; expires: string };
-            Ses.setToken(response.token);
-            Ses.setTokenExpire(dayjs(response.expires));
+            setToken(response.token);
+            setTokenExpire(dayjs(response.expires));
             return true;
         } catch (error) {
             if ((error as AppError).code) {
@@ -151,13 +150,13 @@ export default function useServiceBase(): IUseServiceBase {
                     case 'no_session':
                     case 'session_expired':
                     case 'no_access_granted':
-                        Ses.setToken(null);
-                        Ses.setTokenExpire(null);
+                        setToken(null);
+                        setTokenExpire(null);
                         return false;
                     case 'need_mfa':
-                        Ses.setToken(null);
-                        Ses.setTokenExpire(null);
-                        Ses.setNeedMfa(true);
+                        setToken(null);
+                        setTokenExpire(null);
+                        setNeedMfa(true);
                         break;
                     default:
                         throw new AppError(ErrorTypeEnum.Technical, 'an Error happened', 'error_happened');

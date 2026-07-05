@@ -1,5 +1,7 @@
+import DateTime from '~/core/classes/DateTime';
+
 export interface BaseModel {
     id: number;
-    addedAt: Date;
-    updatedAt?: Date;
+    addedAt: DateTime;
+    updatedAt?: DateTime;
 }

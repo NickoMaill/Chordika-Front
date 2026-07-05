@@ -17,8 +17,8 @@ export default function AppBox({ title, text, icon, customBackUrl, showBack = tr
     // #endregion STATE --> ////////////////////////////////////
 
     // #region HOOKS --> ///////////////////////////////////////
-    const Resources = useResources();
-    const Nav = useNavigation();
+    const { translate } = useResources();
+    const { navigateByPath, goBack } = useNavigation();
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////
@@ -34,8 +34,8 @@ export default function AppBox({ title, text, icon, customBackUrl, showBack = tr
                 <Regular>{text}</Regular>
             </AppCard>
             {showBack && (
-                <Button sx={{ width: 'fit-content' }} variant="contained" color="secondary" onClick={customBackUrl ? (): void => Nav.navigateByPath(customBackUrl) : (): void => Nav.goBack()}>
-                    {Resources.translate('common.back')}
+                <Button sx={{ width: 'fit-content' }} variant="contained" color="secondary" onClick={customBackUrl ? (): void => navigateByPath(customBackUrl) : (): void => goBack()}>
+                    {translate('common.back')}
                 </Button>
             )}
         </Box>

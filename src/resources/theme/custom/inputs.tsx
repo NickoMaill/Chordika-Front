@@ -7,7 +7,6 @@ import CheckBoxOutlineBlankRoundedIcon from '@mui/icons-material/CheckBoxOutline
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import RemoveRoundedIcon from '@mui/icons-material/RemoveRounded';
 import { gray, brand, red } from '../themePrimitives';
-import { selectClasses } from '@mui/material/Select';
 
 export const inputsCustomizations: Components<Theme> = {
     MuiButtonBase: {
@@ -219,9 +218,6 @@ export const inputsCustomizations: Components<Theme> = {
                     },
                 ],
             }),
-            loadingIndicator: {
-                color: '#ffffff',
-            },
         },
     },
     MuiIconButton: {
@@ -377,7 +373,7 @@ export const inputsCustomizations: Components<Theme> = {
     },
     MuiInputBase: {
         styleOverrides: {
-            root: {
+            root: ({ theme }) => ({
                 border: 'none',
                 variants: [
                     {
@@ -389,8 +385,24 @@ export const inputsCustomizations: Components<Theme> = {
                             borderWidth: '2px!important',
                         },
                     },
+                    {
+                        props: {
+                            disabled: true,
+                        },
+                        ...theme.applyStyles('dark', {
+                            style: {
+                                backgroundColor: '#727272',
+                            },
+                        }),
+                        ...theme.applyStyles('light', {
+                            style: {
+                                backgroundColor: '#e8e5e5',
+                            },
+                        }),
+                    },
                 ],
-            },
+                backgroundColor: (theme.vars || theme).palette.background.default,
+            }),
             input: {
                 '&::placeholder': {
                     opacity: 0.7,
@@ -465,6 +477,34 @@ export const inputsCustomizations: Components<Theme> = {
             root: ({ theme }) => ({
                 typography: theme.typography.caption,
                 marginBottom: 8,
+            }),
+        },
+    },
+    MuiAutocomplete: {
+        styleOverrides: {
+            paper: ({ theme }) => ({
+                backgroundColor: (theme.vars || theme).palette.background.default,
+                border: `solid 1px ${(theme.vars || theme).palette.grey[300]}`,
+                ...theme.applyStyles('dark', {
+                    border: `solid 1px ${(theme.vars || theme).palette.grey[600]}`,
+                }),
+                variants: [
+                    {
+                        props: {
+                            disabled: true,
+                        },
+                        ...theme.applyStyles('dark', {
+                            style: {
+                                backgroundColor: '#727272',
+                            },
+                        }),
+                        ...theme.applyStyles('light', {
+                            style: {
+                                backgroundColor: '#e8e5e5',
+                            },
+                        }),
+                    },
+                ],
             }),
         },
     },

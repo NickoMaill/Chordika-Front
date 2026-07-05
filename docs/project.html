@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aven - Page Projet</title>
+  <style>
+    :root {
+      --primary: hsl(222, 47%, 50%);
+      --primary-soft: hsla(222, 47%, 50%, .12);
+      --primary-dark: hsl(222, 47%, 38%);
+      --success: #4caf50;
+      --warning: #ffc13b;
+      --danger: #ef5350;
+      --info: #4f8cff;
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --panel-soft: #f1f4fa;
+      --border: #dfe4ee;
+      --text: #17191f;
+      --muted: #64708a;
+      --muted-2: #8d98ad;
+      --shadow: 0 10px 25px rgba(20, 32, 60, .07);
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      min-height: 100vh;
+    }
+
+    aside {
+      background: #f1f4fa;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand {
+      height: 68px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 18px;
+      border-bottom: 1px solid var(--border);
+      color: var(--primary);
+      font-size: 32px;
+      letter-spacing: 12px;
+      font-weight: 300;
+    }
+
+    .burger {
+      width: 34px;
+      height: 34px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: white;
+      color: #2b3448;
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+
+    nav {
+      padding: 10px 0;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 18px;
+      color: #596278;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .nav-item.active {
+      color: var(--primary);
+      background: var(--primary-soft);
+      border-right: 3px solid var(--primary);
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      background: #9ca6ba;
+      color: white;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+    }
+
+    main {
+      padding: 22px 28px 40px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 18px;
+      margin-bottom: 18px;
+    }
+
+    .breadcrumb {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 34px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .project-meta {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 14px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    button {
+      border: 1px solid var(--border);
+      background: white;
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 6px;
+      padding: 6px;
+      background: var(--panel-soft);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow-x: auto;
+      margin-bottom: 18px;
+    }
+
+    .tab {
+      padding: 11px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .tab.active {
+      background: white;
+      color: var(--primary);
+      box-shadow: 0 5px 15px rgba(20, 32, 60, .08);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.4fr .8fr;
+      gap: 18px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .stat {
+      padding: 18px;
+      min-height: 118px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat .label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .stat .value {
+      margin-top: 14px;
+      font-size: 28px;
+      font-weight: 900;
+    }
+
+    .stat .hint {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .stat .icon {
+      position: absolute;
+      right: 16px;
+      top: 16px;
+      width: 28px;
+      height: 28px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-weight: 900;
+    }
+
+    .section {
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      gap: 12px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .badge.success { background: rgba(76,175,80,.12); color: #287b2d; }
+    .badge.warning { background: rgba(255,193,59,.18); color: #946b00; }
+    .badge.danger { background: rgba(239,83,80,.12); color: #b43230; }
+    .badge.info { background: rgba(79,140,255,.13); color: #2f5dbf; }
+
+    .progress-row {
+      display: grid;
+      grid-template-columns: 150px 1fr 48px;
+      gap: 12px;
+      align-items: center;
+      margin: 14px 0;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .bar {
+      height: 9px;
+      background: #e2e7f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      background: var(--primary);
+      border-radius: 999px;
+    }
+
+    .alert-list, .activity-list, .mission-list, .doc-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .alert, .activity, .mission, .doc {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--primary);
+    }
+
+    .dot.danger { background: var(--danger); }
+    .dot.warning { background: var(--warning); }
+    .dot.success { background: var(--success); }
+
+    .title {
+      font-weight: 800;
+      margin-bottom: 3px;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 10px;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 70px 1fr;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: white;
+    }
+
+    .date-box {
+      background: var(--panel-soft);
+      border-radius: 10px;
+      padding: 9px;
+      text-align: center;
+      font-weight: 900;
+      color: var(--primary);
+    }
+
+    .date-box small {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      margin-top: 2px;
+    }
+
+    .budget-box {
+      display: grid;
+      gap: 12px;
+    }
+
+    .money-row {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .money-row strong {
+      color: var(--text);
+    }
+
+    .risk-score {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .risk-mini {
+      padding: 14px;
+      border-radius: 12px;
+      background: var(--panel-soft);
+      text-align: center;
+    }
+
+    .risk-mini strong {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+
+    @media (max-width: 1200px) {
+      .app { grid-template-columns: 1fr; }
+      aside { display: none; }
+      .layout { grid-template-columns: 1fr; }
+      .grid-4 { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 700px) {
+      main { padding: 16px; }
+      .topbar { flex-direction: column; }
+      .grid-4 { grid-template-columns: 1fr; }
+      .progress-row { grid-template-columns: 1fr; }
+      h1 { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <div class="brand"><span class="burger">≡</span>AVEN</div>
+      <nav>
+        <div class="nav-item active">▣ Projets</div>
+        <div class="nav-item">◉ Sociétés</div>
+        <div class="nav-item">☷ Utilisateurs</div>
+        <div class="nav-item">◌ Journal d'activité</div>
+        <div class="nav-item">◷ Tâches planifiées</div>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="avatar">NM</div>
+        <div>
+          <strong>Nicolas Maillos</strong>
+          <div class="sub">Administrateur</div>
+        </div>
+      </div>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <div>
+          <div class="breadcrumb">Projets / Réunion du Comité National de Suivi</div>
+          <h1>▦ Réunion du Comité National de Suivi</h1>
+          <div class="project-meta">
+            <span>Client : L'annexe de Com'</span>
+            <span>•</span>
+            <span>ISMIBI Events</span>
+            <span>•</span>
+            <span>Événement : 04 juin 2026</span>
+            <span class="badge success">En cours</span>
+          </div>
+        </div>
+        <div class="actions">
+          <button>Exporter</button>
+          <button>Paramètres</button>
+          <button class="btn-primary">+ Ajouter une action</button>
+        </div>
+      </header>
+
+      <div class="tabs">
+        <div class="tab active">Vue générale</div>
+        <div class="tab">Rétroplanning</div>
+        <div class="tab">Pilotage</div>
+        <div class="tab">Missions</div>
+        <div class="tab">Budget</div>
+        <div class="tab">Documents</div>
+        <div class="tab">Risques</div>
+        <div class="tab">Activité</div>
+      </div>
+
+      <section class="grid-4">
+        <article class="card stat">
+          <div class="icon">✓</div>
+          <div class="label">Avancement global</div>
+          <div class="value">68%</div>
+          <div class="hint">Planning globalement maîtrisé</div>
+        </article>
+        <article class="card stat">
+          <div class="icon">!</div>
+          <div class="label">Validations en attente</div>
+          <div class="value">4</div>
+          <div class="hint">Dont 2 critiques cette semaine</div>
+        </article>
+        <article class="card stat">
+          <div class="icon">€</div>
+          <div class="label">Budget engagé</div>
+          <div class="value">82%</div>
+          <div class="hint">Reste 4 800 € disponible</div>
+        </article>
+        <article class="card stat">
+          <div class="icon">⚑</div>
+          <div class="label">Risques ouverts</div>
+          <div class="value">3</div>
+          <div class="hint">1 risque élevé à traiter</div>
+        </article>
+      </section>
+
+      <div class="layout">
+        <div>
+          <section class="card section">
+            <div class="section-header">
+              <h2>Santé du projet</h2>
+              <span class="badge warning">Attention requise</span>
+            </div>
+
+            <div class="progress-row">
+              <strong>Rétroplanning</strong>
+              <div class="bar"><span style="width: 78%"></span></div>
+              <span>78%</span>
+            </div>
+            <div class="progress-row">
+              <strong>Budget</strong>
+              <div class="bar"><span style="width: 82%"></span></div>
+              <span>82%</span>
+            </div>
+            <div class="progress-row">
+              <strong>Documents</strong>
+              <div class="bar"><span style="width: 55%"></span></div>
+              <span>55%</span>
+            </div>
+            <div class="progress-row">
+              <strong>Missions Jour J</strong>
+              <div class="bar"><span style="width: 34%"></span></div>
+              <span>34%</span>
+            </div>
+          </section>
+
+          <section class="card section">
+            <div class="section-header">
+              <h2>Actions prioritaires</h2>
+              <button>Voir le pilotage</button>
+            </div>
+            <div class="alert-list">
+              <div class="alert">
+                <span class="dot danger"></span>
+                <div>
+                  <div class="title">Valider le menu traiteur définitif</div>
+                  <div class="sub">Échéance J-10 — bloque la confirmation du nombre de pax</div>
+                </div>
+                <span class="badge danger">Critique</span>
+              </div>
+              <div class="alert">
+                <span class="dot warning"></span>
+                <div>
+                  <div class="title">Confirmer l'impression du bandeau pupitre</div>
+                  <div class="sub">En attente du BAT final</div>
+                </div>
+                <span class="badge warning">À valider</span>
+              </div>
+              <div class="alert">
+                <span class="dot success"></span>
+                <div>
+                  <div class="title">Finaliser le dispositif hôtesses</div>
+                  <div class="sub">Dressing validé, planning à compléter</div>
+                </div>
+                <span class="badge info">Mission</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="card section">
+            <div class="section-header">
+              <h2>Dernières activités</h2>
+              <button>Voir tout</button>
+            </div>
+            <div class="activity-list">
+              <div class="activity">
+                <span class="dot success"></span>
+                <div>
+                  <div class="title">Budget final marqué comme validé</div>
+                  <div class="sub">Aujourd'hui à 09:18 par Nicolas</div>
+                </div>
+                <span>→</span>
+              </div>
+              <div class="activity">
+                <span class="dot"></span>
+                <div>
+                  <div class="title">Rétroplanning modifié</div>
+                  <div class="sub">Hier à 18:24 — déplacement de 2 actions signalétique</div>
+                </div>
+                <span>→</span>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div>
+          <section class="card section">
+            <div class="section-header">
+              <h2>Échéances à venir</h2>
+              <span class="badge info">7 jours</span>
+            </div>
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="date-box">25<small>mai</small></div>
+                <div>
+                  <div class="title">Validation menu classique</div>
+                  <div class="sub">Traiteur · Confirmation définitive</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="date-box">29<small>mai</small></div>
+                <div>
+                  <div class="title">Remise fichiers à S-M</div>
+                  <div class="sub">Graphisme · Écran accueil et R+1</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="date-box">03<small>juin</small></div>
+                <div>
+                  <div class="title">Montage et test technique</div>
+                  <div class="sub">19h00 - 23h00 · Auditorium</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="card section">
+            <div class="section-header">
+              <h2>Budget</h2>
+              <button>Ouvrir</button>
+            </div>
+            <div class="budget-box">
+              <div class="money-row"><span>Budget prévu</span><strong>24 000 €</strong></div>
+              <div class="money-row"><span>Engagé</span><strong>19 200 €</strong></div>
+              <div class="money-row"><span>Reste disponible</span><strong>4 800 €</strong></div>
+              <div class="bar"><span style="width: 82%"></span></div>
+            </div>
+          </section>
+
+          <section class="card section">
+            <div class="section-header">
+              <h2>Missions Jour J</h2>
+              <span class="badge warning">À compléter</span>
+            </div>
+            <div class="mission-list">
+              <div class="mission">
+                <span class="dot"></span>
+                <div>
+                  <div class="title">Accueil café</div>
+                  <div class="sub">09h00 - 09h30 · 2 personnes prévues</div>
+                </div>
+                <span>2/3</span>
+              </div>
+              <div class="mission">
+                <span class="dot warning"></span>
+                <div>
+                  <div class="title">Plénière</div>
+                  <div class="sub">09h30 - 17h30 · Régie à confirmer</div>
+                </div>
+                <span>4/6</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="card section">
+            <div class="section-header">
+              <h2>Risques</h2>
+              <button>Gérer</button>
+            </div>
+            <div class="risk-score">
+              <div class="risk-mini"><strong>1</strong><span class="sub">Élevé</span></div>
+              <div class="risk-mini"><strong>2</strong><span class="sub">Moyens</span></div>
+              <div class="risk-mini"><strong>0</strong><span class="sub">Bloquants</span></div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

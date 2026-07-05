@@ -21,6 +21,7 @@
             "$/*": ["./*"]
         },
         "sourceMap": true,
+        "types": ["node"],
 
         /* Linting */
         "strict": false,

@@ -14,6 +14,7 @@ export type ModalOptions = {
     persistant?: boolean;
     fullPage?: boolean;
     modalActionOptions?: ModalActionType;
+    isLoading?: boolean;
 };
 // #endregion SINGLETON --> /////////////////////////////////
 
@@ -27,15 +28,17 @@ export default function useModal(): IUseModal {
 
     // #region METHODS --> /////////////////////////////////////
 
-    const openModal = ({ title, content, size = 'sm', scroll = 'body', persistant = false, fullPage = false, modalActionOptions = null }: ModalOptions): void => {
+    const openModal = ({ title, content, size = 'sm', scroll = 'paper', persistant = false, fullPage = false, modalActionOptions = null, isLoading = false }: ModalOptions): void => {
         ModalCxt.setContent(content);
         ModalCxt.setTitle(title);
         ModalCxt.setModalActionOptions(modalActionOptions);
         ModalCxt.setOptions({ size, scroll, persistant, fullPage });
+        ModalCxt.setIsLoading(isLoading);
         ModalCxt.setIsOpen(true);
     };
 
     const closeModal = (): void => {
+        ModalCxt.setIsLoading(false);
         ModalCxt.setIsOpen(false);
     };
     // #endregion METHODS --> //////////////////////////////////

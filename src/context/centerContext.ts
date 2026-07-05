@@ -1,14 +1,16 @@
-import { createContext } from 'react';
+import { createContext, Dispatch, useContext } from 'react';
 import { CenterState, CenterStateAction } from '~/types/centerType';
-import { useContext } from 'react';
-import { Dispatch } from 'react';
 
-/* eslint-disable @typescript-eslint/no-explicit-any*/
-export const CenterContext = createContext<any>(undefined);
+export type CenterContextValue<T> = {
+    state: CenterState<T>;
+    dispatch: Dispatch<CenterStateAction<T>>;
+};
 
-export default function useCenterContext<T>(): { state: CenterState<T>; dispatch: Dispatch<CenterStateAction<T>> } {
+export const CenterContext = createContext<CenterContextValue<unknown> | undefined>(undefined);
+
+export default function useCenterContext<T>(): CenterContextValue<T> {
     const context = useContext(CenterContext);
     if (!context) throw new Error('useCenterContext must be used within a CenterProvider');
 
-    return context;
+    return context as CenterContextValue<T>;
 }

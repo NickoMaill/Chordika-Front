@@ -1,35 +1,34 @@
-import { JSX, ReactNode, useContext, useEffect, useRef, useState } from 'react';
+import { JSX, ReactNode, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import SessionContext from '~/context/sessionContext';
 import { AppError } from '~/core/appError';
 import useSessionService from '~/hooks/services/useSessionService';
 import { doneProgress, isProgressStarted, startProgress } from '~/helpers/progressHelper';
-import TOTP from '~/components/app/login/TOTP';
 import useNavigation from '~/hooks/useNavigation';
-import AppContext from '~/context/appContext';
+import useSessionContext from '~/context/sessionContext';
+import useAppContext from '~/context/appContext';
 
 export default function AuthMiddleware({ children }: IAuthMiddleware): JSX.Element {
     const [isReady, setIsReady] = useState(false); // Contrôle de l'affichage
     const checkingRef = useRef(false); // Empêche les doublons d'appel
 
-    const Session = useContext(SessionContext);
-    const SessionService = useSessionService();
-    const Navigation = useNavigation();
-    const App = useContext(AppContext);
+    const { token, setToken, tokenExpire, userId, accessLevel } = useSessionContext();
+    const { refreshSession } = useSessionService();
+    const { getCurrentRoute, pathname } = useNavigation();
+    const { setIsNoAccess } = useAppContext();
 
     const navigate = useNavigate();
     const location = useLocation();
 
     const checkSession = async (): Promise<void> => {
-        let isNetworkDown = false;
         if (checkingRef.current) return;
         checkingRef.current = true;
+
         if (!isProgressStarted()) {
             startProgress();
         }
 
         const currentPath = location.pathname + location.search;
-        const isTokenValid = Session.token && Session.token !== '' && Session.tokenExpire && Session.tokenExpire.valueOf() > Date.now();
+        const isTokenValid = token && token !== '' && tokenExpire && tokenExpire.valueOf() > Date.now();
 
         if (isTokenValid) {
             setIsReady(true);
@@ -39,7 +38,7 @@ export default function AuthMiddleware({ children }: IAuthMiddleware): JSX.Eleme
         }
 
         try {
-            const refreshed = await SessionService.refreshSession();
+            const refreshed = await refreshSession();
             if (refreshed) {
                 setIsReady(true);
                 if (!location.pathname.includes('/center')) doneProgress();
@@ -49,18 +48,26 @@ export default function AuthMiddleware({ children }: IAuthMiddleware): JSX.Eleme
             }
         } catch (error) {
             console.info('erreur détécté', 'Auth middleware', error);
+
             if (error instanceof AppError && error.code === 'need_mfa') {
                 const url = `/login?target=${encodeURIComponent(currentPath)}`;
                 navigate(url, { replace: true });
-            } else if (error.code === 'failed_request') {
+                doneProgress();
+                setIsReady(false);
+                checkingRef.current = false;
+                return;
+            }
+
+            if (error instanceof AppError && error.code === 'failed_request') {
                 doneProgress();
                 setIsReady(true);
+                checkingRef.current = false;
+                return;
             }
         }
 
         // Session invalide ou échec de refresh : redirige vers login
-        Session.setToken(null);
-        if (isNetworkDown) return;
+        setToken(null);
         const isLoginPage = location.pathname === '/login';
         const hasTargetToLogin = new URLSearchParams(location.search).get('target')?.includes('/login');
 
@@ -73,19 +80,23 @@ export default function AuthMiddleware({ children }: IAuthMiddleware): JSX.Eleme
         setIsReady(false);
         checkingRef.current = false;
     };
+
     useEffect(() => {
         checkSession();
     }, [location.pathname, location.search]);
     useEffect(() => {
-        if (isReady && Session.id) {
-            if (Navigation.getCurrentRoute()?.levelAccess > Session.accessLevel) {
-                App.setIsNoAccess(true);
+        if (isReady && userId) {
+            const currentRoute = getCurrentRoute();
+            if (currentRoute?.levelAccess > accessLevel) {
+                setIsNoAccess(true);
+            } else {
+                setIsNoAccess(false);
             }
         }
-    }, [isReady, Session, Navigation.pathname]);
+    }, [isReady, userId, accessLevel, pathname]);
     if (!isReady) return null;
-    if (!Session.id) return null; // <- sécurité : pas de session = pas d'accès
-    if (Session.needMfa) return <TOTP />;
+    if (!userId) return null; // <- sécurité : pas de session = pas d'accès
+    // if (Session.needMfa) return <TOTP />;
     return <>{children}</>;
 }
 

@@ -10,14 +10,15 @@ interface WebSocketRequest<T = unknown> {
     payload: T;
 }
 
+export type WebSocketResponse<T = unknown> = { type: string } & T;
 interface UseWebSocketOptions {
     url: string;
-    onMessage?: (message: unknown) => void;
+    onMessage?: (message: WebSocketResponse) => void;
     reconnectIntervalMs?: number;
 }
 // #endregion SINGLETON --> /////////////////////////////////
 
-export default function useWs({ url, onMessage, reconnectIntervalMs = 5000 }: UseWebSocketOptions): IUseWs {
+export default function useWs<T>({ url, onMessage, reconnectIntervalMs = 5000 }: UseWebSocketOptions): IUseWs {
     // #region STATE --> ///////////////////////////////////////
     const wsRef = useRef<WebSocket | null>(null);
     const [isConnected, setIsConnected] = useState<boolean>(false);
@@ -37,13 +38,14 @@ export default function useWs({ url, onMessage, reconnectIntervalMs = 5000 }: Us
         setError(null);
         const route = `ws://${configManager.getConfig.WS_BASEURL}/${url}`;
         const ws = new WebSocket(route);
+        
         ws.onopen = (): void => {
             setIsConnected(true);
             setIsConnecting(false);
         };
         ws.onmessage = (e): void => {
             try {
-                const data = JSON.parse(e.data);
+                const data: WebSocketResponse<T> = JSON.parse(e.data);
                 onMessageRef.current?.(data);
             } catch (e) {
                 console.error('[WebSocket] Error parsing message: ', e);

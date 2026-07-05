@@ -1,19 +1,18 @@
 // #region IMPORTS -> /////////////////////////////////////
-import { useContext, useEffect, useMemo } from 'react';
+import { useEffect, useMemo, JSX } from 'react';
 import { GenericActionEnum, ICenter } from '~/types/centerType';
-import AppContext from '~/context/appContext';
 import { LevelAccessEnum } from '~/models/Session';
-import SessionContext from '~/context/sessionContext';
 import { useCenterActions, useCenterQuery, useCenterTools } from '~/hooks/useCenterActions';
 import { doneProgress } from '~/helpers/progressHelper';
 import useCenterContext from '~/context/centerContext';
 import { useLocation } from 'react-router-dom';
 import RenderCenter from './RenderCenter';
 import appTool from '~/helpers/appTool';
-import SearchContext from '~/context/searchContext';
-import { JSX } from 'react';
 import nProgress from 'nprogress';
 import AppFullPageLoader from '../common/AppFullPageLoader';
+import useSessionContext from '~/context/sessionContext';
+import useAppContext from '~/context/appContext';
+import useSearchContext from '~/context/searchContext';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
@@ -27,10 +26,10 @@ export default function AppCenter<T>(props: ICenter<T>): JSX.Element {
     // #endregion STATE --> ////////////////////////////////////
 
     // #region HOOKS --> ///////////////////////////////////////
-    const Ses = useContext(SessionContext);
-    const App = useContext(AppContext);
+    const Ses = useSessionContext();
+    const App = useAppContext();
     const Ctx = useCenterContext<T>();
-    const Search = useContext(SearchContext);
+    const Search = useSearchContext();
 
     const { getConfig } = useCenterActions<T>({ props, action, id });
     const { tableQuery, queryOne } = useCenterQuery<T>({ props, action, id });
@@ -116,7 +115,17 @@ export default function AppCenter<T>(props: ICenter<T>): JSX.Element {
 
     // #region RENDER --> //////////////////////////////////////
     // return <>{!Ctx.state.isInitialized ? <AppFullPageLoader isLoading count={3000} counting /> : <RenderCenter props={props} action={action} id={id} table={table} />}</>;
-    return <>{!Ctx.state.isInitialized ? <AppFullPageLoader isLoading count={1000} counting /> : Ctx.state.config && Ctx.state.handlersLoaded ? <RenderCenter props={props} action={action} id={id} table={props.entity} /> : <></>}</>;
+    return (
+        <>
+            {!Ctx.state.isInitialized ? (
+                <AppFullPageLoader isLoading count={1000} counting />
+            ) : Ctx.state.config && Ctx.state.handlersLoaded ? (
+                <RenderCenter props={props} action={action} id={id} table={props.entity} />
+            ) : (
+                <></>
+            )}
+        </>
+    );
     // #endregion RENDER --> ///////////////////////////////////
 }
 

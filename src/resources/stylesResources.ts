@@ -6,6 +6,7 @@ import { feedbackCustomizations } from './theme/custom/feedback';
 import { navigationCustomizations } from './theme/custom/navigation';
 import { surfacesCustomizations } from './theme/custom/surfaces';
 import { dataGridCustomizations, datePickersCustomizations, sidebarCustomizations, formInputCustomizations } from './theme/custom';
+import { darkScrollbar } from '@mui/material';
 
 class StylesResources {
     public get theme(): Theme {
@@ -20,6 +21,11 @@ class StylesResources {
                 ...datePickersCustomizations,
                 ...sidebarCustomizations,
                 ...formInputCustomizations,
+                MuiCssBaseline: {
+                    styleOverrides: (themeParam) => ({
+                        body: themeParam.palette.mode === 'dark' ? darkScrollbar() : null,
+                    }),
+                },
             },
             colorSchemes,
             typography,

@@ -10,13 +10,32 @@ import { lazy, ReactNode } from 'react';
 import { JSX } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
 import { Breakpoint } from '@mui/material/styles';
+import { CircularProgress } from '@mui/material';
+import { Italic } from './Text';
 const AppIcon = lazy(() => import('~/components/common/AppIcon'));
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
 // #endregion SINGLETON --> /////////////////////////////////
 
-export default function Modal({ children, modalTitle, isOpen, onClose, modalAction, closable, modalActionLabel, isModalActionLoading, dismissLabel, maxWidth = 'md', persistant = false, scroll = 'paper', noLayout = false, fullWidth = true, fullscreen = false }: IModal): JSX.Element {
+export default function Modal({
+    children,
+    modalTitle,
+    isOpen,
+    onClose,
+    modalAction,
+    closable,
+    modalActionLabel,
+    isModalActionLoading,
+    isModalLoading,
+    dismissLabel,
+    maxWidth = 'md',
+    persistant = false,
+    scroll = 'paper',
+    noLayout = false,
+    fullWidth = true,
+    fullscreen = false,
+}: IModal): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
     // #endregion STATE --> ////////////////////////////////////
 
@@ -58,7 +77,16 @@ export default function Modal({ children, modalTitle, isOpen, onClose, modalActi
                                 </IconButton>
                             )}
                         </Box>
-                        <DialogContent dividers>{children}</DialogContent>
+                        <DialogContent dividers>
+                            {isModalLoading ? (
+                                <Box className="d-flex flex-column justify-content-center align-items-center">
+                                    <CircularProgress size={50} className="mb-4" />
+                                    <Italic className="fw-bold">Chargement en cours...</Italic>
+                                </Box>
+                            ) : (
+                                children
+                            )}
+                        </DialogContent>
                         {modalAction && (
                             <DialogActions>
                                 <Divider />
@@ -86,6 +114,7 @@ interface IModal {
     modalTitle?: string;
     modalAction?: () => void;
     modalActionLabel?: string;
+    isModalLoading?: boolean;
     isModalActionLoading?: boolean;
     dismissLabel?: string;
     closable?: boolean;

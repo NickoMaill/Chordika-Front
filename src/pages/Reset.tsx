@@ -48,7 +48,7 @@ export default function Reset(): JSX.Element {
     // #region METHODS --> /////////////////////////////////////
     const grantAccessToPage = async (): Promise<void> => {
         if (!params.has('token') || params.get('token') === '') {
-            Navigation.navigate('Login', null, true);
+            Navigation.navigate('Login', null, null, true);
             return;
         }
         await SessionService.checkReset(params.get('token'))

@@ -1,136 +1,99 @@
 // #region IMPORTS -> /////////////////////////////////////
-import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
-import { SelectChangeEvent } from '@mui/material/Select';
-import { JSX, lazy, ReactNode, useContext, useEffect, useState } from 'react';
+import { JSX, lazy, useEffect, useState } from 'react';
+import { Box, Button, CircularProgress, Grid, IconButton } from '@mui/material';
 import ContentLayout from '~/components/layout/ContentLayout';
 import AppCard from '~/components/common/AppCard';
-import AppGridContainer from '~/components/common/AppGridContainer';
-import { Regular } from '~/components/common/Text';
+import { Bold, Regular } from '~/components/common/Text';
 import InputBase from '~/components/formMaker/elements/InputBase';
-import SessionContext from '~/context/sessionContext';
-import { UserApiModel, UserPreferencesPayload, UserSessionApiModel } from '~/models/Users';
-import appTool from '~/helpers/appTool';
-import useUserService from '~/hooks/services/useUserService';
-import usePush from '~/hooks/usePush';
+import { UserApiModel, UserSessionApiModel } from '~/models/Users';
 import useResources from '~/hooks/useResources';
-import useStorage from '~/hooks/useStorage';
-import useToast from '~/hooks/useToast';
-import NotifDeniedTuto from '~/assets/videos/notif_denied.mov';
-import useModal from '~/hooks/useModal';
 import useSessionService from '~/hooks/services/useSessionService';
+import dayjs from 'dayjs';
+import AppGridContainer from '~/components/common/AppGridContainer';
+import useUserService from '~/hooks/services/useUserService';
+import AppAccordion from '~/components/common/AppAccordion';
+import useToast from '~/hooks/useToast';
 import { LogActivities } from '~/components/app/users/LogActivities';
-import SectionLayout from '~/components/layout/SectionLayout';
+import useSessionContext from '~/context/sessionContext';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
-type Loaders = {
-    isPageLoading: boolean;
-    isNotifLoading: boolean;
-};
-const initLoaders: Loaders = { isPageLoading: true, isNotifLoading: false };
-const InputSelectField = lazy(() => import('~/components/formMaker/elements/InputSelectField'));
-const InputSwitchField = lazy(() => import('~/components/formMaker/elements/InputSwitchField'));
+const AppIcon = lazy(() => import('~/components/common/AppIcon'));
+const InputColorField = lazy(() => import('~/components/formMaker/elements/InputColorField'));
 // #endregion SINGLETON --> /////////////////////////////////
 
 export default function Profile(): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
     const [me, setMe] = useState<UserSessionApiModel>(null);
-    const [loaders, setLoaders] = useState<Loaders>(initLoaders);
-    const [blocked, setBlocked] = useState<{ isBlocked: boolean; message: ReactNode }>({ isBlocked: false, message: null });
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [currentColor, setCurrentColor] = useState<string>(null);
+    const [isColorLoading, setIsColorLoading] = useState<boolean>(false);
     // #endregion STATE --> ////////////////////////////////////
 
     // #region HOOKS --> ///////////////////////////////////////
-    const UserService = useUserService();
-    const SessionService = useSessionService();
-    const Ses = useContext(SessionContext);
-    const Resources = useResources();
-    const Push = usePush();
-    const Storage = useStorage();
+    const Session = useSessionService();
+    const User = useUserService();
+    const { userId } = useSessionContext();
+    const { translate } = useResources();
     const Toast = useToast();
-    const Modal = useModal();
-
-    const infoToDisplay = [
-        { label: Resources.translate('user.fullName'), field: 'name' },
-        { label: Resources.translate('user.firstName'), field: 'firstName' },
-        { label: Resources.translate('user.lastName'), field: 'lastName' },
-        { label: Resources.translate('user.email'), field: 'email' },
-        { label: Resources.translate('user.levelAccess'), field: 'levelAccess' },
-    ];
-
-    const maxRowsOptions = [
-        { label: '5', value: 5 },
-        { label: '10', value: 10 },
-        { label: '25', value: 25 },
-        { label: '50', value: 50 },
-    ];
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////
+    const infoToDisplay: { label: string; field: string; valueFormatter?: (v: unknown) => string }[] = [
+        { label: translate('profile.username') as string, field: 'name' },
+        { label: translate('profile.lastCon') as string, field: 'lastConDate', valueFormatter: (v: string): string => dayjs(v).format('DD/MM/YYYY HH:mm:ss') },
+        { label: translate('profile.addedAt') as string, field: 'addedAt', valueFormatter: (v: string): string => dayjs(v).format('DD/MM/YYYY HH:mm:ss') },
+    ];
+
     const getMe = async (): Promise<void> => {
-        if (Ses.id) {
-            await SessionService.getUserProfile()
+        if (userId) {
+            await Session.getUserProfile()
                 .then((res) => setMe(res))
-                .finally(() => setLoaders((prev) => ({ ...prev, isPageLoading: false })));
+                .finally(() => setIsLoading(false));
         }
     };
-
-    const handleNotifChange = async (checked: boolean): Promise<void> => {
-        setLoaders((prev) => ({ ...prev, isNotifLoading: true }));
-        try {
-            if (checked && !Ses.isPushActive) {
-                const isSubs = await Push.subscribe();
-                if (isSubs) {
-                    setBlocked((prev) => ({ ...prev, isBlocked: false, message: null }));
-                    Ses.setIsPushActive(true);
-                } else {
-                    setBlocked((prev) => ({ ...prev, isBlocked: true, message: <BlockedMessage onClick={openModal} /> }));
-                }
-            } else if (!checked && Ses.isPushActive) {
-                const isUnSubs = await Push.unsubscribe();
-                if (isUnSubs) Ses.setIsPushActive(false);
+    const handleOnManageColor = async (action: 'add' | 'delete', value?: string): Promise<void> => {
+        let colors = [...(me?.preferences.favColors || [])];
+        const formData = new FormData();
+        if (action === 'delete') {
+            colors = colors.filter((c) => c !== (value ?? ''));
+        } else {
+            if ((currentColor ?? '').trim() === '') {
+                Toast.warning(translate("profile.colors.needSelect") as string);
+                return;
             }
-        } catch {
-            Toast.error("Une erreur est survenue pendant l'activation", null, true);
-        } finally {
-            setLoaders((prev) => ({ ...prev, isNotifLoading: false }));
+            setIsColorLoading(true);
+            colors.push(currentColor);
         }
-    };
-
-    const handleMaxRowsChange = async (e: SelectChangeEvent): Promise<void> => {
-        Storage.setItem('maxRows', e.target.value);
-        Ses.setMaxRows(Number(e.target.value));
-        const pref: UserPreferencesPayload = { field: 'MaxRows', value: Number(e.target.value) };
-        await UserService.savePreferences(pref).then((res) => {
-            if (res.success) {
-                Toast.success('Préférences sauvegardées avec succès', null, true);
+        let v = colors.join(',');
+        formData.append('Field', 'favColors');
+        formData.append('Value', v);
+        await User.updatePreferences(formData).then((isUpdated) => {
+            if (isUpdated) {
+                getMe();
+            }
+            setCurrentColor(null);
+            if (action === 'add') {
+                Toast.success(translate("profile.colors.saved") as string);
+                setIsColorLoading(false);
+            } else {
+                Toast.info(translate("profile.colors.noSaved") as string);
             }
         });
-    };
-
-    const openModal = (): void => {
-        const content = (): JSX.Element => (
-            <Box className="d-flex justify-content-center">
-                <video autoPlay loop width={800}>
-                    <source src={NotifDeniedTuto} />
-                </video>
-            </Box>
-        );
-        Modal.openModal({ title: 'Activer les notifications', content: content(), size: 'lg' });
     };
     // #endregion METHODS --> //////////////////////////////////
 
     // #region USEEFFECT --> ///////////////////////////////////
     useEffect(() => {
         getMe();
-    }, [Ses.id]);
+    }, [userId]);
     // #endregion USEEFFECT --> ////////////////////////////////
 
     // #region RENDER --> //////////////////////////////////////
     return (
-        <ContentLayout icon="Key" title={Resources.translate('profile.title') as string}>
-            <SectionLayout sx={{ width: { sm: '90%', lg: '70%' } }} title={Resources.translate('common.mainInfo') as string} icon="AccountBox">
-                {loaders.isPageLoading ? (
+        <ContentLayout icon="Person" title={translate('profile.title') as string}>
+            <AppCard sx={{ width: { sm: '90%', lg: '70%' } }} title={translate('profile.mainInfo') as string}>
+                {isLoading ? (
                     <CircularProgress color="primary" size={70} />
                 ) : (
                     infoToDisplay.map((info, i) => {
@@ -139,38 +102,53 @@ export default function Profile(): JSX.Element {
                                 <Regular className="text-nowrap" sx={{ width: { xs: '50%', sm: '30%', lg: '30%' } }}>
                                     {info.label} :
                                 </Regular>
-                                <Regular>{info.field === 'levelAccess' ? appTool.LevelAccessTranslater(me[info.field]) : me[info.field]}</Regular>
+                                <Regular>{info.valueFormatter ? info.valueFormatter(me[info.field]) : me[info.field]}</Regular>
                             </Box>
                         );
                     })
                 )}
-            </SectionLayout>
-            <SectionLayout sx={{ width: { sm: '90%', lg: '70%' } }} title="Réglages du profil" icon="Settings">
-                <AppGridContainer>
-                    <InputBase label="Nombre maximum de ligne" id="maxRows" size={3}>
-                        <InputSelectField id="maxRows" options={maxRowsOptions} required onChange={handleMaxRowsChange} value={Ses.maxRows} />
-                    </InputBase>
-                    {/* {!Ses.isPushActive && (
-                        <InputBase label="Activer les notifications externes ?" id="subs" size={4} error={blocked.isBlocked} errorMessage={blocked.message}>
-                            <InputSwitchField value={Ses.isPushActive} disabled={Ses.isPushActive} switchValue={true} onChange={handleNotifChange} id="subs" isLoading={loaders.isNotifLoading} />
+            </AppCard>
+            <Box sx={{ width: { sm: '90%', lg: '70%' }, mt: 2 }} component={'section'}>
+                <AppAccordion title="Couleurs favorites">
+                    <AppGridContainer>
+                        <InputBase size={10} id="color" label="Ajouter une couleur">
+                            <InputColorField id="color" value={currentColor} onChange={(e) => setCurrentColor(e as string)} />
                         </InputBase>
-                    )} */}
-                </AppGridContainer>
-            </SectionLayout>
-            {me && (
-                <SectionLayout sx={{ width: { sm: '90%', lg: '70%' } }} title="Historique d'activités" icon="ManageSearch">
-                    <LogActivities data={me as unknown as UserApiModel} />
-                </SectionLayout>
-            )}
+                        <InputBase size={2} id="submitColor" className="d-flex align-items-end justify-content-end">
+                            <Button onClick={() => handleOnManageColor('add')} variant="outlined" loading={isColorLoading} sx={{ bgcolor: 'background.default', marginTop: '30px' }}>
+                                {translate("common.add")}
+                            </Button>
+                        </InputBase>
+                    </AppGridContainer>
+                    <Box component={'article'}>
+                        <Bold>{translate("profile.colors.savedColor")}</Bold>
+                        <Grid container spacing={3} component={'ul'} className="list-unstyled">
+                            {me?.preferences.favColors.length > 0 ? (
+                                me?.preferences.favColors.map((c, i) => <ColorElement key={i} color={c} onDelete={() => handleOnManageColor('delete', c)} />)
+                            ) : (
+                                <Regular>{translate("profile.colors.noSaved")}</Regular>
+                            )}
+                        </Grid>
+                    </Box>
+                </AppAccordion>
+                <AppAccordion title={translate("profile.history") as string}>{me && <LogActivities data={me as unknown as UserApiModel} />}</AppAccordion>
+            </Box>
         </ContentLayout>
     );
     // #endregion RENDER --> ///////////////////////////////////
 }
 
-function BlockedMessage({ onClick }: { onClick: () => void }): JSX.Element {
+function ColorElement({ color, onDelete }: { color: string; onDelete: () => void }): JSX.Element {
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const handleDelete = (): void => {
+        setIsLoading(true);
+        onDelete();
+    };
     return (
-        <Box component={'a'} onClick={onClick} className="text-danger cursor-pointer text-decoration-underline">
-            Voir le tutoriel
-        </Box>
+        <Grid component={'li'} size={2} sx={{ boxShadow: 2, bgcolor: color, width: 60, height: 60 }} className="rounded position-relative" title={color}>
+            <IconButton sx={{ backgroundColor: 'background.default' }} loading={isLoading} onClick={handleDelete} size="small" className="position-absolute top-0 start-100 translate-middle p-0">
+                <AppIcon name="CloseRounded" size="small" />
+            </IconButton>
+        </Grid>
     );
 }

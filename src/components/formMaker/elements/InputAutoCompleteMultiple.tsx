@@ -16,7 +16,23 @@ import { useTheme } from '@mui/material/styles';
 // #region SINGLETON --> ////////////////////////////////////
 // #endregion SINGLETON --> /////////////////////////////////
 
-export default function InputAutoCompleteMultiple({ sx, style, disabled, required, onSelectAutocompleteInput, error, id, value, success, warning, ssrUrlExtension, isSearchForm, ssr = false, options = [] }: IInputAutoCompleteMultiple): JSX.Element {
+export default function InputAutoCompleteMultiple({
+    sx,
+    style,
+    disabled,
+    required,
+    onChange,
+    onSelectAutocompleteInput,
+    error,
+    id,
+    value,
+    success,
+    warning,
+    ssrUrlExtension,
+    isSearchForm,
+    ssr = false,
+    options = [],
+}: IInputAutoCompleteMultiple): JSX.Element {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [choices, setChoices] = useState<SelectOptionsType[]>(options);
     const [values, setValues] = useState<SelectOptionsType[]>([]);
@@ -78,26 +94,31 @@ export default function InputAutoCompleteMultiple({ sx, style, disabled, require
         if (!v && ssr) {
             setChoices([]);
         }
+
+        if (onChange) {
+            onChange((v ?? []).map((item) => (isSearchForm ? `${item.value}¤${item.label}` : item.value)).join(','));
+        }
     };
 
     useEffect(() => {
-        if (value && value !== '') {
-            if (ssr) {
-                fetchData('', value as string);
-            } else {
-                setValues((prev) => {
-                    const vs = decodeURIComponent((value as string) ?? '')
-                        .split(',')
-                        .map((v) => v.split('¤')[0]);
-                    const founded = vs
-                        .map((v) => {
-                            const f = options.find((o) => o.value.toString() === v);
-                            if (f) return f;
-                        })
-                        .filter((x) => x !== undefined);
-                    return [...prev, ...founded];
-                });
-            }
+        if (!value || value === '') {
+            setValues([]);
+            return;
+        }
+
+        if (ssr) {
+            fetchData('', value as string);
+        } else {
+            const vs = decodeURIComponent((value as string) ?? '')
+                .split(',')
+                .map((v) => v.split('¤')[0]);
+            const founded = vs
+                .map((v) => {
+                    const f = options.find((o) => o.value.toString() === v);
+                    if (f) return f;
+                })
+                .filter((x) => x !== undefined);
+            setValues(founded);
         }
     }, [value]);
 
@@ -120,11 +141,11 @@ export default function InputAutoCompleteMultiple({ sx, style, disabled, require
                 slotProps={{
                     clearIndicator: {
                         sx: {
-                            // backgroundColor: 'transparent',
+                            backgroundColor: 'transparent',
                             border: 'none',
                             color: (theme.vars || theme).palette.grey[400],
                             '&:hover': {
-                                // backgroundColor: 'transparent',
+                                backgroundColor: 'transparent',
                                 color: (theme.vars || theme).palette.grey[30],
                             },
                         },
@@ -162,16 +183,14 @@ export default function InputAutoCompleteMultiple({ sx, style, disabled, require
                         variant="outlined"
                         required={required}
                         onChange={ssr ? onTextFieldChange : null}
+                        id={id + 'Field'}
                         onBlur={ssr ? onBlur : null}
-                        sx={{ marginTop: '4px', marginBottom: '4px', backgroundColor: disabled ? '#e8e5e5' : 'transparent', borderRadius: 1, ...sx }}
                         {...params}
                         InputProps={{
                             ...params.InputProps,
                             className: 'autocomplete-textfield-override',
                             style: style,
-                            sx: {
-                                backgroundColor: disabled ? '#e8e5e5' : 'transparent',
-                            },
+                            sx,
                         }}
                     />
                 )}
@@ -182,7 +201,7 @@ export default function InputAutoCompleteMultiple({ sx, style, disabled, require
                     })
                 }
             />
-            <input type="hidden" id={id as string} name={id as string} value={values.map((v) => (isSearchForm ? `${v.value}¤${v.label}` : v.value)).join(',')} />
+            <input type="hidden" id={id as string} name={id as string} value={values.map((v) => (isSearchForm ? `${v.value}¤${v.label}` : v.value)).join(',')} readOnly />
         </>
     );
     // #endregion RENDER --> ///////////////////////////////////

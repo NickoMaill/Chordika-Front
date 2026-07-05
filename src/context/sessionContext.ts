@@ -1,11 +1,11 @@
 import dayjs, { Dayjs } from 'dayjs';
-import { Dispatch, SetStateAction, createContext } from 'react';
+import { Dispatch, SetStateAction, createContext, useContext } from 'react';
 import { LevelAccessEnum } from '~/models/Session';
-import { UserApiModel } from '~/models/Users';
+import { UserPreferences, UserSessionApiModel } from '~/models/Users';
 
 export interface ISessionContext {
-    id: number;
-    setId?: Dispatch<SetStateAction<number>>;
+    userId: number;
+    setUserId?: Dispatch<SetStateAction<number>>;
 
     username: string;
     setUsername?: Dispatch<SetStateAction<string>>;
@@ -48,12 +48,17 @@ export interface ISessionContext {
     needMfa: boolean;
     setNeedMfa?: Dispatch<SetStateAction<boolean>>;
 
-    proxyList: UserApiModel[];
-    setProxyList?: Dispatch<SetStateAction<UserApiModel[]>>;
+    proxyList: { id: number; name: string }[];
+    setProxyList?: Dispatch<SetStateAction<{ id: number; name: string }[]>>;
+
+    preferences: UserPreferences;
+    setPreferences?: Dispatch<SetStateAction<UserPreferences>>;
+
+    setSession: (user?: UserSessionApiModel) => void;
 }
 
 const initialContext: ISessionContext = {
-    id: null,
+    userId: null,
     username: null,
     fullName: null,
     email: null,
@@ -68,9 +73,16 @@ const initialContext: ISessionContext = {
     maxRows: 50,
     needMfa: null,
     proxyList: [],
+    preferences: null,
     getToken: () => null,
+    setSession: () => null,
 };
 
-const SessionContext = createContext<ISessionContext>(initialContext);
+export const SessionContext = createContext<ISessionContext>(initialContext);
 
-export default SessionContext;
+export default function useSessionContext(): ISessionContext {
+    const context = useContext(SessionContext);
+    if (!context) throw new Error('useSessionContext must be used within a SessionProvider');
+
+    return context as ISessionContext;
+}

@@ -15,12 +15,14 @@ import { Link } from 'react-router';
 import DashboardSidebarContext from '~/context/DashboardSidebarContext';
 import { Fragment, JSX, ReactNode, useCallback, useContext, useMemo, useState } from 'react';
 import { MINI_DRAWER_WIDTH } from '~/constants';
+import { To } from 'react-router-dom';
 
 export interface DashboardSidebarPageItemProps {
     id: string;
     title: string;
     icon?: ReactNode;
     href?: string;
+    linkState?: unknown;
     action?: ReactNode;
     defaultExpanded?: boolean;
     expanded?: boolean;
@@ -30,7 +32,20 @@ export interface DashboardSidebarPageItemProps {
     onClick?: () => void;
 }
 
-export default function DashboardSidebarPageItem({ id, title, icon, href, action, defaultExpanded = false, expanded = defaultExpanded, selected = false, disabled = false, nestedNavigation, onClick = null }: DashboardSidebarPageItemProps): JSX.Element {
+export default function DashboardSidebarPageItem({
+    id,
+    title,
+    icon,
+    href,
+    linkState,
+    action,
+    defaultExpanded = false,
+    expanded = defaultExpanded,
+    selected = false,
+    disabled = false,
+    nestedNavigation,
+    onClick = null,
+}: DashboardSidebarPageItemProps): JSX.Element {
     const sidebarContext = useContext(DashboardSidebarContext);
     if (!sidebarContext) {
         throw new Error('Sidebar context was used without a provider.');
@@ -70,6 +85,18 @@ export default function DashboardSidebarPageItem({ id, title, icon, href, action
     const hasExternalHref = href ? href.startsWith('http://') || href.startsWith('https://') : false;
 
     const LinkComponent = hasExternalHref ? 'a' : Link;
+    const internalTo = useMemo<To | undefined>(() => {
+        if (!href || hasExternalHref) {
+            return undefined;
+        }
+
+        const [pathname, search = ''] = href.split('?');
+
+        return {
+            pathname,
+            search: search ? `?${search}` : '',
+        };
+    }, [href, hasExternalHref]);
 
     const miniNestedNavigationSidebarContextValue = useMemo(() => {
         return {
@@ -123,7 +150,8 @@ export default function DashboardSidebarPageItem({ id, title, icon, href, action
                                         rel: 'noopener noreferrer',
                                     }
                                   : {}),
-                              to: onClick ? null : href,
+                              to: onClick ? undefined : internalTo,
+                              state: onClick || hasExternalHref ? undefined : linkState,
                               onClick: onClick ? onClick : handleClick,
                           }
                         : {})}

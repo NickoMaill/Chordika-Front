@@ -65,11 +65,11 @@ export const navigationCustomizations: Components<Theme> = {
                 borderColor: gray[200],
                 backgroundColor: (theme.vars || theme).palette.background.default,
                 // boxShadow: `inset 0 1px 0 1px hsla(220, 0%, 100%, 0.6), inset 0 -1px 0 1px hsla(220, 35%, 90%, 0.5)`, // moche
-                // '&:hover': {
-                //     borderColor: gray[300],
-                //     backgroundColor: (theme.vars || theme).palette.background.paper,
-                //     boxShadow: 'none',
-                // },
+                '&:hover': {
+                    borderColor: gray[300],
+                    backgroundColor: (theme.vars || theme).palette.background.paper,
+                    boxShadow: 'none',
+                },
                 [`&.${selectClasses.focused}`]: {
                     outlineOffset: 0,
                     borderColor: gray[400],
@@ -81,13 +81,13 @@ export const navigationCustomizations: Components<Theme> = {
                 ...theme.applyStyles('dark', {
                     borderRadius: (theme.vars || theme).shape.borderRadius,
                     borderColor: gray[700],
-                    // backgroundColor: (theme.vars || theme).palette.background.paper,
+                    backgroundColor: (theme.vars || theme).palette.background.default,
                     // boxShadow: `inset 0 1px 0 1px ${alpha(gray[700], 0.15)}, inset 0 -1px 0 1px hsla(220, 0%, 0%, 0.7)`,
-                    // '&:hover': {
-                    //     borderColor: alpha(gray[700], 0.7),
-                    //     backgroundColor: (theme.vars || theme).palette.background.paper,
-                    //     boxShadow: 'none',
-                    // },
+                    '&:hover': {
+                        // borderColor: alpha(gray[700], 0.7),
+                        backgroundColor: (theme.vars || theme).palette.background.default,
+                        boxShadow: 'none',
+                    },
                     [`&.${selectClasses.focused}`]: {
                         outlineOffset: 0,
                         borderColor: gray[900],

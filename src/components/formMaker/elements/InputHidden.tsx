@@ -5,36 +5,14 @@ import { JSX } from 'react';
 import Input from '@mui/material/Input';
 // #endregion IMPORTS -> //////////////////////////////////
 
-// #region SINGLETON --> ////////////////////////////////////
-// #endregion SINGLETON --> /////////////////////////////////
+export default function InputHidden({ id, value }: IInputHidden): JSX.Element {
+    const [currentVal, setCurrentVal] = useState<unknown>(value ?? '');
 
-export default function InputHidden({ onChange, id, value }: IInputHidden): JSX.Element {
-    // #region STATE --> ///////////////////////////////////////
-    const [currentVal, setCurrentVal] = useState<unknown>(value);
-    // #endregion STATE --> ////////////////////////////////////
-
-    // #region HOOKS --> ///////////////////////////////////////
-    // #endregion HOOKS --> ////////////////////////////////////
-
-    // #region METHODS --> /////////////////////////////////////
-    // #endregion METHODS --> //////////////////////////////////
-
-    // #region USEEFFECT --> ///////////////////////////////////
     useEffect(() => {
-        if (value) {
-            setCurrentVal(value);
-        }
+        setCurrentVal(value ?? '');
     }, [value]);
-    // #endregion USEEFFECT --> ////////////////////////////////
 
-    // #region RENDER --> //////////////////////////////////////
-    return (
-        //<input type="hidden" id={id} name={id} onChange={onChange} defaultValue={value as string | number} />
-        <Input type="hidden" id={id} name={id} onChange={onChange} value={currentVal ?? ''} />
-    );
-    // #endregion RENDER --> ///////////////////////////////////
+    return <Input type="hidden" id={id} name={id} value={currentVal ?? ''} readOnly />;
 }
 
-// #region IPROPS -->  /////////////////////////////////////
 interface IInputHidden extends InputBaseType {}
-// #enderegion IPROPS --> //////////////////////////////////

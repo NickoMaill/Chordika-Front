@@ -1,5 +1,5 @@
-import { FormEvent, lazy, RefObject, useState } from 'react';
-import { FormMakerContentType, FormMakerPartEnum, IFormMakerInput, IFormMakerPanel, InputBaseType } from '~/types/FormMakerCoreTypes';
+import { ChangeEvent, lazy, RefObject, useEffect, useMemo, useState } from 'react';
+import { FormMakerType, FormMakerFocusErrorType, FormMakerPartEnum, IFormMakerInput, IFormMakerPanel, InputBaseType, InputType, FormMakerContentType } from '~/types/FormMakerCoreTypes';
 import TabsView from '../common/TabsView';
 import AppGridContainer from '../common/AppGridContainer';
 import InputBase from './elements/InputBase';
@@ -9,7 +9,7 @@ import appTool from '~/helpers/appTool';
 import { GenericActionEnum } from '~/types/centerType';
 import useResources from '~/hooks/useResources';
 import InputAutoComplete from './elements/InputAutoComplete';
-import { useSearchParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import CenterProvider from '~/context/CenterProvider';
 import InputValue from './elements/InputValue';
 import JSONView from './elements/JSONView';
@@ -21,6 +21,7 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import SectionLayout from '../layout/SectionLayout';
 import dayjs from 'dayjs';
+import FormMakerContext, { FormMakerValue } from '~/context/formMakerContext';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
@@ -41,22 +42,49 @@ const InputRichTextField = lazy(() => import('./elements/InputRichTextField'));
 const InputCronField = lazy(() => import('./elements/InputCronField'));
 const InputGroupedSelectField = lazy(() => import('./elements/InputGroupedSelectField'));
 const AppCenter = lazy(() => import('../center/AppCenter'));
+
+const noInputBase: InputType[] = ['hidden'];
+const elementSpacing = 2;
 // #endregion SINGLETON --> /////////////////////////////////
-export default function FormMaker<T>({ onSubmit, structure, data, outputType = 'formData', onBackPress, isSubmitLoading, focusOnError = [], action, grammar, isView = false, submitLabel, showBackPress = true, showBottom = true, idExtension = '', formRef = null, isSearchForm = false, isFormLoading = false }: IFormMaker<T>): JSX.Element {
+export default function FormMaker<T>({
+    onSubmit,
+    structure,
+    data,
+    outputType = 'formData',
+    onBackPress,
+    isSubmitLoading,
+    focusOnError = [],
+    action,
+    grammar,
+    isView = false,
+    submitLabel,
+    showBackPress = true,
+    showBottom = true,
+    idExtension = '',
+    formRef = null,
+    isSearchForm = false,
+    isFormLoading = false,
+    resetCount = 0,
+    recordId
+}: IFormMaker<T>): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
     const [file, setFile] = useState<File>(null);
     const [fileField, setFileFields] = useState<string>(null);
+    const [formValues, setFormValues] = useState<Record<string, FormMakerValue>>({});
     let groupIds = 0;
+    // const [initialValues, setInitialValues] = useState({});
+    // const [formSubmitted, setFormSubmitted] = useState(false);
     // #endregion STATE --> ////////////////////////////////////
 
     // #region HOOKS --> ///////////////////////////////////////
     // const [params] = useSearchParams();
-    const Resources = useResources();
-    const [params] = useSearchParams();
+    const { translate } = useResources();
+    const { id } = useParams();
+    const centerParentId = recordId ?? id;
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////
-    const handleSubmit = (e: FormEvent<HTMLFormElement>): FormData | T => {
+    const handleSubmit = (e: ChangeEvent<HTMLFormElement>): FormData | T => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
         if (outputType === 'JSON') {
@@ -73,6 +101,65 @@ export default function FormMaker<T>({ onSubmit, structure, data, outputType = '
             return formData;
         }
     };
+
+    const extractInitialValues = (): Record<string, FormMakerValue> => {
+        const values: Record<string, FormMakerValue> = {};
+
+        const assignValue = (input: IFormMakerInput): void => {
+            if (!input) return;
+            const source = data && typeof data === 'object' ? (data as Record<string, FormMakerValue>) : null;
+            values[input?.id] = source && input.id in source ? (source[input.id] as FormMakerValue) : ((input.value ?? '') as FormMakerValue);
+        };
+
+        if (!structure?.length) {
+            return values;
+        }
+
+        structure.forEach((part) => {
+            if (part.type === FormMakerPartEnum.TAB) {
+                (part.content as IFormMakerPanel[]).forEach((panel) => {
+                    panel.content.forEach(assignValue);
+                });
+            } else {
+                (part.content as IFormMakerInput[]).forEach(assignValue);
+            }
+        });
+
+        return values;
+    };
+
+    const setValue = (field: string, value: FormMakerValue): void => {
+        setFormValues((prev) => ({
+            ...prev,
+            [field]: value,
+        }));
+    };
+
+    const setValues = (nextValues: Record<string, FormMakerValue>): void => {
+        setFormValues((prev) => ({
+            ...prev,
+            ...nextValues,
+        }));
+    };
+
+    const getValue = <TValue = FormMakerValue,>(field: string): TValue => {
+        return (formValues[field] ?? null) as TValue;
+    };
+
+    const resetValues = (nextValues?: Record<string, FormMakerValue>): void => {
+        setFormValues(nextValues ?? extractInitialValues());
+    };
+
+    const formMakerContextValue = useMemo(
+        () => ({
+            values: formValues,
+            setValue,
+            setValues,
+            getValue,
+            resetValues,
+        }),
+        [formValues]
+    );
     /**
      * @description method that parse and render form
      * @returns form content HTML Element
@@ -113,11 +200,13 @@ export default function FormMaker<T>({ onSubmit, structure, data, outputType = '
                 if (s.type === FormMakerPartEnum.TAB) {
                     (s.content as IFormMakerPanel[]).forEach((p: IFormMakerPanel) => {
                         p.content.forEach((el) => {
+                            if (!el) return;
                             ids.push(el.id);
                         });
                     });
                 } else {
                     (s.content as IFormMakerInput[]).forEach((el) => {
+                        if (!el) return;
                         ids.push(el.id);
                     });
                 }
@@ -130,33 +219,11 @@ export default function FormMaker<T>({ onSubmit, structure, data, outputType = '
         }
     };
 
-    // /**
-    //  *
-    //  * @param id
-    //  * @returns data
-    //  */
-    // const foundDataById = (id: string): string | number | boolean => {
-    //     let key = '';
-    //     if (data) {
-    //         for (const entry in data) {
-    //             if (id.toString() === entry) {
-    //                 key = entry;
-    //             }
-    //         }
-    //         if (key !== '') {
-    //             return data[key];
-    //         } else {
-    //             return null;
-    //         }
-    //     } else {
-    //         return null;
-    //     }
-    // };
-
     const buildPanelContent = (struct: FormMakerContentType<FormMakerPartEnum.PANEL | FormMakerPartEnum.SEARCH>, index: number): JSX.Element => {
         const groupedElement: JSX.Element[] = [];
         let currentGroup: JSX.Element[] = [];
         struct.content.forEach((element, i) => {
+            if (!element || element.hidden) return;
             const inputBaseProps: InputBaseType = {
                 className: element.className,
                 sx: element.sx,
@@ -166,16 +233,16 @@ export default function FormMaker<T>({ onSubmit, structure, data, outputType = '
                 disabled: element.disabled,
                 showLabel: element.showLabel,
                 size: element.size,
-                id: element.id,
+                id: element.type === 'autocomplete' || element.type === 'multipleAutocomplete' ? element.id + 'Field' : element.id,
                 helpText: element.helpText,
                 label: element.label,
-                error: focusOnError.includes(element.id.toLowerCase()) || element.error,
-                errorMessage: element.errorMessage,
+                error: focusOnError.some((f) => f.field.toLowerCase() === element.id.toLowerCase()) || element.error,
+                errorMessage: focusOnError.find((f) => f.field.toLowerCase() === element.id.toLowerCase())?.message ?? element.errorMessage,
             };
             if (element.index === 1) {
                 if (currentGroup.length > 0) {
                     groupedElement.push(
-                        <AppGridContainer key={`group-${groupIds}`} id={`group-${groupIds}`} spacing={2}>
+                        <AppGridContainer key={`group-${groupIds}`} id={`group-${groupIds}`} spacing={elementSpacing}>
                             {currentGroup}
                         </AppGridContainer>
                     );
@@ -183,7 +250,7 @@ export default function FormMaker<T>({ onSubmit, structure, data, outputType = '
                     groupIds++;
                 }
                 currentGroup.push(
-                    element.type === 'hidden' ? (
+                    noInputBase.includes(element.type) ? (
                         buildInput(element, i)
                     ) : (
                         <InputBase key={i} {...inputBaseProps}>
@@ -193,7 +260,7 @@ export default function FormMaker<T>({ onSubmit, structure, data, outputType = '
                 );
             } else {
                 currentGroup.push(
-                    element.type === 'hidden' ? (
+                    noInputBase.includes(element.type) ? (
                         buildInput(element, i)
                     ) : (
                         <InputBase key={i} {...inputBaseProps}>
@@ -205,7 +272,7 @@ export default function FormMaker<T>({ onSubmit, structure, data, outputType = '
 
             if (i === struct.content.length - 1) {
                 groupedElement.push(
-                    <AppGridContainer key={'a' + i} spacing={2}>
+                    <AppGridContainer key={'a' + i} spacing={elementSpacing}>
                         {currentGroup}
                     </AppGridContainer>
                 );
@@ -220,7 +287,7 @@ export default function FormMaker<T>({ onSubmit, structure, data, outputType = '
             );
         } else {
             return (
-                <Box key={index} display="flex" justifyContent="center" flexDirection="column" alignItems="center" marginBottom={4}>
+                <Box key={index} display="flex" justifyContent="center" flexDirection="column" alignItems="center" >
                     {groupedElement}
                 </Box>
             );
@@ -244,25 +311,40 @@ export default function FormMaker<T>({ onSubmit, structure, data, outputType = '
             label: element.label,
             required: element.required,
             disabled: element.disabled,
-            value: data ? data[element.id] : element.value?.toString() !== '' ? element.value : null,
-            errorMessage: element.errorMessage,
-            error: focusOnError.includes(element.id.toLowerCase()) || element.error,
+            value: formValues[element.id] ?? '',
+            errorMessage: focusOnError.find((f) => f.field.toLowerCase() === element.id.toLowerCase())?.message ?? element.errorMessage,
+            error: focusOnError.some((f) => f.field.toLowerCase() === element.id.toLowerCase()) || element.error,
             isLoading: element.isLoading,
             success: element.success,
             warning: element.warning,
-            onChange: element.onChange,
+            onChange: (inputValue, args) => {
+                let nextValue = inputValue as FormMakerValue;
+
+                if (typeof inputValue === 'object' && inputValue !== null && 'target' in inputValue) {
+                    nextValue = (inputValue.target as HTMLInputElement | HTMLTextAreaElement)?.value ?? '';
+                }
+
+                setValue(element.id, nextValue);
+
+                if (element.onChange) {
+                    element.onChange(inputValue, args);
+                }
+            },
             sx: element.sx,
             autoComplete: element.autoComplete,
             autoCapitalize: element.autoCapitalize,
             placeholder: element.placeholder,
             readOnly: element.readOnly,
             isSearchForm,
+            resetSignal: element.resetSignal,
         };
         if (isView) {
             let founded = null;
             switch (elementType) {
+                case 'autocomplete':
                 case 'select':
                     if (baseProps.value) {
+                        if (element.ssr) break;
                         founded = element.selectOptions.find((e) => e.value === baseProps.value);
                         if (founded) {
                             baseProps.value = founded.label;
@@ -311,7 +393,7 @@ export default function FormMaker<T>({ onSubmit, structure, data, outputType = '
             case 'url':
             case 'text':
             case 'value': {
-                return <InputTextField {...baseProps} key={i} type={elementType} min={element.min} max={element.max} />;
+                return <InputTextField {...baseProps} key={i} type={elementType} />;
             }
             case 'hidden': {
                 return <input key={i} name={baseProps.id} id={baseProps.id} value={(baseProps.value as string) ?? ''} type="hidden" />;
@@ -341,7 +423,7 @@ export default function FormMaker<T>({ onSubmit, structure, data, outputType = '
                 return <InputAutoCompleteMultiple {...baseProps} key={i} options={element.selectOptions} ssr={element.ssr} ssrUrlExtension={element.ssrUrlExtension} />;
             }
             case 'radio': {
-                return <InputRadioField {...baseProps} key={i} options={element.radioOptions} row={element.row} />;
+                return <InputRadioField {...baseProps} key={i} options={element.radioOptions} />;
             }
             case 'textarea': {
                 return <InputTextAreaField {...baseProps} key={i} limit={element.limit} rows={element.rows} />;
@@ -366,9 +448,9 @@ export default function FormMaker<T>({ onSubmit, structure, data, outputType = '
                 return <RangeInput {...baseProps} key={i} />;
             }
             case 'center': {
-                const props = { entity: element.id, parentId: params.has('ID') ? params.get('ID') : '', isSubCenter: true, genericAction: GenericActionEnum.TABLE, parentField: element.parentField };
+                const props = { entity: element.id, parentId: centerParentId!, isSubCenter: true, action: GenericActionEnum.TABLE, parentField: element.parentField };
                 return (
-                    <CenterProvider>
+                    <CenterProvider isSub forcedTableName={element.id}>
                         <SearchProvider>
                             <AppCenter {...props} key={i} />
                         </SearchProvider>
@@ -386,8 +468,12 @@ export default function FormMaker<T>({ onSubmit, structure, data, outputType = '
                     <InputFileField
                         {...baseProps}
                         onChange={(e) => {
+                            setValue(element.id, e);
                             setFile(e as File);
                             setFileFields(baseProps.id);
+                            if (element.onChange) {
+                                element.onChange(e);
+                            }
                         }}
                         key={i}
                     />
@@ -402,59 +488,86 @@ export default function FormMaker<T>({ onSubmit, structure, data, outputType = '
     const getActionLabel = (str: string): string => {
         switch (str) {
             case GenericActionEnum.UPDATE:
-                return Resources.translate('common.update') as string;
+                return translate('common.update') as string;
             case GenericActionEnum.DELETE:
-                return Resources.translate('common.delete') as string;
+                return translate('common.delete') as string;
             case GenericActionEnum.TABLE:
-                return Resources.translate('common.search') as string;
+                return translate('common.search') as string;
             default:
-                return Resources.translate('common.add') as string;
+                return translate('common.add') as string;
         }
     };
     // #endregion METHODS --> //////////////////////////////////
 
     // #region USEEFFECT --> ///////////////////////////////////
+    useEffect(() => {
+        setFormValues(extractInitialValues());
+    }, [structure, data]);
+    
+    useEffect(() => {
+        console.log(resetCount);
+        if (resetCount > 0) {
+            resetValues();
+        }
+    }, [resetCount])
     // #endregion USEEFFECT --> ////////////////////////////////
 
     // #region RENDER --> //////////////////////////////////////
     return (
-        <>
+        <FormMakerContext.Provider value={formMakerContextValue}>
             {isFormLoading ? (
                 <AppFullPageLoader count={300} counting isLoading message={`${grammar} en cours de chargement...`} />
             ) : (
-                <Box encType="multipart/form-data" ref={formRef ? formRef : null} name={`Form${idExtension}`} id={`Form${idExtension}`} onSubmit={onSubmit ? (e): void => onSubmit(handleSubmit(e)) : null} component="form" className="position-relative" sx={{ width: '100%', flexGrow: 1, marginTop: 1 }}>
+                <Box
+                    encType="multipart/form-data"
+                    ref={formRef ? formRef : null}
+                    name={`Form${idExtension}`}
+                    id={`Form${idExtension}`}
+                    onSubmit={onSubmit ? (e): void => onSubmit(handleSubmit(e)) : null}
+                    component="form"
+                    className="position-relative"
+                    sx={{ width: '100%', flexGrow: 1, marginTop: 2 }}
+                >
                     <input type="hidden" id="action" name="action" value={action} />
                     {renderForm()}
                     {showBottom && (
                         <Container component="div" className="d-flex align-items-center justify-content-center">
-                            <InputSubmit showSubmit={action === GenericActionEnum.DELETE ? true : !isView} isLoading={isSubmitLoading} label={submitLabel ? submitLabel : `${getActionLabel(action)} ${grammar}`} showBackPress={showBackPress} onBackPress={onBackPress} />
+                            <InputSubmit
+                                showSubmit={action === GenericActionEnum.DELETE ? true : !isView}
+                                isLoading={isSubmitLoading}
+                                label={submitLabel ? submitLabel : `${getActionLabel(action)} ${grammar}`}
+                                showBackPress={showBackPress}
+                                onBackPress={onBackPress}
+                            />
                         </Container>
                     )}
                 </Box>
             )}
-        </>
+        </FormMakerContext.Provider>
     );
     // #endregion RENDER --> ///////////////////////////////////
 }
 
 // #region IPROPS -->  /////////////////////////////////////
 export interface IFormMaker<T> {
-    onSubmit: (f: FormData | T) => void;
+    onSubmit?: (f: FormData | T) => void;
     onBackPress?: () => void;
-    structure: FormMakerContentType<FormMakerPartEnum>[];
+    structure: FormMakerType<FormMakerPartEnum>;
     data?: T;
     outputType?: 'formData' | 'JSON';
     idExtension?: string;
     isFormLoading?: boolean;
     isSubmitLoading?: boolean;
-    focusOnError?: string[];
+    focusOnError?: FormMakerFocusErrorType[];
     action?: GenericActionEnum;
     grammar?: string;
     isView?: boolean;
     submitLabel?: string;
+    resetCount?: number;
     showBackPress?: boolean;
     showBottom?: boolean;
     formRef?: RefObject<HTMLFormElement>;
     isSearchForm?: boolean;
+    recordId?: string;
 }
 // #endregion IPROPS --> //////////////////////////////////

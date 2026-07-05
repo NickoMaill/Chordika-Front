@@ -1,8 +1,7 @@
-import { JSX, ReactNode, useContext, useEffect } from 'react';
+import { JSX, ReactNode, useEffect } from 'react';
 import AppCard from '../common/AppCard';
 import { Bold, Regular } from '../common/Text';
 import { Link } from 'react-router-dom';
-import AppContext from '~/context/appContext';
 import useNavigation from '~/hooks/useNavigation';
 import { Trans } from 'react-i18next';
 import { doneProgress } from '~/helpers/progressHelper';
@@ -13,6 +12,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import AppBox from '../common/AppBox';
 import Container from '@mui/material/Container';
+import useAppContext from '~/context/appContext';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
@@ -20,9 +20,9 @@ import Container from '@mui/material/Container';
 
 export default function LayoutFallback({ children, backUrl }: ILayoutFallback): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
-    const App = useContext(AppContext);
-    const Navigation = useNavigation();
-    const Resources = useResources();
+    const { isNoAccess, setIsNoAccess, setNotFound, notFound, noServer, boxOptions } = useAppContext();
+    const { navigateByPath, goBack } = useNavigation();
+    const { translate } = useResources();
     // #endregion STATE --> ////////////////////////////////////
 
     // #region HOOKS --> ///////////////////////////////////////
@@ -31,31 +31,31 @@ export default function LayoutFallback({ children, backUrl }: ILayoutFallback): 
     // #region METHODS --> /////////////////////////////////////
     const handleNavigate = (): void => {
         if (backUrl && backUrl !== '') {
-            Navigation.navigateByPath(backUrl);
+            navigateByPath(backUrl);
         } else {
-            Navigation.goBack();
+            goBack();
         }
     };
     // #endregion METHODS --> //////////////////////////////////
 
     // #region USEEFFECT --> ///////////////////////////////////
     useEffect(() => {
-        if (App.isNoAccess) {
-            App.setIsNoAccess(false);
+        if (isNoAccess) {
+            setIsNoAccess(false);
         }
-        if (App.notFound) {
-            App.setNotFound(false);
+        if (notFound) {
+            setNotFound(false);
         }
-    }, [Navigation.location]);
+    }, [location]);
     useEffect(() => {
-        if (App.isNoAccess || App.notFound) doneProgress();
-    }, [App.isNoAccess]);
+        if (isNoAccess || notFound) doneProgress();
+    }, [isNoAccess]);
     // #endregion USEEFFECT --> ////////////////////////////////
 
     // #region RENDER --> //////////////////////////////////////
     return (
         <>
-            {App.isNoAccess ? (
+            {isNoAccess ? (
                 <Box display="flex" alignItems="center" flexDirection="column">
                     <AppCard title="Accès Refusé" sx={{ width: '100%' }} icon="Lock">
                         <Bold>
@@ -74,16 +74,16 @@ export default function LayoutFallback({ children, backUrl }: ILayoutFallback): 
                         </Regular>
                     </AppCard>
                     <Button onClick={handleNavigate} sx={{ width: 'fit-content' }} variant="contained" color="secondary">
-                        {Resources.translate('common.back')}
+                        {translate('common.back')}
                     </Button>
                 </Box>
-            ) : App.notFound ? (
+            ) : notFound ? (
                 <NotFound />
-            ) : App.noServer ? (
+            ) : noServer ? (
                 <NoServer />
-            ) : App.boxOptions ? (
+            ) : boxOptions ? (
                 <Container>
-                    <AppBox title={App.boxOptions.title} text={App.boxOptions.text} icon={App.boxOptions.icon} showBack={App.boxOptions.showBack} />
+                    <AppBox title={boxOptions.title} text={boxOptions.text} icon={boxOptions.icon} showBack={boxOptions.showBack} />
                 </Container>
             ) : (
                 children

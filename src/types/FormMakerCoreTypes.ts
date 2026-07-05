@@ -1,10 +1,11 @@
 import { SelectChangeEvent } from '@mui/material/Select';
-import { SxProps } from '@mui/material/styles';
+import { Breakpoint, SxProps } from '@mui/material/styles';
 import { DateView } from '@mui/x-date-pickers';
 import { CSSProperties, ChangeEvent, Dispatch, ReactNode } from 'react';
 import { CenterState, CenterStateAction, GenericActionEnum } from './centerType';
 import { JSX } from 'react';
 import { IconNameType } from '~/components/common/AppIcon';
+import { GridSize } from '@mui/material';
 
 /**
  * @description FormMaker input type options
@@ -65,14 +66,13 @@ export interface IFormMakerInput extends InputBaseType {
     parentField?: string;
     centerState?: CenterState<unknown>;
     centerDispatch?: Dispatch<CenterStateAction<unknown>>;
-    min?: number;
-    max?: number;
-    row?: boolean;
 }
 
 /**
  * @description FormMaker structure Type
  */
+export type FormMakerType<T extends FormMakerPartEnum> = FormMakerContentType<T>[];
+
 export type FormMakerContentType<T extends FormMakerPartEnum> = {
     /**
      * @description title of tab if T = FormMakerPartEnum.TAB else title of PANEL
@@ -120,6 +120,15 @@ export enum FormMakerPartEnum {
     SEARCH = 2,
 }
 
+/**
+ * @description type of error for focus on error feature of FormMaker, field is the field name to focus, name is the field name to display in error message and message is the error message to display
+ */
+export type FormMakerFocusErrorType = {
+    field: string;
+    name: string;
+    message: string;
+};
+
 //====================================>
 /**
  * @description Input regular type
@@ -132,7 +141,7 @@ export interface InputBaseType {
     error?: boolean;
     success?: boolean;
     warning?: boolean;
-    size?: number;
+    size?: GridSize | Array<GridSize | null> | { [key in Breakpoint]?: GridSize | null }
     helpText?: string;
     errorMessage?: string | ReactNode;
     autoComplete?: AutoCompleteType;
@@ -144,6 +153,7 @@ export interface InputBaseType {
     showLabel?: boolean;
     placeholder?: string;
     sx?: SxProps;
+    hidden?: boolean;
     style?: CSSProperties;
     isLoading?: boolean;
     icon?: IconNameType;
@@ -151,9 +161,11 @@ export interface InputBaseType {
     defaultValue?: unknown;
     onFocusChange?: (isFocused: boolean) => void;
     isSearchForm?: boolean;
+    resetSignal?: unknown;
+    showErrorContainer?: boolean;
 }
 
-export type AutoCompleteType = 'on' | 'off' | 'given-name' | 'family-name' | 'email' | 'address-line1' | 'country' | 'country-name' | 'bday' | 'new-password' | 'username';
+export type AutoCompleteType = 'on' | 'off' | 'given-name' | 'family-name' | 'email' | 'address-line1' | 'country' | 'country-name' | 'bday' | 'new-password';
 export type AutoCapitalizeType = 'off' | 'on' | 'words' | 'characters';
 export type InputType =
     | 'button'

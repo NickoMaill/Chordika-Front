@@ -1,18 +1,19 @@
 // #region IMPORTS -> /////////////////////////////////////
 import Box from '@mui/material/Box';
-import { Bold, Regular } from '../common/Text';
-import { lazy, useContext, useState } from 'react';
-import SearchContext, { SearchField } from '~/context/searchContext';
-import { FormMakerContentType, FormMakerPartEnum } from '~/types/FormMakerCoreTypes';
+import { Bold, Bolder } from '../common/Text';
+import { lazy, useState } from 'react';
+import { SearchField } from '~/context/searchContext';
+import { FormMakerPartEnum, FormMakerType } from '~/types/FormMakerCoreTypes';
 import FormMaker from '../formMaker/FormMaker';
 import useResources from '~/hooks/useResources';
 import { CenterGrammarType, GenericActionEnum } from '~/types/centerType';
 import appTool from '~/helpers/appTool';
 import { JSX } from 'react';
-import Link from '@mui/material/Link';
 import Drawer from '@mui/material/Drawer';
 import { useTheme } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
+import { Button, Chip, Grid, Paper } from '@mui/material';
+import useSearchContext from '~/context/searchContext';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
@@ -24,11 +25,11 @@ export default function AppCenterSearch<T>({ searchFormStruct, onSubmitSearchFor
     const [isSearchFormVisible, setIsSearchFormVisible] = useState<boolean>(false);
     const [isNew, setIsNew] = useState<boolean>(true);
     // #endregion STATE --> ////////////////////////////////////
-
+ 
     // #region HOOKS --> ///////////////////////////////////////
-    const Search = useContext(SearchContext);
-    const Resources = useResources();
-    const theme = useTheme();
+    const { filters, sortedBy, setFilters, setPage } = useSearchContext();
+    const { translate } = useResources();
+    const { palette } = useTheme();
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////
@@ -38,9 +39,9 @@ export default function AppCenterSearch<T>({ searchFormStruct, onSubmitSearchFor
     };
 
     const mapSearchFieldToObject = (): T | null => {
-        if (Search.filters) {
+        if (filters) {
             const obj = new Object();
-            Search.filters.forEach((f) => {
+            filters.forEach((f) => {
                 Object.defineProperty(obj, f.field, { value: f.values, writable: true });
             });
             return obj as T;
@@ -51,21 +52,10 @@ export default function AppCenterSearch<T>({ searchFormStruct, onSubmitSearchFor
 
     const onSubmit = (f: T): void => {
         const searchField: SearchField[] = appTool.ParseSearchUrl(searchFormStruct, f as Record<string, string>);
-        Search.setFilters(searchField);
-        Search.setPage(0);
+        setFilters(searchField);
+        setPage(0);
         onSubmitSearchForm();
         setIsSearchFormVisible(false);
-    };
-
-    const formatFiltersView = (): string => {
-        if (Search.filters) {
-            const searchString = Search.filters.map((filter) => {
-                return `${filter.fieldName} : ${filter.formattedValue}`;
-            });
-            return searchString.join(', ');
-        } else {
-            return '';
-        }
     };
     // #endregion METHODS --> //////////////////////////////////
 
@@ -75,43 +65,69 @@ export default function AppCenterSearch<T>({ searchFormStruct, onSubmitSearchFor
     // #region RENDER --> //////////////////////////////////////
     return (
         <>
-            <Box display="flex" flexWrap={'wrap'} alignItems={'center'} marginBottom={1}>
-                <Box display={'flex'}>
-                    <Regular className="me-1">
-                        <b>{Resources.translate('common.filters')}</b> : {!Search.filters || Search.filters.length < 1 ? Resources.translate('center.search.nothing') : formatFiltersView() + ', '} {Search.sortedBy ? Resources.translate('center.search.orderBy') : null}{' '}
-                    </Regular>
-                    {Search.sortedBy && (
-                        <Bold display="flex" alignItems="center" marginRight={2}>
-                            {Search.sortedBy.sortLabel}
-                            <AppIcon name={Search.sortedBy.order === 'asc' ? 'ArrowUpward' : 'ArrowDownward'} />
-                        </Bold>
-                    )}
-                </Box>
-                <Box display="flex">
-                    {Search.filters && Search.filters.length > 0 && (
-                        <Link marginRight={3} component={'a'} onClick={() => openCloseModal(false)}>
-                            <Bold className="cursor-pointer">{Resources.translate('center.search.updateSearch')}</Bold>
-                        </Link>
+            <Grid container component={Paper} variant="outlined" className="mb-3 rounded-3 p-3 d-flex align-items-center w-100" sx={{ gap: '1rem' }}>
+                <Grid component={Paper} variant="outlined" className="rounded p-1 d-flex align-items-center">
+                    <AppIcon name="TuneRounded" color="primary" />
+                </Grid>
+                <Grid sx={{ flexGrow: 1 }}>
+                    <Bolder className="mb-1" color="paper">
+                        {translate('common.filters').toString().toUpperCase()}
+                    </Bolder>
+                    <Box className="d-flex align-items-center flex-wrap" sx={{ gap: '0.5rem' }}>
+                        {filters.length > 0 ? (
+                            filters.map((filter, i) => {
+                                return <Chip key={i} label={`${filter.fieldName} : ${filter.formattedValue}`} />;
+                            })
+                        ) : (
+                            <Chip label={translate('center.search.nothing')} />
+                        )}
+                        {sortedBy && (
+                            <Chip
+                                label={`${translate('center.search.orderBy')} ${sortedBy.sortLabel}`}
+                                icon={<AppIcon name={sortedBy.order === 'asc' ? 'ArrowUpward' : 'ArrowDownward'} />}
+                            />
+                        )}
+                    </Box>
+                </Grid>
+                <Grid display="flex">
+                    {filters && filters.length > 0 && (
+                        <Button variant="outlined" sx={{ bgcolor: 'background.default' }} className="me-2" startIcon={<AppIcon name="TuneRounded" />} onClick={() => openCloseModal(false)}>
+                            <Bold className="cursor-pointer">{translate('center.search.updateSearch')}</Bold>
+                        </Button>
                     )}
                     {searchFormStruct && searchFormStruct.length > 0 && (
-                        <Link component={'a'} onClick={() => openCloseModal(true)}>
-                            <Bold className="cursor-pointer">{Resources.translate('center.search.newSearch')}</Bold>
-                        </Link>
+                        <Button variant="outlined" sx={{ bgcolor: 'background.default' }} startIcon={<AppIcon name="SearchRounded" />} onClick={() => openCloseModal(true)}>
+                            <Bold className="cursor-pointer">{translate('center.search.newSearch')}</Bold>
+                        </Button>
                     )}
-                </Box>
-            </Box>
+                </Grid>
+            </Grid>
             {searchFormStruct && searchFormStruct.length > 0 && (
                 <>
-                    <Drawer slotProps={{ root: { sx: { zIndex: 1202 } }, paper: { className: 'rounded-start', sx: { position: { xs: 'unset', sm: 'fixed' } } } }} open={isSearchFormVisible} anchor="right" onClose={() => openCloseModal(true)}>
+                    <Drawer
+                        slotProps={{ root: { sx: { zIndex: 1202 } }, paper: { className: 'rounded-start', sx: { position: { xs: 'unset', sm: 'fixed' } } } }}
+                        open={isSearchFormVisible}
+                        anchor="right"
+                        onClose={() => openCloseModal(true)}
+                    >
                         <Box width={{ sm: '650px' }} display={'flex'} alignItems={'center'} justifyContent={'center'} flexDirection={'column'} className="px-5 position-relative">
                             <IconButton aria-label="close" onClick={() => openCloseModal(false)} className="position-absolute top-0 start-0 m-1">
                                 <AppIcon name="Close" />
                             </IconButton>
                             <Box className="m-4 mt-5 w-100 d-flex align-items-center">
-                                <Bold component={'h5'} className="pe-2" variant="h5">{`${Resources.translate('common.search')} ${grammar.plural}`}</Bold>
-                                <AppIcon name="Search" sx={{ color: theme.palette.grey[500] }} />
+                                <Bold component={'h5'} className="pe-2" variant="h5">{`${translate('common.search')} ${grammar.plural}`}</Bold>
+                                <AppIcon name="Search" sx={{ color: palette.grey[500] }} />
                             </Box>
-                            <FormMaker<T> isSearchForm grammar={grammar.plural} action={GenericActionEnum.TABLE} outputType="JSON" data={Search.filters && !isNew ? mapSearchFieldToObject() : null} structure={searchFormStruct} onBackPress={() => openCloseModal(true)} onSubmit={onSubmit} />
+                            <FormMaker<T>
+                                isSearchForm
+                                grammar={grammar.plural}
+                                action={GenericActionEnum.TABLE}
+                                outputType="JSON"
+                                data={filters && !isNew ? mapSearchFieldToObject() : null}
+                                structure={searchFormStruct}
+                                onBackPress={() => openCloseModal(true)}
+                                onSubmit={onSubmit}
+                            />
                         </Box>
                     </Drawer>
                 </>
@@ -123,7 +139,7 @@ export default function AppCenterSearch<T>({ searchFormStruct, onSubmitSearchFor
 
 // #region IPROPS -->  /////////////////////////////////////
 interface IAppCenterSearch {
-    searchFormStruct?: FormMakerContentType<FormMakerPartEnum.SEARCH>[];
+    searchFormStruct?: FormMakerType<FormMakerPartEnum.SEARCH>;
     onSubmitSearchForm?: () => void;
     searchData?: SearchField[];
     grammar: CenterGrammarType;

@@ -23,28 +23,10 @@ export type UserSessionApiModel = {
     preferences: UserPreferences;
     isPushActive: boolean;
     maxRows: number;
+    token: string;
     userName: string;
     proxies: UserApiModel[];
 };
-
-export interface UserSessionDb {
-    id: number;
-    userId: string;
-    email: string;
-    firstName: string;
-    ip: string;
-    lastName: string;
-    levelAccess: number;
-    mobile: string;
-    name: string;
-    needMFA: boolean;
-    preferences: UserPreferences;
-    isPushActive: boolean;
-    maxRows: number;
-    userName: string;
-    isAuthenticated: boolean;
-    proxies: UserApiModel[];
-}
 
 export type SearchUserForm = {
     id: string;
@@ -55,4 +37,32 @@ export type UserPreferencesPayload = {
     value: unknown;
 };
 
-export type UserPreferences = { maxRows: number; isPushActive: boolean };
+export type UserPreferences = {
+    favColors: string[];
+};
+
+export type UserDeviceSessions = {
+    id: number;
+    token: string;
+    type: 'SES' | 'RES';
+    userId: number;
+    userIp: string;
+    userAgent: string;
+    deviceId: string;
+    expires: Date;
+    isRevoked: boolean;
+    revokedAt: Date;
+    addedAt: Date;
+    updatedAt: Date;
+};
+
+export type PlaySession = {
+    id: number;
+    userId: number;
+    movieId: number;
+    movieTitle: string;
+    lastSeen: Date;
+    revoked: boolean;
+    addedAt: Date;
+    updatedAt: Date;
+};

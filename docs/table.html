@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pilotage projets - Rétroplanning</title>
+  <style>
+    :root {
+      --bg: #f4f6f8;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --text: #172033;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --primary: #162232;
+      --primary-soft: #eef2f7;
+      --accent: #d9a441;
+      --success: #3f8f62;
+      --warning: #d98b2b;
+      --danger: #bf4d4d;
+      --info: #3f6f9f;
+      --shadow: 0 18px 45px rgba(22, 34, 50, 0.08);
+      --radius-xl: 26px;
+      --radius-lg: 18px;
+      --radius-md: 12px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(217, 164, 65, 0.18), transparent 32rem),
+        linear-gradient(135deg, #f8fafc, var(--bg));
+    }
+
+    button, input, select { font: inherit; }
+
+    .app-shell {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      padding: 28px 22px;
+      background: rgba(255, 255, 255, 0.7);
+      border-right: 1px solid rgba(229, 231, 235, 0.8);
+      backdrop-filter: blur(18px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 36px;
+    }
+
+    .brand-logo {
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 16px;
+      color: white;
+      font-weight: 800;
+      background: var(--primary);
+      box-shadow: 0 12px 28px rgba(22, 34, 50, 0.22);
+    }
+
+    .brand-title {
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      font-size: 1.1rem;
+    }
+
+    .brand-subtitle {
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .nav-title {
+      margin: 26px 10px 10px;
+      color: var(--muted);
+      font-size: 0.74rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 12px 14px;
+      margin-bottom: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      border-radius: 14px;
+      transition: 160ms ease;
+    }
+
+    .nav-item:hover,
+    .nav-item.active {
+      color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .nav-icon {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: white;
+      border: 1px solid var(--border);
+    }
+
+    .main { padding: 30px; }
+
+    .topbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 26px;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 4px 0 8px;
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      line-height: 1;
+      letter-spacing: -0.07em;
+    }
+
+    .page-intro {
+      margin: 0;
+      color: var(--muted);
+      max-width: 720px;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .primary-button,
+    .ghost-button,
+    .accent-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 44px;
+      border-radius: 16px;
+      font-weight: 780;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .primary-button {
+      border: 0;
+      color: white;
+      background: var(--primary);
+      padding: 0 18px;
+      box-shadow: 0 16px 32px rgba(22, 34, 50, 0.2);
+    }
+
+    .accent-button {
+      border: 0;
+      color: #2f2107;
+      background: linear-gradient(135deg, #efc464, var(--accent));
+      padding: 0 18px;
+      box-shadow: 0 16px 32px rgba(217, 164, 65, 0.24);
+    }
+
+    .ghost-button {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--primary);
+      padding: 0 14px;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .metric-card,
+    .panel,
+    .project-card,
+    .pilot-card {
+      background: rgba(255, 255, 255, 0.86);
+      border: 1px solid rgba(229, 231, 235, 0.9);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .metric-card {
+      padding: 20px;
+      border-radius: var(--radius-lg);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .metric-card::after {
+      content: "";
+      position: absolute;
+      right: -30px;
+      bottom: -30px;
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: rgba(217, 164, 65, 0.11);
+    }
+
+    .metric-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--muted);
+      font-size: 0.86rem;
+      margin-bottom: 12px;
+    }
+
+    .metric-value {
+      font-size: 2rem;
+      font-weight: 850;
+      letter-spacing: -0.06em;
+    }
+
+    .metric-note {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 380px;
+      gap: 22px;
+    }
+
+    .panel {
+      border-radius: var(--radius-xl);
+      padding: 20px;
+    }
+
+    .panel + .panel { margin-top: 18px; }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 1.1rem;
+      letter-spacing: -0.03em;
+    }
+
+    .panel-subtitle {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .search,
+    .select {
+      height: 44px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 14px;
+      padding: 0 14px;
+      color: var(--text);
+      outline: none;
+    }
+
+    .search { flex: 1 1 260px; }
+    .select { flex: 0 0 auto; }
+
+    .pilot-strip {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .pilot-card {
+      padding: 16px;
+      border-radius: 18px;
+    }
+
+    .pilot-label {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 10px;
+    }
+
+    .pilot-value {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-weight: 850;
+      font-size: 1.04rem;
+    }
+
+    .health-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      background: var(--success);
+      box-shadow: 0 0 0 5px rgba(63, 143, 98, 0.12);
+    }
+
+    .health-dot.warn { background: var(--warning); box-shadow: 0 0 0 5px rgba(217, 139, 43, 0.14); }
+    .health-dot.danger { background: var(--danger); box-shadow: 0 0 0 5px rgba(191, 77, 77, 0.14); }
+
+    .projects-list { display: grid; gap: 14px; }
+
+    .project-card {
+      display: grid;
+      grid-template-columns: 1fr 180px;
+      gap: 18px;
+      padding: 18px;
+      border-radius: 20px;
+      transition: 160ms ease;
+    }
+
+    .project-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 22px 50px rgba(22, 34, 50, 0.12);
+    }
+
+    .project-main { min-width: 0; }
+
+    .project-topline {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .project-title {
+      margin: 0;
+      font-size: 1.08rem;
+      letter-spacing: -0.03em;
+    }
+
+    .client-name {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .project-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 0.84rem;
+      margin: 10px 0 14px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .badge.progress { color: #7a4b12; background: rgba(217, 164, 65, 0.2); }
+    .badge.ready { color: #286246; background: rgba(63, 143, 98, 0.16); }
+    .badge.late { color: #873333; background: rgba(191, 77, 77, 0.16); }
+    .badge.blocked { color: #7b2f2f; background: rgba(191, 77, 77, 0.12); }
+    .badge.decision { color: #174a6f; background: rgba(63, 111, 159, 0.14); }
+
+    .timeline-mini {
+      position: relative;
+      height: 9px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #e9edf2;
+    }
+
+    .timeline-mini span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+    }
+
+    .pilot-checks {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .check-item {
+      padding: 8px 9px;
+      border-radius: 12px;
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 750;
+    }
+
+    .check-item.ok { color: #286246; background: rgba(63, 143, 98, 0.09); border-color: rgba(63, 143, 98, 0.18); }
+    .check-item.warn { color: #7a4b12; background: rgba(217, 164, 65, 0.12); border-color: rgba(217, 164, 65, 0.22); }
+    .check-item.ko { color: #873333; background: rgba(191, 77, 77, 0.10); border-color: rgba(191, 77, 77, 0.20); }
+
+    .project-side {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 14px;
+      min-width: 160px;
+    }
+
+    .date-box { text-align: right; }
+    .date-label { color: var(--muted); font-size: 0.72rem; font-weight: 750; text-transform: uppercase; }
+    .date-value { font-weight: 850; font-size: 1.08rem; }
+    .owner-pill { color: var(--primary); background: var(--primary-soft); padding: 7px 10px; border-radius: 999px; font-size: 0.74rem; font-weight: 800; }
+
+    .side-stack { display: grid; gap: 18px; }
+
+    .steering-list,
+    .task-list,
+    .risk-list { display: grid; gap: 12px; margin-top: 14px; }
+
+    .steering-row,
+    .task-row,
+    .risk-row {
+      display: grid;
+      grid-template-columns: 10px 1fr auto;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--surface-soft);
+    }
+
+    .dot { width: 10px; height: 10px; border-radius: 999px; background: var(--accent); }
+    .dot.green { background: var(--success); }
+    .dot.red { background: var(--danger); }
+    .dot.blue { background: var(--info); }
+
+    .row-title { font-weight: 750; font-size: 0.88rem; }
+    .row-subtitle { color: var(--muted); font-size: 0.76rem; margin-top: 2px; }
+    .row-date { color: var(--muted); font-size: 0.76rem; white-space: nowrap; }
+
+    .decision-box {
+      padding: 18px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, var(--primary), #29364e);
+      color: white;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .decision-box::after {
+      content: "";
+      position: absolute;
+      right: -35px;
+      bottom: -35px;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: rgba(217, 164, 65, 0.18);
+    }
+
+    .decision-title {
+      margin: 0 0 8px;
+      font-size: 1rem;
+      letter-spacing: -0.03em;
+    }
+
+    .decision-text {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.74);
+      font-size: 0.88rem;
+      line-height: 1.55;
+    }
+
+    .calendar-preview {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .calendar-day {
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      color: var(--muted);
+      background: var(--surface-soft);
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .calendar-day.active { color: white; background: var(--primary); }
+    .calendar-day.warn { color: #7a4b12; background: rgba(217, 164, 65, 0.2); }
+    .calendar-day.risk { color: white; background: var(--danger); }
+
+    @media (max-width: 1180px) {
+      .dashboard-grid, .pilot-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .workspace { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 860px) {
+      .app-shell { grid-template-columns: 1fr; }
+      .sidebar { position: sticky; top: 0; z-index: 10; padding: 16px; }
+      .brand { margin-bottom: 14px; }
+      .nav-title, .nav-item:not(.active) { display: none; }
+      .main { padding: 20px; }
+      .topbar { align-items: flex-start; flex-direction: column; }
+      .dashboard-grid, .pilot-strip, .pilot-checks { grid-template-columns: 1fr; }
+      .project-card { grid-template-columns: 1fr; }
+      .project-side { align-items: stretch; }
+      .date-box { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">P</div>
+        <div>
+          <div class="brand-title">Pilotage</div>
+          <div class="brand-subtitle">Projets & rétroplannings</div>
+        </div>
+      </div>
+
+      <div class="nav-title">Navigation</div>
+      <a class="nav-item active" href="#"><span class="nav-icon">⌂</span> Pilotage</a>
+      <a class="nav-item" href="#"><span class="nav-icon">▦</span> Projets</a>
+      <a class="nav-item" href="#"><span class="nav-icon">◷</span> Échéances</a>
+      <a class="nav-item" href="#"><span class="nav-icon">⚑</span> Décisions</a>
+      <a class="nav-item" href="#"><span class="nav-icon">!</span> Risques</a>
+
+      <div class="nav-title">Organisation</div>
+      <a class="nav-item" href="#"><span class="nav-icon">◎</span> Sociétés</a>
+      <a class="nav-item" href="#"><span class="nav-icon">◼</span> Catégories</a>
+      <a class="nav-item" href="#"><span class="nav-icon">⚙</span> Paramètres</a>
+    </aside>
+
+    <main class="main">
+      <section class="topbar">
+        <div>
+          <div class="eyebrow">Tableau de pilotage</div>
+          <h1>Piloter les projets,<br />pas seulement les suivre.</h1>
+          <p class="page-intro">
+            Une vue d’ensemble pour arbitrer, prioriser et sécuriser les rétroplannings : avancement,
+            risques, décisions attendues, responsabilités et prochaines échéances.
+          </p>
+        </div>
+        <div class="top-actions">
+          <button class="ghost-button">Exporter synthèse</button>
+          <button class="primary-button">+ Nouveau projet</button>
+        </div>
+      </section>
+
+      <section class="dashboard-grid">
+        <article class="metric-card">
+          <div class="metric-label">Santé globale <span>◉</span></div>
+          <div class="metric-value">78%</div>
+          <div class="metric-note">3 projets à surveiller</div>
+        </article>
+        <article class="metric-card">
+          <div class="metric-label">Décisions attendues <span>⚑</span></div>
+          <div class="metric-value">7</div>
+          <div class="metric-note">Dont 2 bloquantes</div>
+        </article>
+        <article class="metric-card">
+          <div class="metric-label">Points de risque <span>!</span></div>
+          <div class="metric-value">5</div>
+          <div class="metric-note">Budget, traiteur, signalétique</div>
+        </article>
+        <article class="metric-card">
+          <div class="metric-label">Échéances critiques <span>◷</span></div>
+          <div class="metric-value">12</div>
+          <div class="metric-note">Sur les 10 prochains jours</div>
+        </article>
+      </section>
+
+      <section class="workspace">
+        <div>
+          <section class="panel">
+            <div class="panel-header">
+              <div>
+                <h2 class="panel-title">Pilotage des projets</h2>
+                <p class="panel-subtitle">Priorité donnée aux arbitrages, alertes et décisions.</p>
+              </div>
+              <button class="ghost-button">Voir portefeuille</button>
+            </div>
+
+            <div class="pilot-strip">
+              <article class="pilot-card">
+                <div class="pilot-label">Projet le plus sensible</div>
+                <div class="pilot-value">Réunion CNS <span class="health-dot warn"></span></div>
+              </article>
+              <article class="pilot-card">
+                <div class="pilot-label">Prochain comité</div>
+                <div class="pilot-value">Lundi 11 mai</div>
+              </article>
+              <article class="pilot-card">
+                <div class="pilot-label">Charge équipe</div>
+                <div class="pilot-value">84%</div>
+              </article>
+            </div>
+
+            <div class="filters">
+              <input class="search" type="search" placeholder="Rechercher un projet, un responsable, un risque..." />
+              <select class="select">
+                <option>Tous les niveaux de risque</option>
+                <option>Sain</option>
+                <option>À surveiller</option>
+                <option>Bloquant</option>
+              </select>
+              <select class="select">
+                <option>Tri : criticité</option>
+                <option>Prochaine échéance</option>
+                <option>Responsable</option>
+              </select>
+            </div>
+
+            <div class="projects-list">
+              <article class="project-card">
+                <div class="project-main">
+                  <div class="project-topline">
+                    <h3 class="project-title">Réunion du Comité National de Suivi</h3>
+                    <span class="badge progress">En cours</span>
+                    <span class="badge decision">2 décisions</span>
+                  </div>
+                  <div class="client-name">Client : CNS · Agence Ideacom</div>
+                  <div class="project-meta">
+                    <span>42 tâches</span>
+                    <span>8 catégories</span>
+                    <span>Responsable : Ideacom</span>
+                    <span>Risque : moyen</span>
+                  </div>
+                  <div class="timeline-mini"><span style="width: 72%"></span></div>
+                  <div class="pilot-checks">
+                    <span class="check-item ok">Budget cadré</span>
+                    <span class="check-item warn">Traiteur à confirmer</span>
+                    <span class="check-item ok">Lieu validé</span>
+                    <span class="check-item warn">Signalétique en cours</span>
+                  </div>
+                </div>
+                <div class="project-side">
+                  <span class="owner-pill">Pilote : IDEACOM</span>
+                  <div class="date-box">
+                    <div class="date-label">Événement</div>
+                    <div class="date-value">4 juin</div>
+                  </div>
+                  <button class="ghost-button">Piloter</button>
+                </div>
+              </article>
+
+              <article class="project-card">
+                <div class="project-main">
+                  <div class="project-topline">
+                    <h3 class="project-title">Convention partenaires 2026</h3>
+                    <span class="badge ready">À venir</span>
+                  </div>
+                  <div class="client-name">Client : Maison Derval</div>
+                  <div class="project-meta">
+                    <span>29 tâches</span>
+                    <span>6 catégories</span>
+                    <span>Responsable : Marie Lambert</span>
+                    <span>Risque : faible</span>
+                  </div>
+                  <div class="timeline-mini"><span style="width: 38%"></span></div>
+                  <div class="pilot-checks">
+                    <span class="check-item ok">Brief validé</span>
+                    <span class="check-item ok">Budget OK</span>
+                    <span class="check-item warn">Prestataires à verrouiller</span>
+                    <span class="check-item ok">Planning stable</span>
+                  </div>
+                </div>
+                <div class="project-side">
+                  <span class="owner-pill">Pilote : Marie</span>
+                  <div class="date-box">
+                    <div class="date-label">Événement</div>
+                    <div class="date-value">18 juin</div>
+                  </div>
+                  <button class="ghost-button">Piloter</button>
+                </div>
+              </article>
+
+              <article class="project-card">
+                <div class="project-main">
+                  <div class="project-topline">
+                    <h3 class="project-title">Lancement produit presse</h3>
+                    <span class="badge late">En retard</span>
+                    <span class="badge blocked">Bloquant</span>
+                  </div>
+                  <div class="client-name">Client : Studio Nova</div>
+                  <div class="project-meta">
+                    <span>35 tâches</span>
+                    <span>7 catégories</span>
+                    <span>Responsable : Thomas Bernard</span>
+                    <span>Risque : élevé</span>
+                  </div>
+                  <div class="timeline-mini"><span style="width: 54%"></span></div>
+                  <div class="pilot-checks">
+                    <span class="check-item ko">Budget non arbitré</span>
+                    <span class="check-item warn">Planning serré</span>
+                    <span class="check-item ko">Validation client manquante</span>
+                    <span class="check-item ok">Lieu réservé</span>
+                  </div>
+                </div>
+                <div class="project-side">
+                  <span class="owner-pill">Pilote : Thomas</span>
+                  <div class="date-box">
+                    <div class="date-label">Événement</div>
+                    <div class="date-value">27 mai</div>
+                  </div>
+                  <button class="ghost-button">Piloter</button>
+                </div>
+              </article>
+            </div>
+          </section>
+        </div>
+
+        <aside class="side-stack">
+          <section class="decision-box">
+            <h2 class="decision-title">Point de pilotage prioritaire</h2>
+            <p class="decision-text">
+              La validation menu et le nombre définitif de participants doivent être arbitrés avant J-10 pour sécuriser le traiteur.
+            </p>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header">
+              <h2 class="panel-title">Décisions attendues</h2>
+              <button class="ghost-button">Tout voir</button>
+            </div>
+            <div class="steering-list">
+              <div class="steering-row">
+                <span class="dot red"></span>
+                <div>
+                  <div class="row-title">Validation budget final + BDC</div>
+                  <div class="row-subtitle">Réunion CNS · DGEFP</div>
+                </div>
+                <div class="row-date">J-10</div>
+              </div>
+              <div class="steering-row">
+                <span class="dot"></span>
+                <div>
+                  <div class="row-title">Confirmation nombre de pax</div>
+                  <div class="row-subtitle">Traiteur · Client</div>
+                </div>
+                <div class="row-date">J-8</div>
+              </div>
+              <div class="steering-row">
+                <span class="dot blue"></span>
+                <div>
+                  <div class="row-title">Validation écran d’accueil R+1</div>
+                  <div class="row-subtitle">Signalétique dynamique</div>
+                </div>
+                <div class="row-date">J-5</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header">
+              <h2 class="panel-title">Risques ouverts</h2>
+            </div>
+            <div class="risk-list">
+              <div class="risk-row">
+                <span class="dot red"></span>
+                <div>
+                  <div class="row-title">Budget final non signé</div>
+                  <div class="row-subtitle">Impact : lancement commandes</div>
+                </div>
+                <div class="row-date">Haut</div>
+              </div>
+              <div class="risk-row">
+                <span class="dot"></span>
+                <div>
+                  <div class="row-title">Dressing hôtesses à valider</div>
+                  <div class="row-subtitle">Impact : logistique accueil</div>
+                </div>
+                <div class="row-date">Moyen</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header">
+              <h2 class="panel-title">Mai 2026</h2>
+              <button class="ghost-button">Mois</button>
+            </div>
+            <div class="calendar-preview">
+              <div class="calendar-day">1</div><div class="calendar-day">2</div><div class="calendar-day">3</div><div class="calendar-day">4</div><div class="calendar-day warn">5</div><div class="calendar-day">6</div><div class="calendar-day">7</div>
+              <div class="calendar-day">8</div><div class="calendar-day">9</div><div class="calendar-day risk">10</div><div class="calendar-day active">11</div><div class="calendar-day active">12</div><div class="calendar-day">13</div><div class="calendar-day">14</div>
+              <div class="calendar-day">15</div><div class="calendar-day warn">16</div><div class="calendar-day">17</div><div class="calendar-day">18</div><div class="calendar-day">19</div><div class="calendar-day">20</div><div class="calendar-day">21</div>
+              <div class="calendar-day">22</div><div class="calendar-day">23</div><div class="calendar-day">24</div><div class="calendar-day active">25</div><div class="calendar-day">26</div><div class="calendar-day">27</div><div class="calendar-day">28</div>
+            </div>
+          </section>
+        </aside>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

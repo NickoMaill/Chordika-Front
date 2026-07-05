@@ -45,39 +45,27 @@ import Box from '@mui/material/Box';
 const AppIcon = lazy(() => import('~/components/common/AppIcon'));
 // #endregion IMPORTS -> //////////////////////////////////
 
-// #region SINGLETON --> ////////////////////////////////////
-// #endregion SINGLETON --> /////////////////////////////////
-
 export default function InputRichTextField({ disabled, id, onChange, value, required, maxLength = 2000 }: IInputRichTextField): JSX.Element {
-    // #region STATE --> ///////////////////////////////////////
     const [text, setText] = useState<string>((value as string) ?? '');
     const editorRef = useRef<Editor | null>(null);
-    // #endregion STATE --> ////////////////////////////////////
 
-    // #region HOOKS --> ///////////////////////////////////////
-    // #endregion HOOKS --> ////////////////////////////////////
-
-    // #region METHODS --> /////////////////////////////////////
     const handleChange = (e: { editor: Editor; transaction: Transaction }): void => {
         const html = e.editor.getHTML();
         const encoded = encodeURIComponent(html);
+        setText(encoded);
         if (onChange) {
             onChange(encoded);
         }
-        setText(encoded);
     };
-    // #endregion METHODS --> //////////////////////////////////
 
-    // #region USEEFFECT --> ///////////////////////////////////
     useEffect(() => {
         if (value !== undefined && value !== text) {
-            setText(value as string);
-            editorRef.current?.commands.setContent(decodeURIComponent((value as string) ?? ''));
+            const nextValue = (value as string) ?? '';
+            setText(nextValue);
+            editorRef.current?.commands.setContent(decodeURIComponent(nextValue));
         }
     }, [value]);
-    // #endregion USEEFFECT --> ////////////////////////////////
 
-    // #region RENDER --> //////////////////////////////////////
     return (
         <Box className="mt-1">
             <RichTextEditor
@@ -138,18 +126,18 @@ export default function InputRichTextField({ disabled, id, onChange, value, requ
                         <MenuDivider />
                         <MenuButtonBold tooltipLabel="Gras" />
                         <MenuButtonItalic tooltipLabel="Italique" />
-                        <MenuButtonUnderline tooltipLabel="Souligné" />
-                        <MenuButtonStrikethrough tooltipLabel="Barré" />
+                        <MenuButtonUnderline tooltipLabel="Souligne" />
+                        <MenuButtonStrikethrough tooltipLabel="Barre" />
                         <MenuDivider />
                         <MenuButtonUndo tooltipLabel="Annuler" />
-                        <MenuButtonRedo tooltipLabel="Rétablir" />
+                        <MenuButtonRedo tooltipLabel="Retablir" />
                         <MenuDivider />
-                        <MenuButtonBulletedList tooltipLabel="Liste à puces" />
-                        <MenuButtonOrderedList tooltipLabel="Liste à nombres" />
+                        <MenuButtonBulletedList tooltipLabel="Liste a puces" />
+                        <MenuButtonOrderedList tooltipLabel="Liste a nombres" />
                         <MenuDivider />
-                        <MenuButtonAlignLeft tooltipLabel="Aligné à gauche" />
-                        <MenuButtonAlignCenter tooltipLabel="Aligné au centre" />
-                        <MenuButtonAlignRight tooltipLabel="Aligné à droite" />
+                        <MenuButtonAlignLeft tooltipLabel="Aligne a gauche" />
+                        <MenuButtonAlignCenter tooltipLabel="Aligne au centre" />
+                        <MenuButtonAlignRight tooltipLabel="Aligne a droite" />
                         <MenuButtonAlignJustify tooltipLabel="Justifier" />
                         <MenuDivider />
                         <MenuButtonEditLink tooltipLabel="Lien" />
@@ -171,24 +159,30 @@ export default function InputRichTextField({ disabled, id, onChange, value, requ
                 )}
             >
                 {() => (
-                    <>
-                        <LinkBubbleMenu labels={{ editLinkAddTitle: 'Ajouter Lien', editLinkEditTitle: 'Texte', editLinkHrefInputLabel: 'Lien', editLinkCancelButtonLabel: 'Annuler', editLinkSaveButtonLabel: 'Ajouter', editLinkTextInputLabel: 'Texte', viewLinkEditButtonLabel: 'Modifier', viewLinkRemoveButtonLabel: 'Supprimer' }} />
-                    </>
+                    <LinkBubbleMenu
+                        labels={{
+                            editLinkAddTitle: 'Ajouter Lien',
+                            editLinkEditTitle: 'Texte',
+                            editLinkHrefInputLabel: 'Lien',
+                            editLinkCancelButtonLabel: 'Annuler',
+                            editLinkSaveButtonLabel: 'Ajouter',
+                            editLinkTextInputLabel: 'Texte',
+                            viewLinkEditButtonLabel: 'Modifier',
+                            viewLinkRemoveButtonLabel: 'Supprimer',
+                        }}
+                    />
                 )}
             </RichTextEditor>
             {editorRef.current && (
                 <div style={{ textAlign: 'right', fontSize: 12, color: '#888' }}>
-                    {editorRef.current.storage.characterCount.characters()}/{maxLength} caractères
+                    {editorRef.current.storage.characterCount.characters()}/{maxLength} caracteres
                 </div>
             )}
-            <input type="hidden" value={text ?? ''} id={id} name={id} />
+            <input type="hidden" value={text ?? ''} id={id} name={id} readOnly />
         </Box>
     );
-    // #endregion RENDER --> ///////////////////////////////////
 }
 
-// #region IPROPS -->  /////////////////////////////////////
 interface IInputRichTextField extends InputBaseType {
     maxLength?: number;
 }
-// #enderegion IPROPS --> //////////////////////////////////

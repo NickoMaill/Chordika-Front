@@ -33,11 +33,11 @@ i18n.use(initReactI18next).init({
  *
  * @param {RecursiveKeyOf<TranslationResourcesType>} key of translation
  * @param args dynamic value
- * @description !!! PLEASE use this function when you're inside a React function, otherwise use `useResources().translate() hooks`
+ * @description !!! PLEASE use this function when you're not inside a React function, otherwise use `useResources().translate() hooks`
  * @returns
  */
 export const translate = (key: RecursiveKeyOf<TranslationResourcesType>, args?: Record<string, string>): string => {
-    return i18n.t(key, args);
+    return i18n.t(key as string, args);
 };
 
 export default i18n;

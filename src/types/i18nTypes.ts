@@ -1,8 +1,13 @@
+import { RecursiveKeyOf } from './custom';
+
 export type TranslationResourcesType = {
     common: {
+        homepage;
+        title;
         yes;
         no;
-        title;
+        send;
+        noResultDb;
         changeLang;
         sendMessage;
         openMenu;
@@ -13,11 +18,16 @@ export type TranslationResourcesType = {
         resend;
         add;
         update;
-        delete;
         dismiss;
+        delete;
+        import;
+        addedAt;
+        addedAtFem;
+        updatedAt;
         youAdd;
         youUpdate;
         youDismiss;
+        youDelete;
         adding;
         updating;
         deleting;
@@ -26,9 +36,29 @@ export type TranslationResourcesType = {
         filters;
         details;
         close;
+        period;
+        name;
+        informations;
         mainInfo;
         description;
-        name;
+        text;
+        date;
+        lastUpd;
+        lastUpdate;
+        resume;
+        status;
+        progress;
+        event;
+        loading;
+        state;
+        dark;
+        light;
+        overview;
+        importCSV;
+        contact;
+        actions;
+        action;
+        ok;
         specifiers: {
             singularApos;
             singularFem;
@@ -45,8 +75,8 @@ export type TranslationResourcesType = {
                 plural;
                 density;
                 comfortable;
-                regular;
                 skinny;
+                regular;
                 selectedLines;
             };
             nav: {
@@ -60,6 +90,26 @@ export type TranslationResourcesType = {
                 label;
             };
         };
+    };
+    businessTerms: {
+        event;
+    };
+    entity: {
+        user;
+        users;
+        log;
+        company;
+        companies;
+        project;
+        projects;
+        planning;
+        plannings;
+        category;
+        categories;
+        subCategory;
+        subCategories;
+        task;
+        tasks;
     };
     login: {
         rememberMe;
@@ -79,24 +129,267 @@ export type TranslationResourcesType = {
         MfaTitle;
         MfaSubtitle;
         MfaDetails;
-        MfaRegister;
         resendMfa;
     };
     profile: {
         title;
+        mainInfo;
+        intro;
+        username;
+        name;
+        firstName;
+        lastName;
+        email;
+        levelAccess;
+        lastCon;
+        addedAt;
+        history;
+        colors: {
+            needSelect;
+            saved;
+            deleted;
+            savedColor;
+            noSaved;
+        };
     };
     nav: {
         profile;
+        users;
+        setup;
+        companies;
+        activity;
+        schedules;
+        logout;
+        projects;
+        proxy;
+        notFound;
         myScore;
         scoreAdd;
         scoreImport;
-        users;
         adverts;
-        setup;
-        activity;
-        schedules;
+    };
+    proxy: {
+        title;
+        message;
+        search;
+        choose;
+        noProxy;
+    };
+    home: {
+        welcome;
+    };
+    logs: {
+        singular;
+        plural;
         proxy;
-        logout;
+        action;
+        addedAt;
+        info;
+    };
+    categories: {
+        singular;
+        plural;
+    };
+    user: {
+        singular;
+        plural;
+        username;
+        name;
+        firstName;
+        lastName;
+        email;
+        levelAccess;
+        admin;
+        password;
+    };
+    schedule: {
+        singular;
+        plural;
+        freq;
+        isActive;
+        lastExec;
+        startedAt;
+        endedAt;
+        nextExec;
+        method;
+        monitoring;
+        monitoringLoading;
+        history;
+        error;
+        timeout;
+        ongoing;
+        standby;
+        ended;
+    };
+    company: {
+        singular;
+        plural;
+        name;
+        shortName;
+        type;
+        client;
+        supplier;
+        provider;
+        agency;
+        logoPath;
+        role;
+    };
+    project: {
+        singular;
+        plural;
+        edit;
+        create;
+        new;
+        search;
+        status: {
+            incoming;
+            ongoing;
+            ended;
+        };
+        priority: {
+            title;
+            normal;
+            high;
+            critical;
+        };
+        dates: {
+            start;
+            end;
+            startEvent;
+            endEvent;
+            startSetup;
+            endSetup;
+            startTeardown;
+            endTeardown;
+        };
+        teams: {
+            singular;
+            plural;
+            import: {
+                action;
+                importLabel;
+                list: {
+                    l1;
+                    l2;
+                    l3;
+                    l4;
+                    l5;
+                };
+                advertMessage;
+                downloadTemplate;
+            };
+            add: {
+                action;
+                addManual;
+                addLabel;
+            };
+            update: {
+                action;
+            };
+            delete: {
+                action;
+                title;
+                advert;
+                consequences;
+                noRecover;
+                shouldContinue;
+            };
+            noTeam;
+            teamHelpText;
+            endText;
+        };
+        member: {
+            singular;
+            plural;
+            job;
+            toComplete;
+            toConfirm;
+            complete;
+            partials;
+            listTitle;
+            listSubtitle;
+            searchPlaceholder;
+            manageResources;
+            allStatus;
+            allStates;
+            add: {
+                action;
+            };
+            update: {
+                action;
+            };
+        };
+        actionMessage: {
+            root: {
+                updated;
+                update;
+                dismiss;
+                dismissConfirm;
+                dismissReject;
+            };
+            company: {
+                add;
+                added;
+                update;
+                updated;
+                delete;
+                deleted;
+                defineRole;
+            };
+        };
+    };
+    planning: {
+        singular;
+        plural;
+        who;
+        what;
+        color;
+        fontColor;
+        colorPreview;
+        colorPlaceholder;
+        category: {
+            add;
+            update;
+            delete;
+        };
+        subCategory: {
+            add;
+            update;
+            delete;
+        };
+        task: {
+            update;
+            delete;
+            status: {
+                ongoing;
+                incoming;
+                waiting;
+                ended;
+            };
+        };
+        promptDelete: {
+            placeholder;
+            category: {
+                title;
+                message;
+                target;
+            };
+            subCategory: {
+                title;
+                message;
+                target;
+            };
+            task: {
+                title;
+                message;
+                target;
+            };
+            company: {
+                title;
+                message;
+                target;
+            };
+        };
     };
     error: {
         common: {
@@ -124,18 +417,10 @@ export type TranslationResourcesType = {
             linkForward;
         };
         noAccess: {
-            title;
             intro;
             please;
             expired;
             login;
-        };
-        notFound: {
-            title;
-            intro;
-            please;
-            advise;
-            goBack;
         };
     };
     center: {
@@ -145,16 +430,17 @@ export type TranslationResourcesType = {
             filters;
             nothing;
             orderBy;
+            total;
+            ref;
         };
         bulk: {
             bulkUpdate;
             bulkAdd;
-            bulkDelete;
-            importXlsx;
             downloadTemplate;
+            importXlsx;
             bulkAddMessage;
             bulkTitle;
-            exportXls;
+            exportXlsx;
             exportCSV;
         };
         update: {
@@ -167,55 +453,7 @@ export type TranslationResourcesType = {
             success;
         };
     };
-    user: {
-        singular;
-        plural;
-        username;
-        firstName;
-        lastName;
-        fullName;
-        email;
-        levelAccess;
-        lastCon;
-        logHistory;
-        mobile;
-        admin;
-        password;
-        userId;
-    };
-    logs: {
-        singular;
-        plural;
-        proxy;
-        action;
-        entryDate;
-        info;
-    };
-    schedule: {
-        singular;
-        plural;
-        freq;
-        isActive;
-        lastExec;
-        startedAt;
-        endedAt;
-        nextExec;
-        method;
-        monitoring;
-        monitoringLoading;
-        history;
-        error;
-        timeout;
-        ongoing;
-        standby;
-        ended;
-    };
-    adverts: {
-        singular;
-        plural;
-        expires;
-        createdBy;
-    };
 };
 
 export type LangType = 'fr' | 'en';
+export type TranslateType = RecursiveKeyOf<TranslationResourcesType>;

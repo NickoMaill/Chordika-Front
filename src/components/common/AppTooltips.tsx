@@ -33,7 +33,16 @@ export default function ToolTips({ textContent, children }: IToolTips): JSX.Elem
 
     // #region RENDER --> //////////////////////////////////////
     return (
-        <Box paddingLeft={0.5} sx={{ marginBottom: -1 }} className="position-relative" component="div" aria-owns={anchorEl ? 'mouse-over-popover' : null} aria-haspopup="true" onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose}>
+        <Box
+            paddingLeft={0.5}
+            sx={{ marginBottom: -1 }}
+            className="position-relative"
+            component="div"
+            aria-owns={anchorEl ? 'mouse-over-popover' : null}
+            aria-haspopup="true"
+            onMouseEnter={handlePopoverOpen}
+            onMouseLeave={handlePopoverClose}
+        >
             {children ? children : <InfoOutlinedIcon sx={{ position: 'relative', top: '-2px' }} color="primary" />}
             <Popover
                 id="mouse-over-popover"

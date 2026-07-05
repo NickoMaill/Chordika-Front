@@ -5,27 +5,36 @@ import { Theme } from '@emotion/react';
 import { JSX } from 'react';
 import FileCsv from '~/assets/svg/file-csv-solid-full.svg?react';
 import FileExcel from '~/assets/svg/file-excel-solid-full.svg?react';
+import BarProgress from '~/assets/svg/bars-progress-solid-full.svg?react';
+import DirectionArrows from '~/assets/svg/arrows-up-down-left-right-solid-full.svg?react';
+import FilePdf from '~/assets/svg/file-pdf-solid-full.svg?react';
+import FileZip from '~/assets/svg/file-zipper-solid-full.svg?react';
 import Staves from '~/assets/svg/scoreSymbols/staves.svg?react';
 import Segno from '~/assets/svg/scoreSymbols/segno.svg?react';
 import Microphone from '~/assets/svg/scoreSymbols/microphone.svg?react';
 import MusicScore from '~/assets/svg/score.svg?react';
-import ScoreRaw from '~/assets/svg/score.svg';
-import SvgIcon, { SvgIconPropsColorOverrides, SvgIconPropsSizeOverrides, SvgIconTypeMap } from '@mui/material/SvgIcon';
+import ScoreRaw from '~/assets/svg/score.svg?react';
+import SvgIcon, { SvgIconPropsColorOverrides, SvgIconPropsSizeOverrides } from '@mui/material/SvgIcon';
 import { SxProps } from '@mui/material/styles';
-import { OverridableComponent } from '@mui/material/OverridableComponent';
 
 const customIcons = {
     FileCsv,
     FileExcel,
+    BarProgress,
+    DirectionArrows,
+    FilePdf,
+    FileZip,
     Staves,
     Segno,
     Microphone,
     MusicScore,
+    ScoreRaw
 };
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
 export type IconNameType = keyof typeof MuiIcon | keyof typeof customIcons;
+export type IconColorType = OverridableStringUnion<'action' | 'disabled' | 'inherit' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning', SvgIconPropsColorOverrides>;
 // #endregion SINGLETON --> /////////////////////////////////
 
 export default function AppIcon({ name, color, sx, size, className }: IAppIcon): JSX.Element {
@@ -51,16 +60,9 @@ export default function AppIcon({ name, color, sx, size, className }: IAppIcon):
 // #region IPROPS -->  /////////////////////////////////////
 interface IAppIcon {
     name: IconNameType;
-    color?: OverridableStringUnion<'action' | 'disabled' | 'inherit' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning', SvgIconPropsColorOverrides>;
+    color?: IconColorType;
     sx?: SxProps<Theme>;
     size?: OverridableStringUnion<'small' | 'inherit' | 'large' | 'medium', SvgIconPropsSizeOverrides>;
     className?: string;
 }
-
-export const ScoreIcon: OverridableComponent<SvgIconTypeMap<{}, 'svg'>> & { muiName: string } = (props) => (
-    <SvgIcon {...props} inheritViewBox>
-        <image href={ScoreRaw} width="100%" height="100%" />
-    </SvgIcon>
-);
-ScoreIcon.muiName = 'Score';
 // #endregion IPROPS --> //////////////////////////////////

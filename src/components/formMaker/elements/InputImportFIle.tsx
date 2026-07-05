@@ -79,8 +79,18 @@ export default function InputImportFile({ typeFile, filesLimit = 1, className = 
                 })
             ) : (
                 <>
-                    <Box component="div" onDragOver={() => setIsDrag(true)} draggable onDragLeave={() => setIsDrag(false)} onDrop={() => setIsDrag(false)} className={`rounded w-100 drag-base ${isDrag ? 'drag-on' : 'drag-off'} ${className}`}>
-                        <Box sx={{ borderStyle: 'dashed' }} className="position-relative border border-2 rounded border-secondary w-100 h-100 d-flex flex-column justify-content-center align-items-center">
+                    <Box
+                        component="div"
+                        onDragOver={() => setIsDrag(true)}
+                        draggable
+                        onDragLeave={() => setIsDrag(false)}
+                        onDrop={() => setIsDrag(false)}
+                        className={`rounded w-100 drag-base ${isDrag ? 'drag-on' : 'drag-off'} ${className}`}
+                    >
+                        <Box
+                            sx={{ borderStyle: 'dashed' }}
+                            className="position-relative border border-2 rounded border-secondary w-100 h-100 d-flex flex-column justify-content-center align-items-center"
+                        >
                             <Box className="d-flex flex-column justify-content-evenly align-items-center h-75">
                                 <AppIcon name={isWrongTypeFile ? 'Error' : 'CloudUploadOutlined'} sx={{ fontSize: '4rem' }} color={isWrongTypeFile ? 'error' : 'secondary'} />
                                 <Regular component="span" id="fileMonitor">
@@ -99,7 +109,14 @@ export default function InputImportFile({ typeFile, filesLimit = 1, className = 
                                     )}
                                 </Regular>
                             </Box>
-                            <input type="file" onChange={(e) => verifyFile([...e.target.files])} multiple={filesLimit > 1} className="opacity-0 position-absolute w-100 h-100 border" name="file" id="file" />
+                            <input
+                                type="file"
+                                onChange={(e) => verifyFile([...e.target.files])}
+                                multiple={filesLimit > 1}
+                                className="opacity-0 position-absolute w-100 h-100 border"
+                                name="file"
+                                id="file"
+                            />
                         </Box>
                     </Box>
                 </>
@@ -120,5 +137,13 @@ interface IInputImportFile {
 }
 
 export type AllowedFilesInput = FileExtension[];
-export type FileExtension = 'text/csv' | 'text/pdf' | 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' | 'application/xml' | 'application/vnd.ms-excel' | 'image/jpeg' | 'image/webp' | 'image/png';
+export type FileExtension =
+    | 'text/csv'
+    | 'text/pdf'
+    | 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    | 'application/xml'
+    | 'application/vnd.ms-excel'
+    | 'image/jpeg'
+    | 'image/webp'
+    | 'image/png';
 // #endregion IPROPS --> //////////////////////////////////

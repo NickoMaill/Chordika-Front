@@ -1,6 +1,5 @@
-import { lazy, useContext, useState } from 'react';
+import { lazy, useState } from 'react';
 import { Regular } from '~/components/common/Text';
-import SessionContext from '~/context/sessionContext';
 import { ApiErrorType } from '~/models/Error';
 import useResources from '~/hooks/useResources';
 import '~/styles/ErrorBondaryStyles.scss';
@@ -15,6 +14,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Button from '@mui/material/Button';
 import dayjs from 'dayjs';
+import useSessionContext from '~/context/sessionContext';
 // import useModal from '~/hooks/useModal';
 
 const InputTextAreaField = lazy(() => import('~/components/formMaker/elements/InputTextAreaField'));
@@ -22,18 +22,18 @@ const InputTextAreaField = lazy(() => import('~/components/formMaker/elements/In
 export default function StandardError({ error }: IStandardError): JSX.Element {
     const [_isLoading, _setIsLoading] = useState<boolean>(false);
 
-    const Ses = useContext(SessionContext);
-    const Resources = useResources();
+    const { ip, gear, email } = useSessionContext();
+    const { translate } = useResources();
     // const Modal = useModal();
 
     const errorDetails = [
-        { label: Resources.translate('error.errorBoundary.diag'), data: error.message },
-        { label: Resources.translate('error.errorBoundary.source'), data: error.stack },
-        { label: Resources.translate('error.errorBoundary.page'), data: window.location.href },
-        { label: Resources.translate('error.errorBoundary.clockDate'), data: dayjs().format('DD/MM/YYYY - HH:mm:ss') },
-        { label: Resources.translate('error.errorBoundary.browser'), data: Ses.gear },
-        { label: Resources.translate('error.errorBoundary.address'), data: Ses.ip },
-        { label: Resources.translate('error.errorBoundary.linkForward'), data: error.targetUrl },
+        { label: translate('error.errorBoundary.diag'), data: error.message },
+        { label: translate('error.errorBoundary.source'), data: error.stack },
+        { label: translate('error.errorBoundary.page'), data: window.location.href },
+        { label: translate('error.errorBoundary.clockDate'), data: dayjs().format('DD/MM/YYYY - HH:mm:ss') },
+        { label: translate('error.errorBoundary.browser'), data: gear },
+        { label: translate('error.errorBoundary.address'), data: ip },
+        { label: translate('error.errorBoundary.linkForward'), data: error.targetUrl },
     ];
 
     return (
@@ -43,28 +43,35 @@ export default function StandardError({ error }: IStandardError): JSX.Element {
                     <Box className="errortext w-100 d-flex flex-column align-items-center justify-content-center pt-3">
                         <Box className="w-75" component="form" action="SQLError.aspx" method="post">
                             <Regular fontSize={13} textAlign={'center'}>
-                                <b>{Resources.translate('error.errorBoundary.sorry')}</b> {Resources.translate('error.errorBoundary.firstErrorMessage')}{' '}
+                                <b>{translate('error.errorBoundary.sorry')}</b> {translate('error.errorBoundary.firstErrorMessage')}{' '}
                                 <b style={{ textDecoration: 'underline', color: 'blue' }}>
-                                    <a href={Resources.translate('error.errorBoundary.supportEmail') as string}>{Resources.translate('error.errorBoundary.technicalStaff')}</a>
+                                    <a href={translate('error.errorBoundary.supportEmail') as string}>{translate('error.errorBoundary.technicalStaff')}</a>
                                 </b>
                                 <br />
-                                {Resources.translate('error.errorBoundary.thanks')}
+                                {translate('error.errorBoundary.thanks')}
                                 <br />
                                 <br />
-                                {Resources.translate('error.errorBoundary.toSendMessage')}
+                                {translate('error.errorBoundary.toSendMessage')}
                                 <br />
                                 <Regular fontSize={13} fontWeight={'bold'} component={'span'} color={'#E00'}>
-                                    {Resources.translate('error.errorBoundary.pleaseSend')}
+                                    {translate('error.errorBoundary.pleaseSend')}
                                 </Regular>{' '}
-                                {Resources.translate('error.errorBoundary.thenClick')} "<b>{Resources.translate('common.sendMessage')}</b>"
+                                {translate('error.errorBoundary.thenClick')} "<b>{translate('common.sendMessage')}</b>"
                                 <br />
                             </Regular>
                             <InputTextAreaField sx={{ width: '100%' }} showLabel={false} rows={5} id="Body" label="message" />
                             <br />
-                            <input type="hidden" defaultValue={Ses.email} name="From" />
+                            <input type="hidden" defaultValue={email} name="From" />
                             <Box display="flex" alignItems="center" justifyContent="center" marginBottom={1}>
-                                <Button type="submit" variant="contained" style={{ fontWeight: 'bold' }} sx={{ width: '30%', minWidth: 200, alignItems: 'center', backgroundColor: '#6599CC' }} name="Submit" className="button">
-                                    {Resources.translate('common.sendMessage')}
+                                <Button
+                                    type="submit"
+                                    variant="contained"
+                                    style={{ fontWeight: 'bold' }}
+                                    sx={{ width: '30%', minWidth: 200, alignItems: 'center', backgroundColor: '#6599CC' }}
+                                    name="Submit"
+                                    className="button"
+                                >
+                                    {translate('common.sendMessage')}
                                 </Button>
                             </Box>
                             <input type="hidden" defaultValue={error.message} name="Diagnostic" />
@@ -72,8 +79,8 @@ export default function StandardError({ error }: IStandardError): JSX.Element {
                             <input type="hidden" defaultValue={error.stack} name="TableRowace" />
                             <input type="hidden" defaultValue={window.location.href} name="Page" />
                             <input type="hidden" defaultValue={dayjs().format('DD MMMM YYYY HH:mm:ss')} name="DateTime" />
-                            <input type="hidden" defaultValue={Ses.gear} name="Browser" />
-                            <input type="hidden" defaultValue={Ses.ip} name="Address" />
+                            <input type="hidden" defaultValue={gear} name="Browser" />
+                            <input type="hidden" defaultValue={ip} name="Address" />
                             <input type="hidden" defaultValue={window.location.href} name="Referer" />
                         </Box>
                     </Box>
@@ -84,7 +91,7 @@ export default function StandardError({ error }: IStandardError): JSX.Element {
                             <TableHead>
                                 <TableRow>
                                     <TableCell sx={{ padding: 0.5 }} colSpan={2}>
-                                        {Resources.translate('error.errorBoundary.errorReport')}
+                                        {translate('error.errorBoundary.errorReport')}
                                     </TableCell>
                                 </TableRow>
                             </TableHead>

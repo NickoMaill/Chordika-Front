@@ -1,10 +1,12 @@
 import { SearchField, SortField } from '~/context/searchContext';
-import { FormMakerContentType, FormMakerPartEnum, IFormMakerInput } from '~/types/FormMakerCoreTypes';
+import { FormMakerType, FormMakerPartEnum, IFormMakerInput } from '~/types/FormMakerCoreTypes';
 import { LevelAccessEnum } from '~/models/Session';
 import DOMPurify from 'dompurify';
 import { translate } from '~/resources/i18n/i18n';
 import { GenericActionEnum } from '~/types/centerType';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
+import configManager from '~/managers/configManager';
+import { hexToRgb, rgbToHex } from '@mui/material';
 
 class AppTool {
     constructor() {}
@@ -56,7 +58,7 @@ class AppTool {
         return luminance > 0.5 ? '#000000' : '#ffffff';
     }
 
-    public BuildSearchURL(filters: SearchField[], sort: SortField = null, start: string = '&'): string {
+    public BuildSearchURL(filters: SearchField[] = [], sort: SortField = null, start: string = '&'): string {
         const search = new URLSearchParams();
         if (filters.length === 0 && !sort) return '';
 
@@ -122,7 +124,7 @@ class AppTool {
         return out;
     }
 
-    public ParseSearchUrl(searchForm: FormMakerContentType<FormMakerPartEnum.SEARCH>[], f: Record<string, string> = null): SearchField[] {
+    public ParseSearchUrl(searchForm: FormMakerType<FormMakerPartEnum.SEARCH>, f: Record<string, string> = null): SearchField[] {
         const searchField: SearchField[] = [];
         if (!searchForm || searchForm.length === 0) return searchField;
         let keyValue: Record<string, string>;
@@ -165,12 +167,6 @@ class AppTool {
             }
         });
         return searchField;
-    }
-
-    public toCapitalize(str: string): string {
-        const words = str.split(' ');
-        const capitalizedWords = words.map((word) => word.charAt(0).toUpperCase() + word.slice(1));
-        return capitalizedWords.join(' ');
     }
 
     public LevelAccessTranslater(l: LevelAccessEnum): string {
@@ -222,7 +218,7 @@ class AppTool {
     public async runSequential(...tasks: (() => Promise<unknown>)[]): Promise<unknown[]> {
         const results = [];
 
-        for (const task of tasks) {
+        for await (const task of tasks) {
             const result = await task();
             results.push(result);
         }
@@ -255,6 +251,25 @@ class AppTool {
     public containsHTML(str: string): boolean {
         return /<[^>]+>/.test(str);
     }
+    public buildCompanyLogoUrl(id: number, logo: string): string {
+        return `${configManager.getConfig.API_BASEURL}${configManager.getConfig.API_PUBLIC_URL}/companies/${id}/${logo}`;
+    }
+    public getWidth(height: number, width: number, newHeight: number): number {
+        const newWidth: number = Math.floor((width / height) * newHeight);
+        return newWidth;
+    }
+    public guessResolution(res: string = ''): number {
+        if (res === '2160p') return 3840;
+        if (res === '1440p') return 2560;
+        if (res === '1080p') return 1920;
+        if (res === '720p') return 1280;
+        if (res === '480p') return 854;
+        return 0;
+    }
+    public isHD(res: string = ''): boolean {
+        const screenRes = this.guessResolution(res);
+        return screenRes >= 1280;
+    }
 
     public getAction(action: string = ''): GenericActionEnum {
         switch (action.toLowerCase()) {
@@ -270,9 +285,87 @@ class AppTool {
                 return GenericActionEnum.TABLE;
         }
     }
+
+    public formatFancyTime(from: Dayjs | string | Date): string {
+        const date = dayjs(from);
+        const now = dayjs();
+        const diffMinutes = now.diff(date, 'minute');
+        const diffHours = now.diff(date, 'hour');
+        const diffDays = now.diff(date, 'day');
+
+        if (diffMinutes < 5) return 'Maintenant';
+        if (diffMinutes < 60) return `Il y a ${diffMinutes} minute${diffMinutes > 1 ? 's' : ''}`;
+        if (diffHours < 12) return `Il y a ${diffHours} heure${diffHours > 1 ? 's' : ''}`;
+        if (diffHours < 36) return 'Hier';
+        if (diffDays < 7) return date.format('dddd');
+        if (diffDays < 15) return `Il y a ${diffDays} jour${diffDays > 1 ? 's' : ''}`;
+        if (diffDays < 365) return date.format('DD MMM');
+        return date.format('DD MMM YYYY');
+    }
+
+    public formatEventDate(eventStartDate?: string, eventEndDate?: string): string {
+        if (eventStartDate || eventEndDate) {
+            const dates = [eventStartDate, eventEndDate].filter((d) => d);
+            let isYearDifferent = dates.length === 2 && dayjs(dates[0]).year() !== dayjs(dates[1]).year();
+            return dates
+                .map((d) => dayjs(d).format(`DD MMMM${isYearDifferent ? 'YYYY' : ''}`))
+                .distinct()
+                .join(' - ');
+        } else {
+            return '-';
+        }
+    }
+
+    public getReadableTextColor(hex: string): string {
+        const [r, g, b] = hexToRgb(hex)
+            .replace('rgb(', '')
+            .replace(')', '')
+            .split(',')
+            .map((h) => parseInt(h.trim()));
+
+        const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+        // Couleur très claire : on force un texte sombre neutre
+        if (luminance > 0.78) {
+            return '#1F2937';
+        }
+
+        // Couleur moyenne : on assombrit la couleur choisie
+        if (luminance > 0.55) {
+            return this.darkenHex(hex, 0.45);
+        }
+
+        // Couleur déjà foncée : on garde la couleur
+        return hex;
+    }
+    public darkenHex(hex: string, amount = 0.35): string {
+        const [r, g, b] = hexToRgb(hex)
+            .replace('rgb(', '')
+            .replace(')', '')
+            .split(',')
+            .map((h) => parseInt(h.trim()));
+
+        return rgbToHex('rgb(' + [r * (1 - amount), g * (1 - amount), b * (1 - amount)].join(', ') + ')');
+    }
+
+    public logFormData(form: FormData): void {
+        const obj = this.formToObj(form);
+        console.log(obj);
+    }
+
+    public formToObj(form: FormData): Record<string, string> {
+        const obj: Record<string, string> = {};
+        for (const [key, value] of form.entries()) {
+            obj[key] = String(value);
+        }
+        return obj;
+    }
+
     // public --> end region ///////////////////////////////////////////////
 
     // private --> start region ////////////////////////////////////////////
     // private --> end region //////////////////////////////////////////////
 }
-export default new AppTool();
+
+const appTool = new AppTool();
+export default appTool;

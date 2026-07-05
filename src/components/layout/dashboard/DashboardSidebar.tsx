@@ -10,14 +10,15 @@ import { DRAWER_WIDTH, MINI_DRAWER_WIDTH } from '../../../constants';
 import DashboardSidebarPageItem from './DashboardSidebarPageItem';
 import DashboardSidebarDividerItem from './DashboardSidebarDividerItem';
 import { getDrawerSxTransitionMixin, getDrawerWidthTransitionMixin } from '../../../mixins';
-import { Fragment, JSX, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { Fragment, JSX, ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import DashboardSidebarContext from '~/context/DashboardSidebarContext';
 import NavigationResource from '~/resources/navigationResources';
 import useResources from '~/hooks/useResources';
-import SessionContext from '~/context/sessionContext';
 import useSessionService from '~/hooks/services/useSessionService';
 import useNavigation from '~/hooks/useNavigation';
 import DashboardAvatar from './DashboardAvatar';
+import useSessionContext from '~/context/sessionContext';
+import AppIcon from '~/components/common/AppIcon';
 
 export interface DashboardSidebarProps {
     expanded?: boolean;
@@ -30,8 +31,8 @@ export default function DashboardSidebar({ expanded = true, setExpanded, disable
     const theme = useTheme();
 
     const { pathname } = useLocation();
-    const Resources = useResources();
-    const Ses = useContext(SessionContext);
+    const { translate } = useResources();
+    const { accessLevel, email, fullName, proxyList } = useSessionContext();
     const SessionService = useSessionService();
     const Navigation = useNavigation();
 
@@ -42,6 +43,7 @@ export default function DashboardSidebar({ expanded = true, setExpanded, disable
 
     const [isFullyExpanded, setIsFullyExpanded] = useState<boolean>(expanded);
     const [isFullyCollapsed, setIsFullyCollapsed] = useState<boolean>(!expanded);
+    const [child, _setChild] = useState<Record<string, ReactNode>>({});
 
     useEffect(() => {
         if (expanded) {
@@ -93,25 +95,65 @@ export default function DashboardSidebar({ expanded = true, setExpanded, disable
 
     const headerMethod = {
         logout: async (): Promise<void> => {
-            await SessionService.logout().then((res) => {
-                if (res) Navigation.navigateByPath(NavigationResource.routesPath.login);
+            await SessionService.logout().then((_res) => {
+                Navigation.navigateByPath(NavigationResource.routesPath.login);
             });
         },
-        proxyLogout: async (): Promise<void> => {
-            await SessionService.proxyLogout();
-        },
+        // proxyLogout: async (): Promise<void> => {
+        //     await SessionService.proxyLogout();
+        // },
     };
 
     const renderLink = (): JSX.Element[] => {
         return NavigationResource.navigationHeaderInfo
-            .filter((x) => ('levelAccess' in x ? x.levelAccess <= Ses.accessLevel : null))
+            .filter((x) => ('levelAccess' in x ? x.levelAccess <= accessLevel : null))
             .map((navEl, i) => {
                 if (navEl.name === 'divider') {
                     return <DashboardSidebarDividerItem key={i} />;
-                } else if ('redirect' in navEl && !navEl.redirect) {
-                    return <DashboardSidebarPageItem key={i} id="employees" title={Resources.translate(navEl.name) as string} href={null} icon={<navEl.Icon />} onClick={() => headerMethod[navEl.method as string]()} selected={false} />;
-                } else {
-                    return <DashboardSidebarPageItem key={i} id="employees" title={Resources.translate(navEl.name) as string} icon={<navEl.Icon />} href={navEl.link} selected={!!matchPath(`${navEl.link}/*`, pathname)} />;
+                } else if (navEl.link) {
+                    return (
+                        <DashboardSidebarPageItem
+                            key={i}
+                            id={'_' + i}
+                            title={translate(navEl.name) as string}
+                            icon={<AppIcon name={navEl.icon} />}
+                            href={navEl.link}
+                            linkState={{
+                                sidebarNavigationToken: Date.now(),
+                                ...(navEl.link === NavigationResource.routesPath.movies ? { resetMovieSearch: Date.now() } : {}),
+                            }}
+                            selected={!!matchPath(`${navEl.link}/*`, pathname)}
+                        />
+                    );
+                } else if (navEl.method) {
+                    return (
+                        <DashboardSidebarPageItem
+                            key={i}
+                            id={'_' + navEl.method}
+                            title={translate(navEl.name) as string}
+                            href={null}
+                            icon={<AppIcon name={navEl.icon} />}
+                            onClick={!navEl.isFolder ? (): void => headerMethod[navEl.method as string]() : null}
+                            selected={false}
+                            nestedNavigation={
+                                navEl.isFolder ? (
+                                    <List
+                                        dense
+                                        sx={{
+                                            padding: 0,
+                                            my: 1,
+                                            pl: mini ? 0 : 1,
+                                            minWidth: 240,
+                                        }}
+                                    >
+                                        {child[navEl.method + 'Child']}
+                                    </List>
+                                ) : null
+                            }
+                            defaultExpanded={false}
+                            expanded={expandedItemIds.includes('_' + navEl.method)}
+                        />
+                    );
                 }
             })
             .flat();
@@ -149,7 +191,7 @@ export default function DashboardSidebar({ expanded = true, setExpanded, disable
                         {renderLink()}
                     </List>
                 </Box>
-                <DashboardAvatar sideBardExpanded={expanded} name={Ses.fullName ?? ''} email={Ses.email ?? ''} />
+                <DashboardAvatar sideBardExpanded={expanded} name={fullName ?? ''} email={email ?? ''} />
             </Fragment>
         ),
         [mini, hasDrawerTransitions, isFullyExpanded, expandedItemIds, pathname, renderLink]
@@ -157,7 +199,7 @@ export default function DashboardSidebar({ expanded = true, setExpanded, disable
 
     const getDrawerSharedSx = useCallback(
         (isTemporary: boolean) => {
-            const drawerWidth = mini ? MINI_DRAWER_WIDTH : (Ses.proxyList ?? []).length > 0 ? 350 : DRAWER_WIDTH;
+            const drawerWidth = mini ? MINI_DRAWER_WIDTH : (proxyList ?? []).length > 0 ? 350 : DRAWER_WIDTH;
 
             return {
                 displayPrint: 'none',
@@ -223,7 +265,6 @@ export default function DashboardSidebar({ expanded = true, setExpanded, disable
             </Drawer>
             <Drawer
                 variant="permanent"
-                id="sidebarContainer"
                 sx={{
                     display: { xs: 'none', md: 'block' },
                     ...getDrawerSharedSx(false),

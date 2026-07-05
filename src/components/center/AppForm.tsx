@@ -2,14 +2,14 @@
 import CenterBase from './CenterBase';
 import { CenterSpecifierType, GenericActionEnum, ICenterBase } from '~/types/centerType';
 import FormMaker from '../formMaker/FormMaker';
-import { FormMakerContentType, FormMakerPartEnum } from '~/types/FormMakerCoreTypes';
+import { FormMakerType, FormMakerFocusErrorType, FormMakerPartEnum } from '~/types/FormMakerCoreTypes';
 import { JSX } from 'react';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
 // #endregion SINGLETON --> /////////////////////////////////
 
-export default function AppForm<T>({ baseProps, data, formMakerBaseProps, specifiers, actionName, onBackPress, onSubmit, isView = false }: IAppForm<T>): JSX.Element {
+export default function AppCenterForm<T>({ baseProps, data, formMakerBaseProps, specifiers, actionName, onBackPress, onSubmit, isView = false, recordId }: IAppCenterForm<T>): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
     // #endregion STATE --> ////////////////////////////////////
 
@@ -26,10 +26,10 @@ export default function AppForm<T>({ baseProps, data, formMakerBaseProps, specif
     return (
         <>
             {baseProps.isSubCenter ? (
-                <FormMaker<T> {...formMakerBaseProps} data={data} onBackPress={onBackPress} isView={isView} onSubmit={onSubmit} />
+                <FormMaker<T> {...formMakerBaseProps} data={data} recordId={recordId} onBackPress={onBackPress} isView={isView} onSubmit={onSubmit} />
             ) : (
                 <CenterBase {...baseProps} prefix={actionName} article={specifiers.singular}>
-                    <FormMaker<T> {...formMakerBaseProps} data={data} onBackPress={onBackPress} isView={isView} onSubmit={onSubmit} />
+                    <FormMaker<T> {...formMakerBaseProps} data={data} recordId={recordId} onBackPress={onBackPress} isView={isView} onSubmit={onSubmit} />
                 </CenterBase>
             )}
         </>
@@ -39,14 +39,14 @@ export default function AppForm<T>({ baseProps, data, formMakerBaseProps, specif
 }
 
 // #region IPROPS -->  /////////////////////////////////////
-interface IAppForm<T> {
+interface IAppCenterForm<T> {
     baseProps: ICenterBase;
     data: T;
     specifiers: CenterSpecifierType;
     formMakerBaseProps: {
-        focusOnError: string[];
+        focusOnError: FormMakerFocusErrorType[];
         isSubmitLoading: boolean;
-        structure: FormMakerContentType<FormMakerPartEnum>[];
+        structure: FormMakerType<FormMakerPartEnum>;
         action: GenericActionEnum;
         grammar: string;
     };
@@ -54,5 +54,6 @@ interface IAppForm<T> {
     onSubmit?: (f: FormData | T) => void;
     actionName: string;
     isView?: boolean;
+    recordId?: string;
 }
 // #enderegion IPROPS --> //////////////////////////////////

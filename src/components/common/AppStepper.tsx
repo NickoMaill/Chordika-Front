@@ -84,7 +84,15 @@ function QontoStepIcon(props: StepIconProps, animate: boolean = false): JSX.Elem
     const { active, completed, className, icon, error } = props;
     return (
         <QontoStepIconRoot ownerState={{ active }} className={className}>
-            {error ? <Warning className="QontoStepIcon-errorIcon" /> : active ? <div className={`QontoStepIcon-active ${animate ? 'active-step-animation' : null}`}>{icon}</div> : completed ? <Check className="QontoStepIcon-completedIcon" /> : <div className="QontoStepIcon-circle">{icon}</div>}
+            {error ? (
+                <Warning className="QontoStepIcon-errorIcon" />
+            ) : active ? (
+                <div className={`QontoStepIcon-active ${animate ? 'active-step-animation' : null}`}>{icon}</div>
+            ) : completed ? (
+                <Check className="QontoStepIcon-completedIcon" />
+            ) : (
+                <div className="QontoStepIcon-circle">{icon}</div>
+            )}
         </QontoStepIconRoot>
     );
 }

@@ -9,12 +9,12 @@ import MenuIcon from '@mui/icons-material/Menu';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import Stack from '@mui/material/Stack';
 import { Link } from 'react-router';
-import { JSX, ReactNode, useCallback, useContext } from 'react';
+import { JSX, ReactNode, useCallback } from 'react';
 import SetupMenu from '../header/SetupMenu';
-import AppContext from '~/context/appContext';
-import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
+import { LevelAccessEnum } from '~/models/Session';
 import NavigationResource from '~/resources/navigationResources';
+import useSessionContext from '~/context/sessionContext';
+import NotificationMenu from '../header/NotificationMenu';
 
 const AppBar = styled(MuiAppBar)(({ theme }) => ({
     borderWidth: 0,
@@ -44,7 +44,7 @@ export interface DashboardHeaderProps {
 
 export default function DashboardHeader({ logo, title, menuOpen, onToggleMenu }: DashboardHeaderProps): JSX.Element {
     const theme = useTheme();
-    const App = useContext(AppContext);
+    const { accessLevel } = useSessionContext();
 
     const handleMenuOpen = useCallback(() => {
         onToggleMenu(!menuOpen);
@@ -81,8 +81,8 @@ export default function DashboardHeader({ logo, title, menuOpen, onToggleMenu }:
                     }}
                 >
                     <Stack direction="row" alignItems="center">
-                        {App.isVisitorHeader() ? <></> : <Box sx={{ mr: 1 }}>{getMenuIcon(menuOpen)}</Box>}
-                        <Link to="/" style={{ textDecoration: 'none' }}>
+                        <Box sx={{ mr: 1 }}>{getMenuIcon(menuOpen)}</Box>
+                        <Link to={NavigationResource.routesPath.home} style={{ textDecoration: 'none' }}>
                             <Stack direction="row" alignItems="center">
                                 {logo ? <LogoContainer>{logo}</LogoContainer> : null}
                                 {title ? (
@@ -102,29 +102,12 @@ export default function DashboardHeader({ logo, title, menuOpen, onToggleMenu }:
                             </Stack>
                         </Link>
                     </Stack>
-                    {App.isVisitorHeader() ? (
-                        <Stack direction={'row'} alignItems={'center'} spacing={1}>
-                            <Stack direction="row" alignItems={'center'}>
-                                <Button component={Link} to={NavigationResource.routesPath.login}>
-                                    Se connecter
-                                </Button>
-                            </Stack>
-                            <Stack direction={'row'} alignItems={'center'} justifyContent={'center'} height={'30px'} spacing={10}>
-                                <Divider orientation="vertical" sx={{ height: '100%' }} />
-                            </Stack>
-                            <Stack direction="row" alignItems={'center'} spacing={1}>
-                                <Button component={Link} to={NavigationResource.routesPath.register}>
-                                    S'inscrire
-                                </Button>
-                            </Stack>
+                    <Stack direction="row" alignItems="center" spacing={1}>
+                        <Stack direction="row" alignItems="center" spacing={1}>
+                            <NotificationMenu />
+                            {accessLevel === LevelAccessEnum.ADMIN && <SetupMenu />}
                         </Stack>
-                    ) : (
-                        <Stack direction="row" alignItems="center" spacing={1} sx={{ marginLeft: 'auto' }}>
-                            <Stack direction="row" alignItems="center">
-                                <SetupMenu />
-                            </Stack>
-                        </Stack>
-                    )}
+                    </Stack>
                 </Stack>
             </Toolbar>
         </AppBar>

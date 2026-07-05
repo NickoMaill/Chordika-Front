@@ -72,8 +72,8 @@ interface ToastContentProps {
     snackbarKey: string | number;
 }
 
-function ToastContent({ message, subMessage, autoHide, autoHideDuration, snackbarKey }: ToastContentProps): JSX.Element {
-    const Resources = useResources();
+export function ToastContent({ message, subMessage, autoHide, autoHideDuration, snackbarKey }: ToastContentProps): JSX.Element {
+    const { translate } = useResources();
     const [width, setWidth] = useState(100);
 
     useEffect(() => {
@@ -102,7 +102,7 @@ function ToastContent({ message, subMessage, autoHide, autoHideDuration, snackba
                 {subMessage && <Regular>{subMessage}</Regular>}
             </Box>
 
-            <IconButton onClick={() => closeSnackbar(snackbarKey)} className="position-absolute top-50 end-0 translate-middle-y" title={Resources.translate('common.close') as string}>
+            <IconButton onClick={() => closeSnackbar(snackbarKey)} className="position-absolute top-50 end-0 translate-middle-y" title={translate('common.close') as string}>
                 <AppIcon name="Close" sx={{ color: 'white' }} />
             </IconButton>
 

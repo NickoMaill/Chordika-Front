@@ -1,5 +1,5 @@
 import { InputBaseType, SelectOptionsType } from '~/types/FormMakerCoreTypes';
-import { ChangeEvent, FocusEvent, lazy, SyntheticEvent, useEffect, useRef, useState } from 'react';
+import { FocusEvent, lazy, SyntheticEvent, useEffect, useRef, useState } from 'react';
 import useDataTextService from '~/hooks/services/useDataTextService';
 import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
@@ -14,33 +14,72 @@ import { useTheme } from '@mui/material/styles';
 const AppIcon = lazy(() => import('~/components/common/AppIcon'));
 // #endregion IMPORTS -> //////////////////////////////////
 
-export default function InputAutoComplete({ sx, style, disabled, required, onSelectAutocompleteInput, error, id, icon, value, ssrUrlExtension, isSearchForm, ssr = false, options = [] }: IInputAutoComplete): JSX.Element {
+export default function InputAutoComplete({
+    sx,
+    style,
+    disabled,
+    required,
+    onChange,
+    onSelectAutocompleteInput,
+    error,
+    id,
+    icon,
+    value,
+    ssrUrlExtension,
+    isSearchForm,
+    ssr = false,
+    options = [],
+    placeholder,
+    resetSignal,
+    includeTextField = false,
+}: IInputAutoComplete): JSX.Element {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [choices, setChoices] = useState<SelectOptionsType[]>(options);
     const [selected, setSelected] = useState<SelectOptionsType>(null);
     const [isError, setIsError] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string>(null);
+    const [inputValue, setInputValue] = useState<string>('');
     // eslint-disable-next-line no-undef
     const searchTimeout = useRef<NodeJS.Timeout | null>(null);
+    const previousResetSignal = useRef(resetSignal);
+    const ignoreExternalValueUntilEmpty = useRef(false);
 
     const DataText = useDataTextService();
     const theme = useTheme();
 
-    const fetchData = async (q?: string, code?: string): Promise<void> => {
+    const reset = (): void => {
+        setSelected(null);
+        setInputValue('');
+        setIsError(false);
+        setErrorMessage(null);
+        if (ssr) {
+            setChoices([]);
+        }
+        if (searchTimeout.current) {
+            clearTimeout(searchTimeout.current);
+        }
+        if (onChange) {
+            onChange('');
+        }
+    };
+
+    const fetchData = async (q?: string, code?: unknown): Promise<void> => {
         setIsError(false);
         setErrorMessage(null);
         try {
-            if ((code ?? '') !== '') {
-                const res = await DataText.searchByCode(code.split('¤')[0], ssrUrlExtension);
+            if (String(code ?? '') !== '') {
+                const res = await DataText.searchByCode(String(code).split('¤')[0], ssrUrlExtension);
                 const options = res.records.map((r) => ({ label: r.description, value: r.code }));
-                if (options.length > 0) setSelected(options[0]);
+                if (options.length > 0) {
+                    setSelected(options[0]);
+                    setInputValue(options[0].label);
+                }
                 setChoices(options);
             } else {
                 const res = await DataText.search(q, ssrUrlExtension);
                 setChoices(res.records.map((r) => ({ label: r.description, value: r.code })));
             }
         } catch (err) {
-            console.log(err);
             if (err.code === 'not_found') {
                 setChoices([]);
                 setIsError(true);
@@ -51,16 +90,21 @@ export default function InputAutoComplete({ sx, style, disabled, required, onSel
         }
     };
 
-    const onTextFieldChange = async (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): Promise<void> => {
-        const inputValue = e.target.value;
+    const onTextFieldChange = async (_: SyntheticEvent<Element, Event>, nextInputValue: string, reason: string): Promise<void> => {
+        setInputValue(nextInputValue);
+        if (reason === 'clear') {
+            reset();
+            return;
+        }
+
         if (ssr) {
             setIsLoading(true);
             if (searchTimeout.current) {
                 clearTimeout(searchTimeout.current);
             }
-            if (inputValue && inputValue.length >= 4) {
+            if (nextInputValue && nextInputValue.length >= 2) {
                 searchTimeout.current = setTimeout(() => {
-                    fetchData(inputValue);
+                    fetchData(nextInputValue);
                 }, 400);
             } else {
                 setChoices([]);
@@ -81,19 +125,51 @@ export default function InputAutoComplete({ sx, style, disabled, required, onSel
         if (onSelectAutocompleteInput) onSelectAutocompleteInput(e, v);
         if (v) {
             setSelected(v);
+            setInputValue(v.label);
         } else {
-            setSelected(null);
-            if (ssr) {
-                setChoices([]);
-            }
+            reset();
+            return;
+        }
+
+        if (onChange) {
+            const nextValue = v ? (isSearchForm ? `${v.value}¤${v.label}` : v.value) : '';
+            onChange(nextValue as unknown as string);
         }
     };
 
     useEffect(() => {
-        if (value !== '' && ssr) {
+        if (ignoreExternalValueUntilEmpty.current) {
+            if (String(value ?? '') === '') {
+                ignoreExternalValueUntilEmpty.current = false;
+            } else {
+                return;
+            }
+        }
+
+        if (String(value ?? '') === '') {
+            setSelected(null);
+            setInputValue('');
+            return;
+        }
+
+        if (ssr) {
             fetchData('', value as string);
+        } else {
+            const option = options.find((o) => String(o.value) === String(value));
+            if (option) {
+                setSelected(option);
+                setInputValue(option.label);
+            }
         }
     }, [value]);
+
+    useEffect(() => {
+        if (previousResetSignal.current !== resetSignal) {
+            previousResetSignal.current = resetSignal;
+            ignoreExternalValueUntilEmpty.current = true;
+            reset();
+        }
+    }, [resetSignal]);
 
     return (
         <>
@@ -102,30 +178,34 @@ export default function InputAutoComplete({ sx, style, disabled, required, onSel
                 disabled={disabled}
                 options={choices}
                 value={selected}
+                inputValue={inputValue}
                 isOptionEqualToValue={(option, value) => option.value === value.value}
                 onChange={onSelect}
+                onInputChange={onTextFieldChange}
                 getOptionLabel={(e: SelectOptionsType) => e.label ?? ''}
                 noOptionsText="Introuvable"
                 loading={isLoading}
+                id={id + 'Field'}
                 fullWidth
                 slotProps={{
                     clearIndicator: {
                         sx: {
-                            // backgroundColor: 'transparent',
+                            backgroundColor: 'transparent',
                             border: 'none',
                             color: (theme.vars || theme).palette.grey[400],
                             '&:hover': {
-                                // backgroundColor: 'transparent',
+                                backgroundColor: 'transparent',
                                 color: (theme.vars || theme).palette.grey[800],
                             },
                             ...theme.applyStyles('dark', {
                                 '&:hover': {
-                                    // backgroundColor: 'transparent',
+                                    backgroundColor: 'transparent',
                                     color: (theme.vars || theme).palette.grey[30],
                                 },
                             }),
                         },
                     },
+                    
                 }}
                 renderOption={(props, option, { inputValue }) => {
                     const { key, ...optionProps } = props;
@@ -159,16 +239,18 @@ export default function InputAutoComplete({ sx, style, disabled, required, onSel
                         variant="outlined"
                         required={required}
                         helperText={errorMessage}
+                        placeholder={placeholder}
                         error={isError || error}
-                        onChange={onTextFieldChange}
+                        
                         onBlur={onBlur}
-                        sx={{ marginTop: '4px', marginBottom: '4px', backgroundColor: disabled ? '#e8e5e5' : 'transparent', borderRadius: 1, ...sx }}
+                        sx={{ marginTop: '4px', marginBottom: '4px', borderRadius: 1, ...sx }}
                         {...params}
                         slotProps={{
                             input: {
                                 ...params.InputProps,
                                 className: 'autocomplete-textfield-override',
                                 style: style,
+                                name: includeTextField ? id + 'Field' : null,
                                 startAdornment: icon && (
                                     <InputAdornment position="start">
                                         <AppIcon name={icon} />
@@ -180,15 +262,12 @@ export default function InputAutoComplete({ sx, style, disabled, required, onSel
                                         {params.InputProps.endAdornment}
                                     </>
                                 ),
-                                sx: {
-                                    backgroundColor: disabled ? '#e8e5e5' : 'transparent',
-                                },
                             },
                         }}
                     />
                 )}
             />
-            <input type="hidden" id={id as string} name={id as string} value={selected ? (isSearchForm ? `${selected.value}¤${selected.label}` : (selected.value as string)) : ''} />
+            <input type="hidden" required={required} id={id as string} name={id as string} value={selected ? (isSearchForm ? `${selected.value}¤${selected.label}` : (selected.value as string)) : ''} />
         </>
     );
 }
@@ -198,7 +277,7 @@ interface IInputAutoComplete extends InputBaseType {
     options: SelectOptionsType[];
     ssr?: boolean;
     ssrUrlExtension?: string;
-    onReset?: () => void;
     onSelectAutocompleteInput?: (e: SyntheticEvent<Element, Event>, v: SelectOptionsType | null) => void;
+    includeTextField?: boolean;
 }
 // #endregion IPROPS --> //////////////////////////////////

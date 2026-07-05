@@ -5,20 +5,27 @@ import Toolbar from '@mui/material/Toolbar';
 import { Outlet } from 'react-router';
 import DashboardHeader from './DashboardHeader';
 import DashboardSidebar from './DashboardSidebar';
-import { JSX, useCallback, useContext, useRef, useState } from 'react';
+import { JSX, useCallback, useRef, useState } from 'react';
+import { useLocation } from 'react-router';
+import NavigationResource from '~/resources/navigationResources';
 import Logo from '../Logo';
 import LayoutFallback from '../LayoutFallback';
-import AppContext from '~/context/appContext';
+import ErrorBoundaryWrapper from '../ErrorBoundaryWrapper';
+import useSessionContext from '~/context/sessionContext';
+import useAppContext from '~/context/appContext';
 // import SitemarkIcon from "./SitemarkIcon";
 
 export default function DashboardLayout(): JSX.Element {
-    const theme = useTheme();
-    const App = useContext(AppContext);
+    const { breakpoints } = useTheme();
+    const { getToken } = useSessionContext();
+    const { boxOptions } = useAppContext();
 
     const [isDesktopNavigationExpanded, setIsDesktopNavigationExpanded] = useState<boolean>(true);
     const [isMobileNavigationExpanded, setIsMobileNavigationExpanded] = useState<boolean>(false);
 
-    const isOverMdViewport = useMediaQuery(theme.breakpoints.up('md'));
+    const { pathname } = useLocation();
+
+    const isOverMdViewport = useMediaQuery(breakpoints.up('md'));
 
     const isNavigationExpanded = isOverMdViewport ? isDesktopNavigationExpanded : isMobileNavigationExpanded;
 
@@ -53,8 +60,14 @@ export default function DashboardLayout(): JSX.Element {
                 width: '100%',
             }}
         >
-            <DashboardHeader logo={<Logo />} title="Chordika" menuOpen={isNavigationExpanded} onToggleMenu={handleToggleHeaderMenu} />
-            {App.isVisitorHeader() ? <></> : <DashboardSidebar expanded={isNavigationExpanded} setExpanded={setIsNavigationExpanded} container={layoutRef?.current ?? undefined} />}
+            {NavigationResource.noHeaderPath.includes(pathname) || !getToken() || (boxOptions && !boxOptions.showHeader) ? (
+                <></>
+            ) : (
+                <>
+                    <DashboardHeader logo={<Logo />} menuOpen={isNavigationExpanded} onToggleMenu={handleToggleHeaderMenu} />
+                    <DashboardSidebar expanded={isNavigationExpanded} setExpanded={setIsNavigationExpanded} container={layoutRef?.current ?? undefined} />
+                </>
+            )}
             <Box
                 sx={{
                     display: 'flex',
@@ -75,9 +88,11 @@ export default function DashboardLayout(): JSX.Element {
                         height: '100vh',
                     }}
                 >
-                    <LayoutFallback>
-                        <Outlet />
-                    </LayoutFallback>
+                    <ErrorBoundaryWrapper>
+                        <LayoutFallback>
+                            <Outlet />
+                        </LayoutFallback>
+                    </ErrorBoundaryWrapper>
                 </Box>
             </Box>
         </Box>

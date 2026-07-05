@@ -18,18 +18,6 @@ export const CenterInitialState = {
      */
     refresh: false,
     /**
-     * @description page actuel de la liste
-     */
-    currentPage: 0,
-    /**
-     * @description Nombre de records par page
-     */
-    rowsPerPage: 50,
-    /**
-     * @description url de sort
-     */
-    sort: '', // On initialisera à partir de props dans useEffect
-    /**
      * @description records de la liste
      */
     datas: null,
@@ -37,10 +25,6 @@ export const CenterInitialState = {
      * @description record
      */
     data: null,
-    /**
-     * @description Action du center => new | update | delete | export |
-     */
-    centerAction: GenericActionEnum.TABLE,
     /**
      * @description contenu de l'alerte
      */
@@ -155,8 +139,6 @@ export const centerReducer = <T>(state: CenterState<T>, action: CenterStateActio
             return { ...state, datas: action.payload };
         case 'SET_DATA':
             return { ...state, data: action.payload };
-        case 'SET_CENTER_ACTION':
-            return { ...state, centerAction: action.payload };
         case 'SET_LOADING':
             return { ...state, isLoading: action.payload };
         case 'SET_ALERT':
@@ -182,7 +164,7 @@ export const centerReducer = <T>(state: CenterState<T>, action: CenterStateActio
         case 'SET_SEARCH_LOADING':
             return { ...state, isSearchLoading: action.payload };
         case 'SET_FOCUS_ERROR':
-            return { ...state, focusOnError: [...state.focusOnError, action.payload] };
+            return { ...state, focusOnError: action.payload };
         case 'CLEAR_FOCUS_ERROR':
             return { ...state, focusOnError: [] };
         case 'SET_MINI_FORM_MOD':

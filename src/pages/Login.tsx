@@ -1,25 +1,21 @@
 // #region IMPORTS -> /////////////////////////////////////
+import { JSX } from 'react';
 import LockIcon from '@mui/icons-material/Lock';
 import EmailIcon from '@mui/icons-material/Email';
 import useSessionService from '~/hooks/services/useSessionService';
 import useNavigation from '~/hooks/useNavigation';
-import { AppError, ErrorTypeEnum } from '~/core/appError';
-import { FormEvent, JSX, useEffect, useState } from 'react';
+import { AppError } from '~/core/appError';
+import React, { useEffect, useState } from 'react';
+import { Box, Button, Checkbox, CircularProgress, Container, FormControlLabel, Grid, LinearProgress, Link, TextField } from '@mui/material';
 import AppAlert from '~/components/common/AppAlert';
+import InputOTPField from '~/components/formMaker/elements/InputOTPField';
 import useResources from '~/hooks/useResources';
 import { Bold, Regular } from '~/components/common/Text';
 import { useSearchParams } from 'react-router-dom';
-import Logo from '../assets/pictures/logo.png';
-import { Link } from 'react-router-dom';
-import { AlertColor } from '@mui/material/Alert';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
-import Checkbox from '@mui/material/Checkbox';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Grid from '@mui/material/Grid';
-import MuiLink from '@mui/material/Link';
-import TextField from '@mui/material/TextField';
+import { Trans } from 'react-i18next';
+import configManager from '~/managers/configManager';
+import { LevelAccessEnum } from '~/models/Session';
+import useSessionContext from '~/context/sessionContext';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
@@ -28,86 +24,131 @@ import TextField from '@mui/material/TextField';
 export default function Login(): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
     const [isError, setIsError] = useState<boolean>(false);
-    const [messageError, setMessageError] = useState<string>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [messageError, setMessageError] = useState<string>(null);
+    const [mfaMode, setMfaMode] = useState<boolean>(false);
     const [resetMode, setResetMode] = useState<boolean>(false);
     const [isPageLoading, setIsPageLoading] = useState<boolean>(true);
+    const [resendCount, setResendCount] = useState<number>(11);
     const [title, setTitle] = useState<string>('');
     const [showAlert, setShowAlert] = useState<boolean>(false);
-    const [alertLevel, setAlerLevel] = useState<AlertColor>('error');
+    const [pendingRedirect, setPendingRedirect] = useState<string | null>(null);
     // #endregion STATE --> ////////////////////////////////////
 
     // #region HOOKS --> ///////////////////////////////////////
     const SessionService = useSessionService();
     const Navigation = useNavigation();
-    const Resources = useResources();
+    const { userId, accessLevel, phone } = useSessionContext();
+    const { translate } = useResources();
     const [params] = useSearchParams();
+    const isMfaEnabled = configManager.isMfaEnabled;
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////
     const hideAlert = (): void => {
         setShowAlert(false);
     };
-    const handleSubmitLogin = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
+
+    const getPostLoginTarget = (): string => {
+        if (params.has('target')) {
+            return decodeURIComponent(params.get('target'));
+        }
+
+        return '/';
+    };
+
+    const handleSubmitLogin = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         setIsLoading(true);
         await SessionService.login(data)
-            .then((isLoginOk) => {
-                if (isLoginOk) {
-                    setIsError(false);
-                    setMessageError(null);
-                    setShowAlert(false);
-                    if (params.has('target')) {
-                        Navigation.navigateByPath(decodeURIComponent(params.get('target')), true);
-                    } else {
-                        Navigation.navigate('Home', null, true);
-                    }
+            .then((session) => {
+                setIsError(false);
+                setMessageError(null);
+                setShowAlert(false);
+
+                const shouldRequireMfa = isMfaEnabled && session.needMFA;
+                if (shouldRequireMfa) {
+                    setMfaMode(true);
+                    return;
                 }
+
+                setPendingRedirect(getPostLoginTarget());
             })
             .catch((err: AppError) => {
                 switch (err.code) {
                     case 'invalid_credentials':
-                        setMessageError(Resources.translate('login.wrongCredentials') as string);
+                        setMessageError(translate('login.wrongCredentials') as string);
                         setShowAlert(true);
                         setIsError(true);
                         break;
                     case 'email_required':
-                        setMessageError(Resources.translate('login.requiredEmail') as string);
+                        setMessageError(translate('login.requiredEmail') as string);
                         setShowAlert(true);
                         setIsError(true);
                         break;
                     case 'password_required':
-                        setMessageError(Resources.translate('login.requiredPassword') as string);
+                        setMessageError(translate('login.requiredPassword') as string);
                         setShowAlert(true);
                         setIsError(true);
                         break;
                     default:
-                        setMessageError(Resources.translate('error.common.error') as string);
+                        setMessageError(translate('error.common.error') as string);
                         setShowAlert(true);
                         setIsError(true);
-                        throw new AppError(ErrorTypeEnum.Technical, err.message, err.code);
+                        throw new Error('Erreur');
+                    // throw new AppError(ErrorTypeEnum.Technical, err.message, err.code);
                 }
-                setAlerLevel('error');
             })
             .finally(() => setIsLoading(false));
     };
 
-    const onResetSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
-        e.preventDefault();
-        const form = new FormData(e.currentTarget);
+    const handleSubmitOtp = async (value: string): Promise<void> => {
+        const form = new FormData();
+        form.append('otp', value);
         setIsLoading(true);
-        await SessionService.resetPassword(form)
+        await SessionService.loginOpt(form)
             .then((res) => {
-                if (res.success) {
-                    Navigation.navigate('Login');
-                    setResetMode(false);
+                if (res) {
+                    setIsError(false);
+                    setMessageError(null);
+                    setPendingRedirect(getPostLoginTarget());
+                } else {
+                    setIsError(true);
                     setShowAlert(true);
-                    setMessageError('Demande envoyée vérifiez vos emails');
-                    setAlerLevel('info');
+                    setMessageError('code invalide');
+                }
+            })
+            .catch((err: AppError) => {
+                setIsError(true);
+                switch (err.code) {
+                    case 'session_expired':
+                        setMfaMode(false);
+                        setIsError(false);
+                        setShowAlert(true);
+                        setMessageError(translate('login.expiredSession') as string);
+                        break;
+                    case 'expired_otp':
+                        setShowAlert(true);
+                        setMessageError(translate('login.expiredMfa') as string);
+                        break;
                 }
             })
             .finally(() => setIsLoading(false));
+    };
+
+    const onResendMfa = async (): Promise<void> => {
+        SessionService.requestOtp();
+        let i = 0;
+        setResendCount(i);
+        const timer = setInterval(() => {
+            if (i === 11) {
+                clearInterval(timer);
+            } else {
+                i++;
+                setResendCount(i);
+            }
+        }, 1000);
     };
     // #endregion METHODS --> //////////////////////////////////
 
@@ -117,28 +158,52 @@ export default function Login(): JSX.Element {
             setResetMode(true);
             setIsPageLoading(false);
         } else {
-            setResetMode(false);
             SessionService.refreshSession()
                 .then((res) => {
                     if (res) {
-                        Navigation.navigateByPath('/');
+                        Navigation.navigate('Home');
                     } else {
                         setIsPageLoading(false);
                     }
                 })
                 .catch((err: AppError) => {
-                    throw err;
+                    if (err.code && err.code === 'need_mfa') {
+                        if (isMfaEnabled) {
+                            setMfaMode(true);
+                            SessionService.requestOtp();
+                        } else {
+                            setIsPageLoading(false);
+                            setIsError(true);
+                            setShowAlert(true);
+                            setMessageError("La configuration du front désactive MFA, mais l'API l'exige encore.");
+                        }
+                    } else {
+                        throw err;
+                    }
                 });
         }
-    }, [Navigation.search]);
+    }, [params, isMfaEnabled]);
 
     useEffect(() => {
-        if (resetMode) {
-            setTitle(Resources.translate('login.resetTitle') as string);
+        if (mfaMode) {
+            setTitle(translate('login.MfaTitle') as string);
+        } else if (resetMode) {
+            setTitle(translate('login.resetTitle') as string);
         } else {
-            setTitle('Connexion');
+            setTitle('');
         }
-    }, [resetMode]);
+    }, [mfaMode, resetMode]);
+
+    useEffect(() => {
+        if (!pendingRedirect) return;
+        if (!userId) return;
+        if (accessLevel < LevelAccessEnum.USER) return;
+
+        setTimeout(() => {
+            Navigation.navigateByPath(pendingRedirect, true);
+            setPendingRedirect(null);
+        }, 50);
+    }, [pendingRedirect, userId, accessLevel, Navigation]);
     // #endregion USEEFFECT --> ////////////////////////////////
 
     // #region RENDER --> //////////////////////////////////////
@@ -150,12 +215,27 @@ export default function Login(): JSX.Element {
                 <Container sx={{ display: 'flex', justifyContent: 'center' }} maxWidth={'lg'}>
                     <Box maxWidth={'400px'} sx={{ marginTop: { xs: 1, md: 8, sm: 3 } }}>
                         <Box display="flex" alignItems="end" justifyContent="start" marginBottom={2}>
-                            <Box component="img" sx={{ height: { xs: 60, sm: 80 }, width: { xs: 80, sm: 100 }, marginRight: 2 }} src={Logo} />
-                            <Bold component="h1" variant="h4" color="textPrimary">
+                            <Bold component="h1" variant="h4" color="primary">
                                 {title}
                             </Bold>
+                            {mfaMode && isLoading && <CircularProgress sx={{ marginLeft: 2 }} />}
                         </Box>
-                        {resetMode ? <ResetForm onSubmit={onResetSubmit} isLoading={isLoading} /> : <LoginForm isError={isError} showError={showAlert} onCloseAlert={hideAlert} messageError={messageError} onSubmit={handleSubmitLogin} isLoading={isLoading} severity={alertLevel} />}
+                        {mfaMode ? (
+                            <OtpForm
+                                showError={showAlert}
+                                onCloseAlert={hideAlert}
+                                onResend={onResendMfa}
+                                messageError={messageError}
+                                isError={isError}
+                                resendWaitCount={resendCount}
+                                phoneNumber={phone.slice(-4)}
+                                onComplete={handleSubmitOtp}
+                            />
+                        ) : resetMode ? (
+                            <ResetForm />
+                        ) : (
+                            <LoginForm isError={isError} showError={showAlert} onCloseAlert={hideAlert} messageError={messageError} onSubmit={handleSubmitLogin} isLoading={isLoading} />
+                        )}
                     </Box>
                 </Container>
             )}
@@ -167,23 +247,48 @@ export default function Login(): JSX.Element {
 // #region IPROPS -->  /////////////////////////////////////
 // #endregion IPROPS --> //////////////////////////////////
 
-function LoginForm({ isError, onSubmit, isLoading, messageError, showError, onCloseAlert, severity }: ILoginForm): JSX.Element {
-    const Resources = useResources();
+function LoginForm({ isError, onSubmit, isLoading, messageError, showError, onCloseAlert }: ILoginForm): JSX.Element {
+    const { translate } = useResources();
     return (
         <>
             <Box component="form" onSubmit={onSubmit} noValidate sx={{ mt: 1 }}>
-                <TextField required={true} InputProps={{ startAdornment: <EmailIcon sx={{ marginRight: 1 }} /> }} error={isError} margin="normal" fullWidth id="Username" label={'username'} type="email" name="Username" autoComplete="email" autoFocus placeholder="exemple@xyz.com" />
-                <TextField required InputProps={{ startAdornment: <LockIcon sx={{ marginRight: 1 }} /> }} error={isError} margin="normal" fullWidth name="Password" label={'password'} type="password" id="password" autoComplete="current-password" placeholder="*******" />
-                <FormControlLabel control={<Checkbox value="true" name="RememberMe" color="primary" />} label={Resources.translate('login.rememberMe')} />
-                <AppAlert isVisible={showError} onClose={onCloseAlert} severity={severity} title={messageError} />
+                <TextField
+                    required={true}
+                    InputProps={{ startAdornment: <EmailIcon color="primary" sx={{ marginRight: 1 }} /> }}
+                    error={isError}
+                    margin="normal"
+                    fullWidth
+                    id="Username"
+                    label={"Nom d'utilisateur"}
+                    type="email"
+                    name="Username"
+                    autoComplete="email"
+                    autoFocus
+                    placeholder="exemple@xyz.com"
+                />
+                <TextField
+                    required
+                    InputProps={{ startAdornment: <LockIcon color="primary" sx={{ marginRight: 1 }} /> }}
+                    error={isError}
+                    margin="normal"
+                    fullWidth
+                    name="Password"
+                    label={'Mot de passe'}
+                    type="password"
+                    id="password"
+                    autoComplete="current-password"
+                    placeholder="*******"
+                />
+                <FormControlLabel control={<Checkbox value="true" name="RememberMe" color="primary" />} label={translate('login.rememberMe')} />
+                <AppAlert isVisible={showError} onClose={onCloseAlert} severity="error" title={messageError} />
                 <Button loading={isLoading} type="submit" fullWidth variant="contained" sx={{ mt: 1, mb: 1 }}>
-                    {Resources.translate('login.connect')}
+                    {translate('login.connect')}
                 </Button>
                 <Grid container>
                     <Grid>
-                        <MuiLink component={Link} to="/login?mode=reset" variant="body1" className="fw-bold">
-                            {Resources.translate('login.forgotPassword')}
-                        </MuiLink>
+                        <Link href="login?mode=reset" variant="body2" className="text-center">
+                            {translate('login.forgotPassword')}
+                        </Link>
                     </Grid>
                 </Grid>
             </Box>
@@ -191,42 +296,86 @@ function LoginForm({ isError, onSubmit, isLoading, messageError, showError, onCl
     );
 }
 interface ILoginForm {
-    onSubmit: (e: FormEvent<HTMLFormElement>) => void;
+    onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
     isError: boolean;
     isLoading: boolean;
     messageError: string;
     showError: boolean;
     onCloseAlert: () => void;
-    severity: AlertColor;
 }
 
-function ResetForm({ isLoading, onSubmit }: IResetForm): JSX.Element {
-    const Resources = useResources();
+function OtpForm({ onComplete, onResend, resendWaitCount = 10, isError, messageError, showError, onCloseAlert }: IOtpForm): JSX.Element {
+    const { translate } = useResources();
+    const Ses = useSessionContext();
+
+    return (
+        <Box>
+            <Bold sx={{ mb: 1 }} variant="h6">
+                {translate('login.MfaSubtitle')}
+            </Bold>
+            <Regular sx={{ mb: 1 }} variant="body2">
+                <Trans i18nKey="login.MfaDetails" values={{ username: Ses.fullName, phoneNumber: Ses.phone }} />
+            </Regular>
+            <InputOTPField id="otp" error={isError} onComplete={onComplete} />
+            <Box display="flex" mt={1}>
+                <Box>
+                    <Regular sx={{ mb: 1 }} variant="body2">
+                        {translate('login.resendMfa')}{' '}
+                    </Regular>
+                </Box>
+                {resendWaitCount < 11 ? (
+                    <Box sx={{ width: '40%' }}>
+                        <LinearProgress sx={{ mb: 1, ml: 1, height: 5, borderRadius: 50 }} variant="determinate" value={resendWaitCount * 10} />
+                    </Box>
+                ) : (
+                    <Link sx={{ mb: 1, ml: 0.5 }} component="button" variant="body2" onClick={onResend}>
+                        {translate('common.resend')}
+                    </Link>
+                )}
+            </Box>
+            <AppAlert severity="error" isVisible={showError} onClose={onCloseAlert} title={messageError} />
+        </Box>
+    );
+}
+interface IOtpForm {
+    onComplete: (v: string) => void;
+    phoneNumber: string;
+    onResend: () => void;
+    resendWaitCount: number;
+    isError?: boolean;
+    messageError?: string;
+    showError: boolean;
+    onCloseAlert: () => void;
+}
+function ResetForm(): JSX.Element {
+    const { translate } = useResources();
 
     return (
         <>
-            <Regular marginBottom={1}>{Resources.translate('login.resetMessage')}</Regular>
+            <Regular marginBottom={1}>{translate('login.resetMessage')}</Regular>
             <Bold marginBottom={1} textAlign="left" variant="body2">
-                {Resources.translate('login.resetDetails')}
+                {translate('login.resetDetails')}
             </Bold>
-            <Box component="form" onSubmit={onSubmit}>
-                <TextField slotProps={{ input: { startAdornment: <EmailIcon color="secondary" sx={{ marginRight: 1 }} /> } }} margin="normal" required fullWidth id="Username" label={Resources.translate('common.emailAddress')} type="email" name="email" autoComplete="email" autoFocus placeholder="exemple@xyz.com" />
-                <Button loading={isLoading} type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 1 }}>
-                    {Resources.translate('login.resetLabel')}
+            <Box component="form" onSubmit={null}>
+                <TextField
+                    InputProps={{ startAdornment: <EmailIcon color="primary" sx={{ marginRight: 1 }} /> }}
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="Username"
+                    label={translate('common.emailAddress')}
+                    type="email"
+                    name="Email"
+                    autoComplete="email"
+                    autoFocus
+                    placeholder="exemple@xyz.com"
+                />
+                <Button loading={false} type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 1 }}>
+                    {translate('login.resetLabel')}
                 </Button>
-                <Grid container>
-                    <Grid>
-                        <MuiLink component={Link} to="/login" variant="body1" className="fw-bold">
-                            {Resources.translate('login.connect')}
-                        </MuiLink>
-                    </Grid>
-                </Grid>
             </Box>
         </>
     );
 }
 
-interface IResetForm {
-    isLoading: boolean;
-    onSubmit: (e: FormEvent<HTMLFormElement>) => void;
-}
+// interface IResetForm {}

@@ -13,14 +13,14 @@ import { SxProps, Theme, useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import dayjs, { Dayjs } from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DATE_PICKER_LOCALE } from './datePickerLocale';
 // #endregion IMPORTS -> //////////////////////////////////
-// pattern => date1,date2$opt
-// #region SINGLETON --> ////////////////////////////////////
+
 const opt = [
-    { label: 'Égale à (=)', value: '' },
-    { label: 'supérieur à (>)', value: '|' },
-    { label: 'inférieur à (<)', value: '$' },
-    { label: 'Du xxx Au xxx', value: 'd' },
+    { label: 'Égal à (=)', value: '' },
+    { label: 'Supérieur à (>)', value: '|' },
+    { label: 'Inférieur à (<)', value: '$' },
+    { label: 'Du ... au ...', value: 'd' },
 ];
 
 const presets = [
@@ -33,74 +33,67 @@ const presets = [
 ];
 
 const styles: SxProps<Theme> = { marginTop: '8px', width: '100%' };
-// #endregion SINGLETON --> /////////////////////////////////
 
 export default function RangeDateField({ id, required, value = '', openTo = 'day', onChange }: IRangeDateField): JSX.Element {
-    // #region STATE --> ///////////////////////////////////////
-    const [date1, setDate1] = useState<Dayjs | null>(value && (value as string).split(',').length > 0 ? dayjs((value as string).split(',')[0]) : null);
-    const [date2, setDate2] = useState<Dayjs | null>(value && (value as string).split(',').length > 1 ? dayjs((value as string).split(',')[1]) : null);
-    const [rangeType, setRangeType] = useState<string>('');
+    const [date1, setDate1] = useState<Dayjs | null>(value && (value as string).split(',').length > 0 ? dayjs((value as string).replace(/^[|$d]/, '').split(',')[0]) : null);
+    const [date2, setDate2] = useState<Dayjs | null>(value && (value as string).split(',').length > 1 ? dayjs((value as string).replace(/^[|$d]/, '').split(',')[1]) : null);
+    const [rangeType, setRangeType] = useState<string>((value as string)?.match(/^[|$d]/)?.[0] ?? '');
 
     const theme = useTheme();
     const isOverMdViewport = useMediaQuery(theme.breakpoints.up('md'));
-    // #endregion STATE --> ////////////////////////////////////
 
-    // #region METHODS --> /////////////////////////////////////
-    const handleChange = (v: string): void => {
-        if (opt.findIndex((o) => o.value === v) > -1) {
-            setRangeType(v);
-            if (v === '') {
+    const handleRangeChange = (nextValue: string): void => {
+        if (opt.findIndex((o) => o.value === nextValue) > -1) {
+            setRangeType(nextValue);
+            if (nextValue === '') {
                 setDate2(null);
             }
+        } else if (nextValue === 'del') {
+            setDate1(null);
+            setDate2(null);
+            setRangeType('');
         } else {
-            if (v === 'del') {
-                setDate1(null);
-                setDate2(null);
-            } else {
-                setPreset(v);
-            }
+            setPreset(nextValue);
         }
     };
-    const handleDateChange = (e: Dayjs | null, last: boolean): void => {
+
+    const handleDateChange = (nextDate: Dayjs | null, last: boolean): void => {
         if (last) {
             if (rangeType === 'd') {
-                setDate2(e);
+                setDate2(nextDate);
             }
         } else {
-            setDate1(e);
+            setDate1(nextDate);
         }
     };
-    const setPreset = (p: string): void => {
-        switch (p) {
+
+    const setPreset = (preset: string): void => {
+        switch (preset) {
             case 'now':
                 setDate1(dayjs());
+                setDate2(null);
                 setRangeType('');
                 break;
-
             case 'last7':
                 setDate1(dayjs().subtract(7, 'day'));
                 setDate2(dayjs());
                 setRangeType('d');
                 break;
-
             case 'month':
                 setDate1(dayjs().startOf('month'));
                 setDate2(dayjs().endOf('month'));
                 setRangeType('d');
                 break;
-
             case 'lastMonth':
                 setDate1(dayjs().subtract(1, 'month').startOf('month'));
                 setDate2(dayjs().subtract(1, 'month').endOf('month'));
                 setRangeType('d');
                 break;
-
             case 'year':
                 setDate1(dayjs().startOf('year'));
                 setDate2(dayjs().endOf('year'));
                 setRangeType('d');
                 break;
-
             case 'lastYear':
                 setDate1(dayjs().subtract(1, 'year').startOf('year'));
                 setDate2(dayjs().subtract(1, 'year').endOf('year'));
@@ -108,33 +101,25 @@ export default function RangeDateField({ id, required, value = '', openTo = 'day
                 break;
         }
     };
-    const renderValue = (v: string): JSX.Element => {
-        switch (v) {
-            case 'd': {
-                return <b className="text-center">Du</b>;
-            }
-            case '|': {
-                return <b className="text-center">{'>'}</b>;
-            }
-            case '$': {
-                return <b className="text-center">{'<'}</b>;
-            }
-            default: {
-                return <b className="text-center">=</b>;
-            }
-        }
-    };
-    const buildValue = (): string => {
-        const range = [date1, date2].filter((d) => d);
-        const v = rangeType + range.map((d) => d.format('YYYY-MM-DD')).join(',');
-        if (onChange) {
-            onChange(v);
-        }
-        return v;
-    };
-    // #endregion METHODS --> //////////////////////////////////
 
-    // #region USEEFFECT --> ///////////////////////////////////
+    const renderValue = (current: string): JSX.Element => {
+        switch (current) {
+            case 'd':
+                return <b className="text-center">Du</b>;
+            case '|':
+                return <b className="text-center">{'>'}</b>;
+            case '$':
+                return <b className="text-center">{'<'}</b>;
+            default:
+                return <b className="text-center">=</b>;
+        }
+    };
+
+    const buildValue = (): string => {
+        const range = [date1, date2].filter((d): d is Dayjs => Boolean(d));
+        return rangeType + range.map((d) => d.format('YYYY-MM-DD')).join(',');
+    };
+
     useEffect(() => {
         if (rangeType !== 'd') {
             setDate2(null);
@@ -142,35 +127,39 @@ export default function RangeDateField({ id, required, value = '', openTo = 'day
     }, [rangeType]);
 
     useEffect(() => {
-        if (value && value !== '') {
-            // setRangeType(/^[0-9]/.test(value as string) ? '' : (value as string).charAt(0));
-            // setDates(
-            //     (value as string)
-            //         .replace('|', '')
-            //         .replace('$', '')
-            //         .replace('d', '')
-            //         .split(',')
-            //         .map((s) => (s ? new DateTime(s) : null))
-            //         .filter((d): d is DateTime => d !== null)
-            // );
+        if (!value || value === '') {
+            setDate1(null);
+            setDate2(null);
+            setRangeType('');
+            return;
         }
-    }, []);
-    // #endregion USEEFFECT --> ////////////////////////////////
 
-    // #region RENDER --> //////////////////////////////////////
+        const rawValue = value as string;
+        const nextRangeType = rawValue.match(/^[|$d]/)?.[0] ?? '';
+        const dates = rawValue.replace(/^[|$d]/, '').split(',');
+        setRangeType(nextRangeType);
+        setDate1(dates[0] ? dayjs(dates[0]) : null);
+        setDate2(dates[1] ? dayjs(dates[1]) : null);
+    }, [value]);
+
+    useEffect(() => {
+        if (onChange) {
+            onChange(buildValue());
+        }
+    }, [date1, date2, rangeType]);
+
     return (
-        <LocalizationProvider localeText={frFR.components.MuiLocalizationProvider.defaultProps.localeText} dateAdapter={AdapterDayjs}>
+        <LocalizationProvider localeText={frFR.components.MuiLocalizationProvider.defaultProps.localeText} dateAdapter={AdapterDayjs} adapterLocale={DATE_PICKER_LOCALE}>
             <>
                 <AppGridContainer spacing={0}>
                     <Grid size={{ xs: 12, sm: 12, md: rangeType === 'd' ? 6 : 12 }} className="ps-0">
                         <DatePicker
                             sx={{ ...styles }}
                             value={date1}
-                            onChange={(e) => handleDateChange(e, false)}
+                            onChange={(nextDate) => handleDateChange(nextDate, false)}
                             slotProps={{
                                 textField: {
                                     required,
-                                    // placeholder: 'JJ/MM/AAAA',
                                     className: 'w-100',
                                     sx: {
                                         margin: 0,
@@ -182,7 +171,15 @@ export default function RangeDateField({ id, required, value = '', openTo = 'day
                                         },
                                     },
                                     startAdornment: (
-                                        <Select renderValue={renderValue} displayEmpty className="d-flex m-0 border-0 border-end" slotProps={{ input: { className: 'd-flex justify-content-center' } }} value={rangeType} onChange={(e) => handleChange(e.target.value)} sx={{ borderEndEndRadius: 0, borderTopRightRadius: 0 }}>
+                                        <Select
+                                            renderValue={renderValue}
+                                            displayEmpty
+                                            className="d-flex m-0 border-0 border-end"
+                                            slotProps={{ input: { className: 'd-flex justify-content-center' } }}
+                                            value={rangeType}
+                                            onChange={(e) => handleRangeChange(e.target.value)}
+                                            sx={{ borderEndEndRadius: 0, borderTopRightRadius: 0 }}
+                                        >
                                             {opt.map((o, i) => (
                                                 <MenuItem key={i} value={o.value}>
                                                     {o.label}
@@ -195,7 +192,7 @@ export default function RangeDateField({ id, required, value = '', openTo = 'day
                                                 </MenuItem>
                                             ))}
                                             <Divider sx={{ marginBlock: 1 }} />
-                                            <MenuItem value={'del'}>Effacer</MenuItem>
+                                            <MenuItem value="del">Effacer</MenuItem>
                                         </Select>
                                     ),
                                     InputProps: {
@@ -215,7 +212,7 @@ export default function RangeDateField({ id, required, value = '', openTo = 'day
                         <Grid size={{ xs: 12, sm: 12, md: 6 }} className="ps-0">
                             <DatePicker
                                 sx={styles}
-                                onChange={(e) => handleDateChange(e, true)}
+                                onChange={(nextDate) => handleDateChange(nextDate, true)}
                                 value={date2}
                                 slotProps={{
                                     textField: {
@@ -243,18 +240,15 @@ export default function RangeDateField({ id, required, value = '', openTo = 'day
                         </Grid>
                     )}
                 </AppGridContainer>
-                <input type="hidden" id={id} name={id} value={buildValue()} />
+                <input type="hidden" id={id} name={id} value={buildValue()} readOnly />
             </>
         </LocalizationProvider>
     );
-    // #endregion RENDER --> ///////////////////////////////////
 }
 
-// #region IPROPS -->  /////////////////////////////////////
 interface IRangeDateField extends InputBaseType {
     format?: string;
     views?: DateView[];
     openTo?: DateView;
     onChange?: (value: string) => void;
 }
-// #enderegion IPROPS --> //////////////////////////////////

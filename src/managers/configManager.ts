@@ -8,7 +8,11 @@ class ConfigManager {
             NODE_ENV: import.meta.env.MODE,
             API_BASEURL: import.meta.env.VITE_API_BASEURL,
             APP_BASEURL: import.meta.env.VITE_APP_BASEURL,
-            EXTRA_BASEURL: import.meta.env.VITE_APP_EXTRA_BASEURL,
+            WS_BASEURL: import.meta.env.VITE_WS_BASEURL,
+            APP_FILEURL: import.meta.env.VITE_APP_FILEURL,
+            API_PUBLIC_URL: import.meta.env.VITE_API_PUBLIC_URL,
+            AUTH_MFA_ENABLED: import.meta.env.VITE_AUTH_MFA_ENABLED,
+            BASE_PATH: import.meta.env.VITE_BASE_PATH
         };
     }
 
@@ -26,6 +30,20 @@ class ConfigManager {
 
     public get isDevMode(): boolean {
         return this.__env.NODE_ENV === 'development';
+    }
+
+    public get isMfaEnabled(): boolean {
+        const value = this.__env.AUTH_MFA_ENABLED;
+
+        if (typeof value === 'boolean') {
+            return value;
+        }
+
+        if (typeof value === 'string') {
+            return value.toLowerCase() === 'true';
+        }
+
+        return false;
     }
 
     public get configAsNumber(): IConfigEnv {

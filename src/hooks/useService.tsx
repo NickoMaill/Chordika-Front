@@ -1,12 +1,11 @@
 // #region IMPORTS -> /////////////////////////////////////
-import { useContext } from 'react';
-import SessionContext from '~/context/sessionContext';
 import useStorage from './useStorage';
 import useModal, { ModalOptions } from './useModal';
 import { AppError, ErrorTypeEnum } from '~/core/appError';
 import StandardError from '~/components/common/StandardError';
 import configManager from '~/managers/configManager';
-import AppContext from '~/context/appContext';
+import useSessionContext from '~/context/sessionContext';
+import useAppContext from '~/context/appContext';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
@@ -15,18 +14,22 @@ const currentUrl = window.location.href;
 // #endregion SINGLETON --> /////////////////////////////////
 
 export default function useService(): IUseServiceApi {
-    const Ses = useContext(SessionContext);
-    const Storage = useStorage();
-    const Modal = useModal();
-    const App = useContext(AppContext);
+    const { getToken } = useSessionContext();
+    const { getSessionItem } = useStorage();
+    const { openModal } = useModal();
+    const { perfMode, setCurrentSizeDownload } = useAppContext();
 
-    const baseRequest = async <T,>(route: string, method: 'GET' | 'POST' | 'PUT' | 'DELETE', { body, formData, headersRequest }: { body?: unknown; formData?: FormData; headersRequest?: object } = {}): Promise<T> => {
+    const baseRequest = async <T,>(
+        route: string,
+        method: 'GET' | 'POST' | 'PUT' | 'DELETE',
+        { body, formData, headersRequest }: { body?: unknown; formData?: FormData; headersRequest?: object } = {}
+    ): Promise<T> => {
         const headers = new Headers();
-        const token = Ses.getToken();
+        const token = getToken();
         if (token) headers.set('Authorization', `Bearer ${token}`);
         headers.set('X-Client-URL', currentUrl);
-        headers.set('X-Client-Annonces', Storage.getSessionItem('annonces') ?? '');
-        if (App.perfMode && !route.includes('/getPerf')) {
+        headers.set('X-Client-Annonces', getSessionItem('annonces') ?? '');
+        if (perfMode && !route.includes('/getPerf')) {
             headers.set('X-Perf-Active', '1');
         }
         if (headersRequest) {
@@ -84,9 +87,9 @@ export default function useService(): IUseServiceApi {
 
     const getFile = async (route: string, headersRequest?: HeadersInit): Promise<Blob> => {
         const headers = new Headers();
-        headers.set('Authorization', `Bearer ${Ses.getToken()}`);
+        headers.set('Authorization', `Bearer ${getToken()}`);
         headers.set('X-Client-URL', currentUrl);
-        headers.set('X-Client-Annonces', Storage.getSessionItem('annonces') ?? '');
+        headers.set('X-Client-Annonces', getSessionItem('annonces') ?? '');
         if (headersRequest) {
             for (const key in headersRequest) {
                 headers.set(key, headersRequest[key]);
@@ -105,9 +108,9 @@ export default function useService(): IUseServiceApi {
 
     const downloadFile = async (route: string, headersRequest?: HeadersInit): Promise<void> => {
         const headers = new Headers();
-        headers.set('Authorization', `Bearer ${Ses.getToken()}`);
+        headers.set('Authorization', `Bearer ${getToken()}`);
         headers.set('X-Client-URL', currentUrl);
-        headers.set('X-Client-Annonces', Storage.getSessionItem('annonces') ?? '');
+        headers.set('X-Client-Annonces', getSessionItem('annonces') ?? '');
         if (headersRequest) {
             for (const key in headersRequest) {
                 headers.set(key, headersRequest[key]);
@@ -144,7 +147,7 @@ export default function useService(): IUseServiceApi {
                     title: 'Erreur',
                     content: <StandardError error={data} />,
                 };
-                Modal.openModal(modalOption);
+                openModal(modalOption);
                 throw new AppError(ErrorTypeEnum.Functional, '', '');
             }
         }
@@ -164,7 +167,7 @@ export default function useService(): IUseServiceApi {
                 if (value) {
                     chunks.push(value);
                     received += value.length;
-                    App.setCurrentSizeDownload((received / total) * 100);
+                    setCurrentSizeDownload((received / total) * 100);
                 }
             }
         }

@@ -11,7 +11,7 @@ export default function InputSubmit({ label, onBackPress, isLoading, title, show
     // #endregion STATE --> ////////////////////////////////////
 
     // #region HOOKS --> ///////////////////////////////////////
-    const Resources = useResources();
+    const { translate } = useResources();
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////
@@ -30,7 +30,7 @@ export default function InputSubmit({ label, onBackPress, isLoading, title, show
                     </Button>
                     {showBackPress && (
                         <Button title={'Annuler la saisie'} sx={{ marginLeft: 2 }} onClick={onBackPress} variant="contained" color="secondary">
-                            {Resources.translate('common.dismiss')}
+                            {translate('common.dismiss')}
                         </Button>
                     )}
                 </>

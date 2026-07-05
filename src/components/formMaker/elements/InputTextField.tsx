@@ -12,7 +12,26 @@ const AppIcon = lazy(() => import('~/components/common/AppIcon'));
 // #region SINGLETON --> ////////////////////////////////////
 // #endregion SINGLETON --> /////////////////////////////////
 
-export default function InputTextField({ style, inputStyle, disabled, required, onChange, error, id, type = 'text', icon, mode, autoComplete, autoCapitalize, value, isLoading, success, warning, placeholder, readOnly, min, max }: IInput): JSX.Element {
+export default function InputTextField({
+    style,
+    inputStyle,
+    disabled,
+    required,
+    onChange,
+    error,
+    id,
+    type = 'text',
+    icon,
+    mode,
+    autoComplete,
+    autoCapitalize,
+    value,
+    isLoading,
+    success,
+    warning,
+    placeholder,
+    readOnly,
+}: IInput): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
     const [currentMode, setCurrentMode] = useState<typeof mode>(null);
     const [currentVal, setCurrentVal] = useState<unknown>(value);
@@ -71,9 +90,7 @@ export default function InputTextField({ style, inputStyle, disabled, required, 
     }, []);
 
     useEffect(() => {
-        if (value) {
-            setCurrentVal(value);
-        }
+        setCurrentVal(value ?? '');
     }, [value]);
     // #endregion USEEFFECT --> ////////////////////////////////
 
@@ -94,7 +111,7 @@ export default function InputTextField({ style, inputStyle, disabled, required, 
                     value={currentVal ?? ''}
                     name={id}
                     id={id}
-                    readOnly={readOnly}
+                    readOnly={readOnly || isLoading}
                     className={`mt-1 ${success ? 'text-field-success' : warning ? 'text-field-warning' : ''}`}
                     required={required}
                     margin="dense"
@@ -121,11 +138,8 @@ export default function InputTextField({ style, inputStyle, disabled, required, 
                     slotProps={{
                         input: {
                             style: inputStyle,
-                            min,
-                            max,
                         },
                     }}
-                    // sx={{ backgroundColor: disabled ? '#e8e5e5' : 'transparent' }}
                 />
             )}
         </>
@@ -140,7 +154,5 @@ interface IInput extends InputBaseType {
     autoComplete?: AutoCompleteType;
     autoCapitalize?: AutoCapitalizeType;
     inputStyle?: CSSProperties;
-    max?: number;
-    min?: number;
 }
 // #endregion IPROPS --> ///////////////////////////////////

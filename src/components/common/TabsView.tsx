@@ -17,6 +17,7 @@ const AppIcon = lazy(() => import('~/components/common/AppIcon'));
 export default function TabsView({ width = 100, containerStyle, tabTitles, content }: ITab): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
     const [currentIndex, setCurrentIndex] = useState<string>('0');
+    const [visitedTabs, setVisitedTabs] = useState<string[]>(['0']);
     const nav = useNavigation();
     // #endregion STATE --> ////////////////////////////////////
 
@@ -26,12 +27,15 @@ export default function TabsView({ width = 100, containerStyle, tabTitles, conte
     // #region METHODS --> /////////////////////////////////////
     const handleChange = (_event: SyntheticEvent, newValue: string): void => {
         setCurrentIndex(newValue);
+        setVisitedTabs((prev) => (prev.includes(newValue) ? prev : [...prev, newValue]));
     };
 
     const handleStartIndex = (): void => {
         if (nav.query && nav.query.tab) {
             if (parseInt(nav.query.tab as string) <= content.length - 1 && parseInt(nav.query.tab as string) >= 0) {
-                setCurrentIndex(nav.query.tab as string);
+                const startIndex = nav.query.tab as string;
+                setCurrentIndex(startIndex);
+                setVisitedTabs((prev) => (prev.includes(startIndex) ? prev : [...prev, startIndex]));
             }
         }
     };
@@ -59,7 +63,7 @@ export default function TabsView({ width = 100, containerStyle, tabTitles, conte
                 </Box>
                 {content.map((element, i) => {
                     return (
-                        <AppTabPanel key={i} value={currentIndex} index={i.toString()}>
+                        <AppTabPanel key={i} value={currentIndex} index={i.toString()} isVisited={visitedTabs.includes(i.toString())}>
                             {element}
                         </AppTabPanel>
                     );
@@ -70,10 +74,14 @@ export default function TabsView({ width = 100, containerStyle, tabTitles, conte
     // #endregion RENDER --> ///////////////////////////////////
 }
 
-function AppTabPanel({ children, value, index }): JSX.Element {
+function AppTabPanel({ children, value, index, isVisited }): JSX.Element {
+    if (!isVisited) {
+        return null;
+    }
+
     return (
         <Box role="tabpanel" id={`simple-tabpanel-${index}`} aria-labelledby={`simple-tab-${index}`}>
-            <Box className={`animate__animated animate__faster ${value === index ? 'animate__fadeIn' : 'animate__fadeOut'}`} sx={{ p: 3, display: value === index ? 'block' : 'none' }}>
+            <Box className={`animate__animated animate__faster ${value === index ? 'animate__fadeIn' : ''}`} sx={{ p: 3, display: value === index ? 'block' : 'none' }}>
                 {children}
             </Box>
         </Box>

@@ -1,5 +1,5 @@
 import { InputBaseType, CheckboxOptionType } from '~/types/FormMakerCoreTypes';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { JSX } from 'react';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -32,11 +32,18 @@ export default function InputCheckBoxField({ disabled, options, id, onChange, va
                 newArr = newArr.filter((x) => x !== e.target.value);
             }
         }
-        setCheckboxes(newArr.join(','));
+        const nextValue = newArr.join(',');
+        setCheckboxes(nextValue);
+        if (onChange) {
+            onChange(nextValue);
+        }
     };
     // #endregion METHODS --> //////////////////////////////////
 
     // #region USEEFFECT --> ///////////////////////////////////
+    useEffect(() => {
+        setCheckboxes((value as string) ?? '');
+    }, [value]);
     // #endregion USEEFFECT --> ////////////////////////////////
 
     // #region RENDER --> //////////////////////////////////////
@@ -47,12 +54,17 @@ export default function InputCheckBoxField({ disabled, options, id, onChange, va
                     {options.map((item, i) => {
                         return (
                             <Grid key={i} size={{ lg: 5, md: 5, xs: 12 }}>
-                                <FormControlLabel key={i} sx={{ flexDirection: rowReverse ? 'row-reverse' : 'row' }} label={item.label} control={<Checkbox disabled={disabled} value={item.value} checked={checkboxes.includes(item.value as string)} onChange={(e) => e} />} />
+                                <FormControlLabel
+                                    key={i}
+                                    sx={{ flexDirection: rowReverse ? 'row-reverse' : 'row' }}
+                                    label={item.label}
+                                    control={<Checkbox disabled={disabled} value={item.value} checked={checkboxes.includes(item.value as string)} onChange={(e) => e} />}
+                                />
                             </Grid>
                         );
                     })}
                 </Grid>
-                <input type="hidden" id={id} name={id} value={checkboxes} onChange={onChange} />
+                <input type="hidden" id={id} name={id} value={checkboxes} readOnly />
             </FormGroup>
         </>
     );

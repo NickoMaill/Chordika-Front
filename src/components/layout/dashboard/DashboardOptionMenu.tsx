@@ -8,11 +8,10 @@ import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { paperClasses } from '@mui/material/Paper';
-import React, { JSX, ReactNode, useContext } from 'react';
+import React, { JSX, lazy, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { matchPath, useLocation } from 'react-router-dom';
-import AppIcon from '~/components/common/AppIcon';
-import SessionContext from '~/context/sessionContext';
+import useSessionContext from '~/context/sessionContext';
 import useSessionService from '~/hooks/services/useSessionService';
 import useNavigation from '~/hooks/useNavigation';
 import useResources from '~/hooks/useResources';
@@ -20,6 +19,7 @@ import NavigationResource from '~/resources/navigationResources';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
+const AppIcon = lazy(() => import('~/components/common/AppIcon'));
 // #endregion SINGLETON --> /////////////////////////////////
 
 export default function DashboardOptionMenu({ children }: { children?: ReactNode }): JSX.Element {
@@ -30,10 +30,10 @@ export default function DashboardOptionMenu({ children }: { children?: ReactNode
 
     // #region HOOKS --> ///////////////////////////////////////
     const { pathname } = useLocation();
-    const Ses = useContext(SessionContext);
-    const Resources = useResources();
-    const SessionService = useSessionService();
-    const Navigation = useNavigation();
+    const { userId, accessLevel, proxyList } = useSessionContext();
+    const { translate } = useResources();
+    const { logout, proxyLogout } = useSessionService();
+    const { navigateByPath } = useNavigation();
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////
@@ -46,18 +46,18 @@ export default function DashboardOptionMenu({ children }: { children?: ReactNode
 
     const headerMethod = {
         logout: async (): Promise<void> => {
-            await SessionService.logout().then((res) => {
-                if (res) Navigation.navigateByPath(NavigationResource.routesPath.login);
+            await logout().then(() => {
+                navigateByPath(NavigationResource.routesPath.login);
             });
         },
         proxyLogout: async (): Promise<void> => {
-            await SessionService.proxyLogout();
+            await proxyLogout();
         },
     };
 
     const renderLink = (): JSX.Element[] => {
         const menu = NavigationResource.userNavigationLinks
-            .filter((x) => ('levelAccess' in x ? x.levelAccess <= Ses.accessLevel : null))
+            .filter((x) => ('levelAccess' in x ? x.levelAccess <= accessLevel : null))
             .map((navEl, i) => {
                 if (navEl.name === 'divider') {
                     return <Divider key={i} />;
@@ -65,33 +65,44 @@ export default function DashboardOptionMenu({ children }: { children?: ReactNode
                     return (
                         <MenuItem key={i} id="employees" onClick={() => headerMethod[navEl.method as string]()} selected={false}>
                             <ListItemIcon>
-                                <navEl.Icon fontSize="small" />
+                                <AppIcon name={navEl.icon} size="small" />
                             </ListItemIcon>
-                            <ListItemText>{Resources.translate(navEl.name) as string}</ListItemText>
+                            <ListItemText>{translate(navEl.name) as string}</ListItemText>
                         </MenuItem>
                     );
-                } else {
+                } else if ('link' in navEl) {
                     return (
-                        <MenuItem component={Link} to={navEl.link} key={i} id="employees" title={Resources.translate(navEl.name) as string} selected={!!matchPath(`${navEl.link}/*`, pathname)}>
+                        <MenuItem component={Link} to={navEl.link} key={i} id="employees" title={translate(navEl.name) as string} selected={!!matchPath(`${navEl.link}/*`, pathname)}>
                             <ListItemIcon>
-                                <navEl.Icon fontSize="small" />
+                                <AppIcon name={navEl.icon} size="small" />
                             </ListItemIcon>
-                            <ListItemText>{Resources.translate(navEl.name) as string}</ListItemText>
+                            <ListItemText>{translate(navEl.name) as string}</ListItemText>
                         </MenuItem>
                     );
                 }
             })
             .flat();
-        if (Ses.proxyList && Ses.proxyList.length > 0) {
-            Ses.proxyList.forEach((p, i2) => {
+        if (proxyList && proxyList.length > 0) {
+            const iProxy = proxyList.findIndex((x) => x.id === userId);
+            if (iProxy > -1) {
                 menu.splice(
                     menu.length - 1,
                     0,
-                    <MenuItem key={i2 + 1000} id="employees" onClick={() => headerMethod.proxyLogout()}>
-                        Se déconnecter du compte "{p.name}"
+                    <MenuItem key={1000} id="employees" onClick={() => headerMethod.proxyLogout()}>
+                        Se déconnecter du compte "{proxyList[iProxy].name}"
                     </MenuItem>
                 );
-            });
+            } else {
+                proxyList.forEach((p, i2) => {
+                    menu.splice(
+                        menu.length - 1,
+                        0,
+                        <MenuItem key={i2 + 1000} id="employees" onClick={() => headerMethod.proxyLogout()}>
+                            Se reconnecter au compte "{p.name}"
+                        </MenuItem>
+                    );
+                });
+            }
         }
         return menu.flat();
     };
@@ -136,7 +147,7 @@ export default function DashboardOptionMenu({ children }: { children?: ReactNode
                 {/* <MenuItem
                     onClick={handleClose}
                     sx={{
-                        [`& .${listItemIconClasses.root}`]: {
+                        [`& .${listItemIconClasroot}`]: {
                             ml: 'auto',
                             minWidth: 0,
                         },

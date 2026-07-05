@@ -9,7 +9,7 @@ import { JSX } from 'react';
 
 export default function AppGridContainer({ children, spacing = 5, width = '100%', align = 'center', ...rest }: IAppGrid): JSX.Element {
     return (
-        <Grid container wrap="wrap" flexWrap="wrap" alignItems={align} width={width} spacing={{ md: spacing, xs: 0 }} {...rest}>
+        <Grid container wrap="wrap" flexWrap="wrap" alignItems={align} width={width} columnSpacing={{ md: spacing, xs: 0 }} {...rest}>
             {children}
         </Grid>
     );

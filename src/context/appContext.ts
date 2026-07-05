@@ -1,5 +1,5 @@
 import { AlertColor } from '@mui/material/Alert';
-import { Dispatch, SetStateAction, createContext } from 'react';
+import { Dispatch, SetStateAction, createContext, useContext } from 'react';
 import { AppBoxOptions } from './AppProvider';
 
 interface IAppContext {
@@ -17,7 +17,10 @@ interface IAppContext {
     setIsOnline?: Dispatch<SetStateAction<boolean>>;
     boxOptions: AppBoxOptions;
     setBoxOptions?: Dispatch<SetStateAction<AppBoxOptions>>;
-    isVisitorHeader: () => boolean;
+    isSearchFocused?: boolean;
+    setIsSearchFocused?: Dispatch<SetStateAction<boolean>>;
+    layoutLinks: { label: string; url?: string }[];
+    setLayoutLinks?: Dispatch<SetStateAction<{ label: string; url?: string }[]>>;
 }
 
 const initialContext: IAppContext = {
@@ -28,7 +31,8 @@ const initialContext: IAppContext = {
     currentSizeDownload: null,
     isOnline: true,
     boxOptions: null,
-    isVisitorHeader: () => true,
+    isSearchFocused: false,
+    layoutLinks: []
 };
 
 export type AlertContextType = {
@@ -37,5 +41,11 @@ export type AlertContextType = {
     subtitle?: string;
 };
 
-const AppContext = createContext<IAppContext>(initialContext);
-export default AppContext;
+export const AppContext = createContext<IAppContext>(initialContext);
+
+export default function useAppContext(): IAppContext {
+    const context = useContext(AppContext);
+    if (!context) throw new Error('useAppContext must be used within a AppProvider');
+
+    return context as IAppContext;
+}

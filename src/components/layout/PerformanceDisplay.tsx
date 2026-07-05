@@ -43,8 +43,8 @@ export default function PerformanceDisplay({ perf }: IPerformanceDisplay): JSX.E
                         return (
                             <TableRow key={i}>
                                 <TableCell>{p.category}</TableCell>
-                                <TableCell>{Math.round(p.durationMs).toLocaleString()} ms</TableCell>
-                                <TableCell>{Math.round(p.durationFromStartMs).toLocaleString()} ms</TableCell>
+                                <TableCell>{Math.round(p.duration).toLocaleString()} ms</TableCell>
+                                <TableCell>{Math.round(p.durationFromStart).toLocaleString()} ms</TableCell>
                                 <TableCell>{p.description}</TableCell>
                             </TableRow>
                         );
