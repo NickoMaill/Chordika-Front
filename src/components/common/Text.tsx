@@ -1,0 +1,40 @@
+import Typography, { TypographyProps } from '@mui/material/Typography';
+import { RecursiveKeyOf } from '~/types/custom';
+import { TranslationResourcesType } from '~/types/i18nTypes';
+import useResources from '~/hooks/useResources';
+import { JSX } from 'react';
+
+export default function Text({ iText, iArgs, weight = 'Regular', ...props }: IText): JSX.Element {
+    const Resources = useResources();
+    return (
+        <Typography {...props} fontWeight={weight}>
+            {Resources.translate(iText, iArgs)}
+        </Typography>
+    );
+}
+
+export function Regular(props: TypographyProps): JSX.Element {
+    return <Typography {...props} />;
+}
+
+export function Bold(props: TypographyProps): JSX.Element {
+    return <Typography {...props} fontWeight="Bold" />;
+}
+
+export function Bolder(props: TypographyProps): JSX.Element {
+    return <Typography {...props} fontWeight="Bolder" />;
+}
+
+export function Thin(props: TypographyProps): JSX.Element {
+    return <Typography {...props} fontWeight="Thin" />;
+}
+
+export function Italic(props: TypographyProps): JSX.Element {
+    return <Typography {...props} fontStyle="italic" />;
+}
+
+interface IText {
+    iText: RecursiveKeyOf<TranslationResourcesType>;
+    iArgs?: Record<string, string>;
+    weight?: 'Regular' | 'Bold' | 'Bolder' | 'Thin' | 'italic';
+}

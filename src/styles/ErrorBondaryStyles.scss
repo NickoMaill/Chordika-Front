@@ -1,0 +1,70 @@
+.hide {
+    display: none;
+}
+
+table {
+    font-family: Verdana, Arial, sans-serif;
+    font-size: 12px;
+}
+table.errortext td.errortext {
+    padding: 15px;
+    background-color: #ddd;
+}
+table.errortext a {
+    color: #039 !important;
+    border-width: 0 !important;
+    padding: 0 !important;
+}
+table.error {
+    background-color: #036;
+}
+table.error th {
+    text-align: left;
+    color: white;
+    padding: 5px;
+    background-color: #036;
+    cursor: pointer;
+}
+table.error td {
+    background-color: #eee;
+}
+table.error td.t {
+    font-weight: bold;
+    background-color: #ddd;
+}
+table.error pre {
+    margin: 0;
+    font-size: 10pt;
+    font-family: monospace !important;
+}
+table.error pre b {
+    font-family: monospace !important;
+    color: inherit !important;
+}
+table.error b {
+    color: inherit !important;
+}
+
+.text input,
+textarea,
+select {
+    margin: 1px;
+    font-size: 14px;
+    font-family: Tahoma;
+    background: #fff;
+    cpadding-left: 4px;
+    border: 1px solid #036;
+}
+
+input.button {
+    color: white !important;
+    font: bold 14px Tahoma;
+    padding: 2px;
+    cursor: pointer;
+    text-align: center;
+    width: 150px;
+}
+input.button {
+    border: 1px solid #369 !important;
+    text-decoration: none !important;
+}

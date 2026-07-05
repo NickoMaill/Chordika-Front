@@ -1,0 +1,388 @@
+.scroll-parent {
+    position: relative;
+    width: 100%;
+    height: 20rem;
+    overflow-x: hidden;
+}
+
+/* hidden on screen, shown in print */
+.page-footer {
+    display: none;
+}
+
+#nprogress {
+    z-index: 3000;
+    position: fixed;
+}
+
+// #nprogress .bar {
+//     background: white !important;
+//     /* Couleur de la barre */
+// }
+
+/* Couleur de l'ombre de la barre */
+#nprogress .peg {
+    box-shadow:
+        0 0 10px white,
+        0 0 5px white;
+}
+
+/* Supprimer le spinner (optionnel) */
+#nprogress .spinner {
+    display: none !important;
+}
+
+/* Si vous voulez un spinner blanc au lieu de le supprimer */
+#nprogress .spinner-icon {
+    border-top-color: white;
+    border-left-color: white;
+}
+
+.scroll-element {
+    width: inherit;
+    height: inherit;
+    position: absolute;
+    left: 0%;
+    top: 0%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.scroll-element a {
+    width: 15%;
+    margin-inline: 1.3rem;
+}
+
+.primary {
+    animation: primary 45s linear infinite;
+}
+
+.secondary {
+    animation: secondary 45s linear infinite;
+}
+
+/* Écran seulement: ratio A4 sans forcer la hauteur en mm */
+@media screen {
+    .editor-page-portrait {
+        width: min(100%, 210mm);
+        aspect-ratio: 190 / 277;
+        margin: 1rem auto;
+        box-sizing: border-box;
+    }
+
+    .editor-page-landscape {
+        width: min(100%, 297mm);
+        aspect-ratio: 277 / 190;
+        margin: 1rem auto;
+        box-sizing: border-box;
+    }
+}
+
+.ProseMirror {
+    min-height: 100px;
+}
+
+@keyframes primary {
+    from {
+        left: 0%;
+    }
+
+    to {
+        left: -100%;
+    }
+}
+
+@keyframes secondary {
+    from {
+        left: 100%;
+    }
+
+    to {
+        left: 0%;
+    }
+}
+
+.drag-base {
+    padding: 0.5rem;
+    background-color: #d0e2ff;
+    height: 250px;
+}
+
+.drag-on {
+    animation: dragon;
+    animation-duration: 200ms;
+    padding: 1rem;
+    background-color: #ffffff;
+}
+
+.drag-off {
+    animation: dragoff;
+    animation-duration: 200ms;
+    padding: 0.5rem;
+    background-color: #d0e2ff;
+}
+
+@keyframes dragoff {
+    from {
+        padding: 1rem;
+        background-color: #ffffff;
+    }
+
+    to {
+        padding: 0.5rem;
+        background-color: #d0e2ff;
+    }
+}
+
+@keyframes dragon {
+    from {
+        padding: 0.5rem;
+        background-color: #d0e2ff;
+    }
+
+    to {
+        padding: 1rem;
+        background-color: #ffffff;
+    }
+}
+
+.MuiDataGrid-overlayWrapper {
+    height: 200px !important;
+}
+
+.logo-transform {
+    transform: rotate(90deg);
+    filter: grayscale(60%);
+}
+
+.autocomplete-textfield-override {
+    margin-top: 5px !important;
+
+    input {
+        padding: 0.1rem !important;
+    }
+}
+
+.progress {
+    display: flex;
+    // height: 1rem;
+    overflow: hidden;
+    font-size: 0.75rem;
+    border-radius: 0.25rem;
+    border: none;
+}
+
+@keyframes progress-bar-stripes {
+    0% {
+        background-position-x: 1rem;
+    }
+}
+
+.progress-bar-animated {
+    animation: 1s linear infinite progress-bar-stripes;
+}
+
+.progress-bar-striped {
+    background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+    background-size: 1rem 1rem;
+}
+
+.progress-bar {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    transition: width 1s ease;
+}
+
+.dynamic-text {
+    color: white;
+    mix-blend-mode: difference;
+}
+
+.MuiFileInput-TextField {
+    div {
+        background-color: transparent !important;
+    }
+}
+
+.JSON-key {
+    color: #9cdcfe;
+}
+
+.JSON-string {
+    color: #ce9178;
+}
+
+.JSON-number {
+    color: #b5cea8;
+}
+
+.JSON-boolean {
+    color: #569cd6;
+}
+
+.JSON-null {
+    color: #808080;
+}
+
+.score-list-item {
+    transition-timing-function: ease-in-out;
+    transition-duration: 150ms;
+    transition-property: background-color;
+
+    &:hover {
+        background-color: #ebeef4;
+    }
+
+    &:active {
+        background-color: #dadee6;
+    }
+}
+
+.dragger {
+    cursor: move;
+}
+
+.animate__animated.animate__fadeIn.bar-edit {
+    --animate-duration: 400ms;
+}
+
+.animate__animated.animate__fadeOut.bar-edit {
+    --animate-duration: 400ms;
+}
+
+@page {
+    size: A4;
+    margin: 0;
+}
+
+@media print and (orientation: landscape) {
+    @page {
+        size: A4 landscape;
+    }
+}
+
+@media print and (orientation: portrait) {
+    @page {
+        size: A4 portrait;
+    }
+}
+
+@media print {
+    /* Masquer toute la chrome d'UI */
+    header,
+    footer,
+    #avatar,
+    #toolbar,
+    nav,
+    #sidebarContainer,
+    #groupActions,
+    .bar-edit,
+    .dragger,
+    #poweredBy,
+    #nprogress {
+        /* cache aussi la barre de chargement */
+        display: none !important;
+    }
+
+    html,
+    body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        background: #ffffff !important;
+    }
+
+    /* Le canevas d'édition occupe toute la page PDF */
+    #Editor {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* Chaque page éditeur devient une page PDF, sans bordure ni ombre */
+    .editor-page-landscape,
+    .editor-page-portrait {
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        width: auto !important;
+        height: auto !important;
+        // min-height: 100vh;
+        break-after: page; /* alias moderne de page-break-after */
+        page-break-after: always; /* compat old */
+        position: relative !important;
+        border-radius: 0;
+        overflow: hidden !important;
+    }
+    .editor-page-portrait {
+        width: 190mm !important;
+        height: 274mm !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+    .editor-page-landscape {
+        width: 277 !important;
+        height: 190 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+    /* Pas de saut après la dernière page */
+    .editor-page-landscape:last-child,
+    .editor-page-portrait:last-child {
+        break-after: auto;
+        page-break-after: auto;
+    }
+
+    /* Footer fixe en bas de page */
+    .page-footer {
+        display: block !important;
+        position: absolute !important;
+        left: 0;
+        right: 0;
+        bottom: 8mm; /* espace de sécurité pour les imprimantes */
+        text-align: center;
+        font-size: 10pt;
+        line-height: 1.2;
+        color: #000;
+        pointer-events: none;
+        background: transparent;
+    }
+
+    /* Réserve de place pour le footer dans le contenu */
+    [id^='content-page-'] {
+        padding-bottom: 14mm !important;
+        box-sizing: border-box;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    /* Éléments interactifs non imprimables ou à neutraliser */
+    .dragger,
+    .handle {
+        cursor: default !important;
+    }
+
+    /* Si react-draggable applique des transforms, on les neutralise pour l'impression */
+    // .react-draggable,
+    // .react-draggable * {
+    //     transform: none !important;
+    // }
+
+    /* Éviter les coupures intempestives dans les blocs importants */
+    .score-list-item,
+    .ProseMirror,
+    .progress,
+    .progress-bar,
+    .MuiDataGrid-overlayWrapper {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+    #ChordEditorContainer {
+        margin: 0 !important;
+    }
+    // #Editor .p-1, #Editor .p-2, #Editor .p-3 { padding-left: 0 !important; padding-right: 0 !important; }
+}

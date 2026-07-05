@@ -1,0 +1,216 @@
+{
+    "common": {
+        "title": "Title",
+        "yes": "yes",
+        "no": "no",
+        "send": "send",
+        "noResultDb": "No results in the database",
+        "changeLang": "Change language",
+        "sendMessage": "Send Message",
+        "openMenu": "Open Menu",
+        "search": "Search",
+        "emailAddress": "Email address",
+        "password": "Password",
+        "welcome": "Welcome",
+        "resend": "Resend",
+        "add": "Add",
+        "update": "Update",
+        "delete": "Delete",
+        "dismiss": "Dismiss",
+        "youAdd": "Add",
+        "youUpdate": "Update",
+        "youDismiss": "Dismiss",
+        "adding": "Add",
+        "updating": "Update",
+        "deleting": "Delete",
+        "back": "Back",
+        "filter": "Filter",
+        "filters": "Filters",
+        "details": "Details",
+        "close": "Close",
+        "mainInfo": "Main Information",
+        "description": "Description",
+        "name": "Name",
+        "specifiers": {
+            "singularApos": "The",
+            "singularFem": "The",
+            "singularMasc": "The",
+            "plural": "The"
+        },
+        "table": {
+            "columns": {
+                "showAll": "Show all",
+                "hideAll": "Hide all",
+                "placeholder": "Label",
+                "search": "Search columns",
+                "singular": "Column",
+                "plural": "Columns",
+                "density": "Density",
+                "comfortable": "Spaced",
+                "skinny": "Thin",
+                "regular": "Regular",
+                "selectedLines": "selected line{{isPlural}}"
+            },
+            "nav": {
+                "resultPerPage": "Results per page"
+            },
+            "filter": {
+                "sortAsc": "Sort by ASC",
+                "sortDesc": "Sort by DESC",
+                "hideColumns": "Hide column",
+                "manageColumns": "Manage columns",
+                "label": "Filters"
+            }
+        }
+    },
+    "login": {
+        "rememberMe": "Remember me",
+        "forgotPassword": "Forgot password?",
+        "pleaseConnect": "Please connect",
+        "connect": "Connect",
+        "reset": "New password",
+        "wrongCredentials": "Invalid email or password",
+        "expiredSession": "Session expired, please reconnect",
+        "expiredMfa": "Your code has expired, please resend another one",
+        "requiredEmail": "Email is required",
+        "requiredPassword": "Password is required",
+        "resetTitle": "Login help",
+        "resetMessage": "Once your account is identified, a message will be sent to you to reset your password.",
+        "resetDetails": "Please enter your email address",
+        "resetLabel": "Reset password",
+        "MfaTitle": "Secure access",
+        "MfaSubtitle": "Multi-factor authentication",
+        "MfaRegister": "Welcome <b>{{username}}</b>. To continue, you need to set up an <b>authenticator</b> to enable Multi-Factor Authentication.<br />To configure it, please follow the steps below:<br />",
+        "MfaDetails": "Welcome <b>{{username}}</b>. To continue, enter the 6-digit verification code sent to your phone number ending in <b>{{phoneNumber}}</b>.",
+        "resendMfa": "Did not receive a code?"
+    },
+    "profile": {
+        "title": "Access Profile"
+    },
+    "nav": {
+        "profile": "Access Profile",
+        "myScore": "My CHord Grids",
+        "users": "Users",
+        "adverts": "Annonces",
+        "setup": "Settings",
+        "activity": "Activity Log",
+        "schedules": "Scheduled Tasks",
+        "proxy": "Proxy as",
+        "logout": "Logout"
+    },
+    "error": {
+        "common": {
+            "error": "An error occurred"
+        },
+        "errorMessage": "Oops, an error occurred... Please reload the application",
+        "errorBoundary": {
+            "sorry": "Sorry, an error occurred.",
+            "firstErrorMessage": "Please use the form below to contact the",
+            "supportEmail": "mailto:",
+            "technicalStaff": "technical support",
+            "thanks": "We will work to fix the problem as soon as possible. Please accept our apologies for the inconvenience caused.",
+            "toSendMessage": "To send a message to technical support,",
+            "pleaseSend": "please briefly describe the problem in the area below,",
+            "thenClick": "then click on:",
+            "errorReport": "Error Report",
+            "diag": "Diagnostic",
+            "source": "Source",
+            "at": "at",
+            "trace": "Trace",
+            "page": "Page",
+            "clockDate": "Date/Time",
+            "browser": "Browser",
+            "address": "Address",
+            "linkForward": " Link from"
+        },
+        "noAccess": {
+            "title": "Access not granted",
+            "intro": "You do not have access to the requested page.",
+            "please": "Please use the options available in the menu.",
+            "expired": "It is also possible that your session has <b>expired</b>.",
+            "login": "In this case, please <link>log in</link> again."
+        },
+        "notFound": {
+            "title": "Resource not found",
+            "intro": "The resource you requested could not be found.",
+            "please": "Please use the available options in the menu to continue browsing.",
+            "advise": "The resource may also be <b>temporarily unavailable</b>.",
+            "goBack": "You can click 'Back' to return to the previous page or use the menu to access another resource."
+        }
+    },
+    "center": {
+        "search": {
+            "newSearch": "New search",
+            "updateSearch": "Change criteria",
+            "filters": "Filters",
+            "nothing": "None (entire base).",
+            "orderBy": "Order by"
+        },
+        "bulk": {
+            "bulkUpdate": "Bulk updates",
+            "bulkAdd": "Bulk adds",
+            "bulkDelete": "Bulk deletions",
+            "downloadTemplate": "Download template",
+            "importXlsx": "Import your .xlsx file here",
+            "bulkAddMessage": "{{action}} multiple {{grammar}} at once by uploading a CSV file containing the new information of the {{grammar}}. <br /><b>Check that the data in the file is correct before uploading it.</b><br /><br /> For more information on the correct formatting of the CSV file, click on the <b>Download Template</b> button.",
+            "bulkTitle": "{{action}} {{grammar}}",
+            "exportXls": "Export CSV format",
+            "exportCSV": "Export Excel format"
+        },
+        "update": {
+            "success": "{{entity}} modified successfully"
+        },
+        "create": {
+            "success": "{{entity}} created successfully"
+        }
+    },
+    "user": {
+        "singular": "User",
+        "plural": "Users",
+        "username": "Username",
+        "name": "Full Name",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "email": "Email",
+        "levelAccess": "Access Level",
+        "lastCon": "Last connection date",
+        "logHistory": "Logs Activities",
+        "mobile": "Mobile",
+        "admin": "Administrator",
+        "password": "Password",
+        "userId": "Id d'Utilisateur"
+    },
+    "logs": {
+        "singular": "Log",
+        "plural": "Logs",
+        "proxy": "Proxy",
+        "action": "Action",
+        "entryDate": "Date",
+        "info": "Infos"
+    },
+    "schedule": {
+        "singular": "Schedule",
+        "plural": "Schedules",
+        "freq": "Interval",
+        "isActive": "Is active ?",
+        "lastExec": "Last execution",
+        "startedAt": "Started at",
+        "endedAt": "Ended at",
+        "nextExec": "Next Execution",
+        "method": "Method",
+        "monitoring": "Monitoring",
+        "monitoringLoading": "Monitoring's loading...",
+        "history": "Execution History",
+        "error": "Error",
+        "timeout": "Timeout",
+        "ongoing": "Ongoing",
+        "standby": "StandBy",
+        "ended": "OK"
+    },
+    "adverts": {
+        "singular": "Advert",
+        "plural": "Adverts",
+        "expires": "Expires",
+        "createdBy": "Created by"
+    }
+}

@@ -1,0 +1,460 @@
+import { FormEvent, lazy, RefObject, useState } from 'react';
+import { FormMakerContentType, FormMakerPartEnum, IFormMakerInput, IFormMakerPanel, InputBaseType } from '~/types/FormMakerCoreTypes';
+import TabsView from '../common/TabsView';
+import AppGridContainer from '../common/AppGridContainer';
+import InputBase from './elements/InputBase';
+import InputSubmit from './elements/InputSubmit';
+import { AppError, ErrorTypeEnum } from '~/core/appError';
+import appTool from '~/helpers/appTool';
+import { GenericActionEnum } from '~/types/centerType';
+import useResources from '~/hooks/useResources';
+import InputAutoComplete from './elements/InputAutoComplete';
+import { useSearchParams } from 'react-router-dom';
+import CenterProvider from '~/context/CenterProvider';
+import InputValue from './elements/InputValue';
+import JSONView from './elements/JSONView';
+import SearchProvider from '~/context/SearchProvider';
+import { JSX } from 'react';
+import { IconNameType } from '~/components/common/AppIcon';
+import AppFullPageLoader from '../common/AppFullPageLoader';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import SectionLayout from '../layout/SectionLayout';
+import dayjs from 'dayjs';
+// #endregion IMPORTS -> //////////////////////////////////
+
+// #region SINGLETON --> ////////////////////////////////////
+const InputTextField = lazy(() => import('./elements/InputTextField'));
+const InputFileField = lazy(() => import('./elements/InputFileField'));
+const RangeInput = lazy(() => import('./elements/RangeInput'));
+const InputSwitchField = lazy(() => import('./elements/InputSwitchField'));
+const InputColorField = lazy(() => import('./elements/InputColorField'));
+const RangeDateField = lazy(() => import('./elements/RangeDateField'));
+const InputDateField = lazy(() => import('./elements/InputDateField'));
+const InputTextAreaField = lazy(() => import('./elements/InputTextAreaField'));
+const InputRadioField = lazy(() => import('./elements/InputRadioField'));
+const InputAutoCompleteMultiple = lazy(() => import('./elements/InputAutoCompleteMultiple'));
+const InputTelephoneField = lazy(() => import('./elements/InputTelephoneField'));
+const InputSelectField = lazy(() => import('./elements/InputSelectField'));
+const InputCheckBoxField = lazy(() => import('./elements/InputCheckBoxField'));
+const InputRichTextField = lazy(() => import('./elements/InputRichTextField'));
+const InputCronField = lazy(() => import('./elements/InputCronField'));
+const InputGroupedSelectField = lazy(() => import('./elements/InputGroupedSelectField'));
+const AppCenter = lazy(() => import('../center/AppCenter'));
+// #endregion SINGLETON --> /////////////////////////////////
+export default function FormMaker<T>({ onSubmit, structure, data, outputType = 'formData', onBackPress, isSubmitLoading, focusOnError = [], action, grammar, isView = false, submitLabel, showBackPress = true, showBottom = true, idExtension = '', formRef = null, isSearchForm = false, isFormLoading = false }: IFormMaker<T>): JSX.Element {
+    // #region STATE --> ///////////////////////////////////////
+    const [file, setFile] = useState<File>(null);
+    const [fileField, setFileFields] = useState<string>(null);
+    let groupIds = 0;
+    // #endregion STATE --> ////////////////////////////////////
+
+    // #region HOOKS --> ///////////////////////////////////////
+    // const [params] = useSearchParams();
+    const Resources = useResources();
+    const [params] = useSearchParams();
+    // #endregion HOOKS --> ////////////////////////////////////
+
+    // #region METHODS --> /////////////////////////////////////
+    const handleSubmit = (e: FormEvent<HTMLFormElement>): FormData | T => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        if (outputType === 'JSON') {
+            const obj = {};
+            for (const pair of formData.entries()) {
+                Object.defineProperty(obj, pair[0], { value: pair[1], writable: true });
+            }
+            return obj as T;
+        } else {
+            if (file && fileField) {
+                formData.delete(fileField);
+                formData.append(fileField, file);
+            }
+            return formData;
+        }
+    };
+    /**
+     * @description method that parse and render form
+     * @returns form content HTML Element
+     */
+    const renderForm = (): JSX.Element => {
+        if (structure && structure.length > 0) {
+            checkIds();
+            if (structure[0].type === FormMakerPartEnum.TAB) {
+                const tabTitles: { label: string; icon: IconNameType }[] = [];
+                const tabGlobalContent: JSX.Element[][] = [];
+                let tabContent: JSX.Element[] = [];
+
+                structure
+                    .filter((s) => (s.hidden ? s.hidden({ data, action }) === false : true))
+                    .forEach((tab: FormMakerContentType<FormMakerPartEnum>) => {
+                        tabTitles.push({ label: tab.title, icon: tab.icon });
+                        tab.content.forEach((panel, i) => {
+                            tabContent.push(buildPanelContent(panel, i));
+                        });
+                        tabGlobalContent.push(tabContent);
+                        tabContent = [];
+                    });
+                return <TabsView tabTitles={tabTitles} content={tabGlobalContent} />;
+            } else {
+                return <>{structure.filter((s) => (s.hidden ? s.hidden({ data, action }) === false : true)).map((s, i) => buildPanelContent(s, i))}</>;
+            }
+        }
+    };
+
+    /**
+     * @description check if ids are uniq
+     * @throws an AppError if not ids are founds
+     */
+    const checkIds = (): void => {
+        const ids: string[] = [];
+        if (structure && structure.length > 0) {
+            structure.forEach((s) => {
+                if (s.type === FormMakerPartEnum.TAB) {
+                    (s.content as IFormMakerPanel[]).forEach((p: IFormMakerPanel) => {
+                        p.content.forEach((el) => {
+                            ids.push(el.id);
+                        });
+                    });
+                } else {
+                    (s.content as IFormMakerInput[]).forEach((el) => {
+                        ids.push(el.id);
+                    });
+                }
+            });
+        }
+        const duplicate = appTool.findDuplicates(ids);
+
+        if (duplicate.length > 0) {
+            // throw new AppError(ErrorTypeEnum.Technical, `found duplicate ids in formMaker (${duplicate.join(',')}) input must have uniq id`);
+        }
+    };
+
+    // /**
+    //  *
+    //  * @param id
+    //  * @returns data
+    //  */
+    // const foundDataById = (id: string): string | number | boolean => {
+    //     let key = '';
+    //     if (data) {
+    //         for (const entry in data) {
+    //             if (id.toString() === entry) {
+    //                 key = entry;
+    //             }
+    //         }
+    //         if (key !== '') {
+    //             return data[key];
+    //         } else {
+    //             return null;
+    //         }
+    //     } else {
+    //         return null;
+    //     }
+    // };
+
+    const buildPanelContent = (struct: FormMakerContentType<FormMakerPartEnum.PANEL | FormMakerPartEnum.SEARCH>, index: number): JSX.Element => {
+        const groupedElement: JSX.Element[] = [];
+        let currentGroup: JSX.Element[] = [];
+        struct.content.forEach((element, i) => {
+            const inputBaseProps: InputBaseType = {
+                className: element.className,
+                sx: element.sx,
+                success: element.success,
+                warning: element.warning,
+                required: element.required,
+                disabled: element.disabled,
+                showLabel: element.showLabel,
+                size: element.size,
+                id: element.id,
+                helpText: element.helpText,
+                label: element.label,
+                error: focusOnError.includes(element.id.toLowerCase()) || element.error,
+                errorMessage: element.errorMessage,
+            };
+            if (element.index === 1) {
+                if (currentGroup.length > 0) {
+                    groupedElement.push(
+                        <AppGridContainer key={`group-${groupIds}`} id={`group-${groupIds}`} spacing={2}>
+                            {currentGroup}
+                        </AppGridContainer>
+                    );
+                    currentGroup = [];
+                    groupIds++;
+                }
+                currentGroup.push(
+                    element.type === 'hidden' ? (
+                        buildInput(element, i)
+                    ) : (
+                        <InputBase key={i} {...inputBaseProps}>
+                            {buildInput(element, i)}
+                        </InputBase>
+                    )
+                );
+            } else {
+                currentGroup.push(
+                    element.type === 'hidden' ? (
+                        buildInput(element, i)
+                    ) : (
+                        <InputBase key={i} {...inputBaseProps}>
+                            {buildInput(element, i)}
+                        </InputBase>
+                    )
+                );
+            }
+
+            if (i === struct.content.length - 1) {
+                groupedElement.push(
+                    <AppGridContainer key={'a' + i} spacing={2}>
+                        {currentGroup}
+                    </AppGridContainer>
+                );
+                currentGroup = [];
+            }
+        });
+        if (struct.type === FormMakerPartEnum.PANEL || structure[0].type === FormMakerPartEnum.TAB) {
+            return (
+                <SectionLayout key={index} icon={struct.icon} title={struct.title}>
+                    {groupedElement}
+                </SectionLayout>
+            );
+        } else {
+            return (
+                <Box key={index} display="flex" justifyContent="center" flexDirection="column" alignItems="center" marginBottom={4}>
+                    {groupedElement}
+                </Box>
+            );
+        }
+    };
+
+    const buildInput = (element: IFormMakerInput, i: number): JSX.Element => {
+        if (element.type === 'checkbox' && !element.checkboxOptions) throw new AppError(ErrorTypeEnum.Technical, 'type checkbox must have checkbox options');
+        else if (element.type === 'radio' && !element.radioOptions) throw new AppError(ErrorTypeEnum.Functional, 'type radio must have radio options');
+        else if (element.type === 'switch' && !element.switchValue) throw new AppError(ErrorTypeEnum.Functional, 'type switch must have a target value');
+        else if (element.type === 'select' && !element.selectOptions) throw new AppError(ErrorTypeEnum.Functional, 'type select must have select options');
+        else if (element.type === 'groupedSelect' && !element.groupedSelectOptions) throw new AppError(ErrorTypeEnum.Functional, 'type grouped select must have grouped select options');
+        else if (element.type === 'multipleAutocomplete' && !element.selectOptions) throw new AppError(ErrorTypeEnum.Functional, 'type tokenmultiple must have select options');
+        else if (element.type === 'htmlContent' && !element.htmlContent) throw new AppError(ErrorTypeEnum.Functional, 'type htmlContent must have htmlContent');
+        let elementType = element.type;
+        const baseProps: InputBaseType = {
+            size: element.size,
+            icon: element.icon,
+            id: element.id,
+            helpText: element.helpText,
+            label: element.label,
+            required: element.required,
+            disabled: element.disabled,
+            value: data ? data[element.id] : element.value?.toString() !== '' ? element.value : null,
+            errorMessage: element.errorMessage,
+            error: focusOnError.includes(element.id.toLowerCase()) || element.error,
+            isLoading: element.isLoading,
+            success: element.success,
+            warning: element.warning,
+            onChange: element.onChange,
+            sx: element.sx,
+            autoComplete: element.autoComplete,
+            autoCapitalize: element.autoCapitalize,
+            placeholder: element.placeholder,
+            readOnly: element.readOnly,
+            isSearchForm,
+        };
+        if (isView) {
+            let founded = null;
+            switch (elementType) {
+                case 'select':
+                    if (baseProps.value) {
+                        founded = element.selectOptions.find((e) => e.value === baseProps.value);
+                        if (founded) {
+                            baseProps.value = founded.label;
+                        }
+                    }
+                    break;
+                case 'radio':
+                    founded = null;
+                    if (baseProps.value) {
+                        founded = element.radioOptions.find((e) => e.value === baseProps.value);
+                        if (founded) {
+                            baseProps.value = founded.label;
+                        }
+                    }
+                    break;
+                case 'checkbox':
+                    founded = null;
+                    if (baseProps.value) {
+                        founded = element.checkboxOptions.find((e) => e.value === baseProps.value);
+                        if (founded) {
+                            baseProps.value = founded.label;
+                        }
+                    }
+                    break;
+                case 'date': {
+                    const date = dayjs(baseProps.value as string | Date).format('DD/MM/YYYY');
+                    baseProps.value = date as unknown;
+                    break;
+                }
+                case 'datetime': {
+                    const datetime = dayjs(baseProps.value as string | Date).format('DD/MM/YYYY HH:mm:ss');
+                    baseProps.value = datetime as unknown;
+                    break;
+                }
+                default:
+                    break;
+            }
+            if (elementType !== 'htmlContent' && elementType !== 'hidden' && elementType !== 'JSON' && elementType !== 'htmlParser') {
+                elementType = 'value';
+            }
+        }
+        switch (elementType) {
+            case 'email':
+            case 'number':
+            case 'search':
+            case 'url':
+            case 'text':
+            case 'value': {
+                return <InputTextField {...baseProps} key={i} type={elementType} min={element.min} max={element.max} />;
+            }
+            case 'hidden': {
+                return <input key={i} name={baseProps.id} id={baseProps.id} value={(baseProps.value as string) ?? ''} type="hidden" />;
+            }
+            case 'htmlParser': {
+                return <InputValue {...baseProps} key={i} parseHTML />;
+            }
+            case 'JSON': {
+                return <JSONView {...baseProps} />;
+            }
+            case 'checkbox': {
+                return <InputCheckBoxField {...baseProps} key={i} options={element.checkboxOptions} />;
+            }
+            case 'select': {
+                return <InputSelectField {...baseProps} key={i} options={element.selectOptions} />;
+            }
+            case 'groupedSelect': {
+                return <InputGroupedSelectField {...baseProps} key={i} groups={element.groupedSelectOptions} />;
+            }
+            case 'tel': {
+                return <InputTelephoneField {...baseProps} key={i} />;
+            }
+            case 'autocomplete': {
+                return <InputAutoComplete {...baseProps} key={i} options={element.selectOptions} ssr={element.ssr} ssrUrlExtension={element.ssrUrlExtension} />;
+            }
+            case 'multipleAutocomplete': {
+                return <InputAutoCompleteMultiple {...baseProps} key={i} options={element.selectOptions} ssr={element.ssr} ssrUrlExtension={element.ssrUrlExtension} />;
+            }
+            case 'radio': {
+                return <InputRadioField {...baseProps} key={i} options={element.radioOptions} row={element.row} />;
+            }
+            case 'textarea': {
+                return <InputTextAreaField {...baseProps} key={i} limit={element.limit} rows={element.rows} />;
+            }
+            case 'richText': {
+                return <InputRichTextField {...baseProps} key={i} maxLength={element.limit} />;
+            }
+            case 'date':
+            case 'datetime': {
+                return <InputDateField {...baseProps} key={i} mode={elementType} format={element.dateFormat} views={element.dateViews} openTo={element.dateOpenTo} />;
+            }
+            case 'dateSearch': {
+                return <RangeDateField {...baseProps} key={i} format={element.dateFormat} views={element.dateViews} openTo={element.dateOpenTo} />;
+            }
+            case 'color': {
+                return <InputColorField {...baseProps} key={i} />;
+            }
+            case 'switch': {
+                return <InputSwitchField {...baseProps} key={i} switchValue={element.switchValue} />;
+            }
+            case 'range': {
+                return <RangeInput {...baseProps} key={i} />;
+            }
+            case 'center': {
+                const props = { entity: element.id, parentId: params.has('ID') ? params.get('ID') : '', isSubCenter: true, genericAction: GenericActionEnum.TABLE, parentField: element.parentField };
+                return (
+                    <CenterProvider>
+                        <SearchProvider>
+                            <AppCenter {...props} key={i} />
+                        </SearchProvider>
+                    </CenterProvider>
+                );
+            }
+            case 'htmlContent': {
+                return <element.htmlContent data={data} />;
+            }
+            case 'cron': {
+                return <InputCronField {...baseProps} key={i} />;
+            }
+            case 'file': {
+                return (
+                    <InputFileField
+                        {...baseProps}
+                        onChange={(e) => {
+                            setFile(e as File);
+                            setFileFields(baseProps.id);
+                        }}
+                        key={i}
+                    />
+                );
+            }
+            default: {
+                return <InputTextField {...baseProps} key={i} />;
+            }
+        }
+    };
+
+    const getActionLabel = (str: string): string => {
+        switch (str) {
+            case GenericActionEnum.UPDATE:
+                return Resources.translate('common.update') as string;
+            case GenericActionEnum.DELETE:
+                return Resources.translate('common.delete') as string;
+            case GenericActionEnum.TABLE:
+                return Resources.translate('common.search') as string;
+            default:
+                return Resources.translate('common.add') as string;
+        }
+    };
+    // #endregion METHODS --> //////////////////////////////////
+
+    // #region USEEFFECT --> ///////////////////////////////////
+    // #endregion USEEFFECT --> ////////////////////////////////
+
+    // #region RENDER --> //////////////////////////////////////
+    return (
+        <>
+            {isFormLoading ? (
+                <AppFullPageLoader count={300} counting isLoading message={`${grammar} en cours de chargement...`} />
+            ) : (
+                <Box encType="multipart/form-data" ref={formRef ? formRef : null} name={`Form${idExtension}`} id={`Form${idExtension}`} onSubmit={onSubmit ? (e): void => onSubmit(handleSubmit(e)) : null} component="form" className="position-relative" sx={{ width: '100%', flexGrow: 1, marginTop: 1 }}>
+                    <input type="hidden" id="action" name="action" value={action} />
+                    {renderForm()}
+                    {showBottom && (
+                        <Container component="div" className="d-flex align-items-center justify-content-center">
+                            <InputSubmit showSubmit={action === GenericActionEnum.DELETE ? true : !isView} isLoading={isSubmitLoading} label={submitLabel ? submitLabel : `${getActionLabel(action)} ${grammar}`} showBackPress={showBackPress} onBackPress={onBackPress} />
+                        </Container>
+                    )}
+                </Box>
+            )}
+        </>
+    );
+    // #endregion RENDER --> ///////////////////////////////////
+}
+
+// #region IPROPS -->  /////////////////////////////////////
+export interface IFormMaker<T> {
+    onSubmit: (f: FormData | T) => void;
+    onBackPress?: () => void;
+    structure: FormMakerContentType<FormMakerPartEnum>[];
+    data?: T;
+    outputType?: 'formData' | 'JSON';
+    idExtension?: string;
+    isFormLoading?: boolean;
+    isSubmitLoading?: boolean;
+    focusOnError?: string[];
+    action?: GenericActionEnum;
+    grammar?: string;
+    isView?: boolean;
+    submitLabel?: string;
+    showBackPress?: boolean;
+    showBottom?: boolean;
+    formRef?: RefObject<HTMLFormElement>;
+    isSearchForm?: boolean;
+}
+// #endregion IPROPS --> //////////////////////////////////

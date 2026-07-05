@@ -1,0 +1,231 @@
+{
+    "common": {
+        "title": "Titre",
+        "yes": "Oui",
+        "no": "Non",
+        "send": "Envoyer",
+        "noResultDb": "Aucun résultat dans la base",
+        "changeLang": "Changer la langue",
+        "sendMessage": "Envoyer un message",
+        "openMenu": "Ouvrir le menu",
+        "search": "Rechercher",
+        "emailAddress": "Adresse email",
+        "password": "Mot de passe",
+        "welcome": "Bienvenue",
+        "resend": "Renvoyer",
+        "add": "Ajouter",
+        "update": "Modifier",
+        "dismiss": "Annuler",
+        "delete": "Supprimer",
+        "youAdd": "Ajoutez",
+        "youUpdate": "Modifiez",
+        "youDismiss": "Annulez",
+        "youDelete": "Supprimez",
+        "adding": "Création",
+        "updating": "Modification",
+        "deleting": "Suppression",
+        "back": "Retour",
+        "filter": "Filtre",
+        "filters": "Filtres",
+        "details": "Détails",
+        "close": "Fermer",
+        "name": "Nom",
+        "mainInfo": "Informations principales",
+        "description": "Description",
+        "text": "Texte",
+        "date": "Date",
+        "specifiers": {
+            "singularApos": "L'",
+            "singularFem": "La",
+            "singularMasc": "Le",
+            "plural": "Les"
+        },
+        "table": {
+            "columns": {
+                "showAll": "Afficher tout",
+                "hideAll": "Masquer tout",
+                "placeholder": "Libellé",
+                "search": "Rechercher une colonne",
+                "singular": "Colonne",
+                "plural": "Colonnes",
+                "density": "Épaisseur",
+                "comfortable": "Espacé",
+                "skinny": "Compacte",
+                "regular": "Normal",
+                "selectedLines": "ligne{{isPlural}} sélectionnée"
+            },
+            "nav": {
+                "resultPerPage": "Résultats par pages"
+            },
+            "filter": {
+                "sortAsc": "Trier par order croissant",
+                "sortDesc": "Trier par order décroissant",
+                "hideColumns": "Masquer la colonne",
+                "manageColumns": "Gestion des colonnes",
+                "label": "Filtres"
+            }
+        }
+    },
+    "entity": {
+        "user": "Utilisateur",
+        "users": "Utilisateurs",
+        "log": "Journal d'activité",
+        "client": "Client",
+        "clients": "Clients"
+    },
+    "login": {
+        "rememberMe": "Se souvenir de moi",
+        "forgotPassword": "Mot de passe oublié ?",
+        "pleaseConnect": "Veuillez vous connecter",
+        "connect": "Connexion",
+        "reset": "Nouveau mot de passe",
+        "wrongCredentials": "Email ou mot de passe invalide",
+        "expiredSession": "Session expirée, veuillez vous reconnecter",
+        "expiredMfa": "Votre code a expiré, veuillez en renvoyer un autre",
+        "requiredEmail": "L'email est requis",
+        "requiredPassword": "Le mot de passe est requis",
+        "resetTitle": "Aide à la connexion",
+        "resetMessage": "Une fois votre compte identifié, un message vous sera envoyé afin de réinitialiser votre mot de passe.",
+        "resetDetails": "Veuillez saisir votre adresse électronique",
+        "resetLabel": "Réinitialiser le mot de passe",
+        "MfaTitle": "Accès sécurisé",
+        "MfaSubtitle": "Authentification multi-facteurs",
+        "MfaRegister": "Bienvenue <b>{{username}}</b>. Pour continuer, vous devez configurer un <b>authenticator</b> pour bénéficier de l’authentification à deux facteurs.<br />Pour vous enregistrer veuillez procéder comme suit : <br/>",
+        "MfaDetails": "Bienvenue <b>{{username}}</b>. Pour continuer, saisissez le code de vérification à 6 chiffres généré par votre application d'authentification.",
+        "resendMfa": "Vous n’avez pas reçu de code ?"
+    },
+    "profile": {
+        "title": "Profil d'accès"
+    },
+    "nav": {
+        "profile": "Profil d'accès",
+        "myScore": "Mes grilles",
+        "scoreAdd": "Ajouter une grille",
+        "scoreImport": "Importer une grille",
+        "users": "Utilisateurs",
+        "adverts": "Annonces",
+        "setup": "Réglages",
+        "activity": "Journal d'activité",
+        "schedules": "Tâche planifiées",
+        "proxy": "Se connecter en tant que",
+        "logout": "Déconnexion"
+    },
+    "error": {
+        "common": {
+            "error": "Une erreur est survenue"
+        },
+        "errorMessage": "Oups, une erreur est survenue... Veuillez recharger l'application",
+        "errorBoundary": {
+            "sorry": "Désolé, une erreur est survenue.",
+            "firstErrorMessage": "Merci d'utiliser le formulaire ci-dessous pour contacter le",
+            "supportEmail": "mailto:",
+            "technicalStaff": "support technique",
+            "thanks": "Nous travaillerons à corriger le problème dès que possible. Veuillez nous excuser pour le dérangement causé.",
+            "toSendMessage": "Pour envoyer un message au support technique,",
+            "pleaseSend": "veuillez décrire brièvement le problème dans la zone ci-dessous,",
+            "thenClick": "puis cliquer sur :",
+            "errorReport": "Rapport d'erreur",
+            "diag": "Diagnostic",
+            "source": "Source",
+            "at": "à",
+            "trace": "Trace",
+            "page": "Page",
+            "clockDate": "Date/Heure",
+            "browser": "Navigateur",
+            "address": "Adresse",
+            "linkForward": " Lien depuis"
+        },
+        "noAccess": {
+            "title": "Accès Refusé",
+            "intro": "Vous n'avez pas accès à la page demandée.",
+            "please": "Merci d'utiliser les options disponibles dans le menu.",
+            "expired": "Il est également possible que votre session soit <b>expirée</b>.",
+            "login": "Dans ce cas, veuillez vous <link>identifier</link> à nouveau."
+        },
+        "notFound": {
+            "title": "Ressource introuvable",
+            "intro": "La ressource que vous avez demandée est introuvable.",
+            "please": "Merci d’utiliser les options disponibles dans le menu pour poursuivre votre navigation.",
+            "advise": "Il est également possible que la ressource soit <b>temporairement indisponible</b>.",
+            "goBack": "Vous pouvez cliquer sur « Retour » pour revenir à la page précédente ou utiliser le menu pour accéder à une autre ressource."
+        }
+    },
+    "center": {
+        "search": {
+            "newSearch": "Nouvelle recherche",
+            "updateSearch": "Changer les critères",
+            "filters": "Filtres",
+            "nothing": "Aucun (base entière).",
+            "orderBy": "Tri par"
+        },
+        "bulk": {
+            "bulkUpdate": "Modifications groupées",
+            "bulkAdd": "Ajouts groupés",
+            "bulkDelete": "Suppressions groupée",
+            "downloadTemplate": "Télécharger le modèle",
+            "importXlsx": "Importer votre fichier .xlsx ici",
+            "bulkAddMessage": "{{action}} plusieurs {{grammar}} à la fois en chargeant un fichier CSV contenant les nouvelles informations des {{grammar}}. <br /><b>Vérifiez que les données du fichier soient correctes avant de le charger.</b><br /><br /> Pour plus d'informations sur le formatage correct du fichier CSV, cliquez sur le bouton <b>Télécharger le modèle</b>.",
+            "bulkTitle": "{{action}} des {{grammar}}",
+            "exportXls": "Export au format CSV",
+            "exportCSV": "Export au format Excel"
+        },
+        "update": {
+            "success": "{{entity}} modifié{{fem}} avec succès"
+        },
+        "create": {
+            "success": "{{entity}} créé{{fem}} avec succès"
+        },
+        "delete": {
+            "success": "{{entity}} supprimé{{fem}} avec succès"
+        }
+    },
+    "user": {
+        "singular": "Utilisateur",
+        "plural": "Utilisateurs",
+        "username": "Identifiant",
+        "name": "Nom complet",
+        "firstName": "Prénom",
+        "lastName": "Nom",
+        "email": "Email",
+        "levelAccess": "Niveau d'accès",
+        "lastCon": "Dernière connexion",
+        "logHistory": "Historique d'activité",
+        "mobile": "Téléphone",
+        "admin": "Administrateur",
+        "password": "Mot de passe",
+        "userId": "ID utilisateur"
+    },
+    "logs": {
+        "singular": "Activité",
+        "plural": "Activités",
+        "proxy": "En tant que",
+        "action": "Action",
+        "entryDate": "Date",
+        "info": "Infos"
+    },
+    "schedule": {
+        "singular": "Tâche planifiée",
+        "plural": "Tâches planifiées",
+        "freq": "Fréquence",
+        "isActive": "Active ?",
+        "lastExec": "Dernière execution",
+        "startedAt": "Commencée à",
+        "endedAt": "Terminée à",
+        "nextExec": "Prochaine Execution",
+        "method": "Méthode",
+        "monitoring": "Monitoring",
+        "monitoringLoading": "Monitoring en cours de chargement...",
+        "history": "Historique d'exécution",
+        "error": "Erreur",
+        "timeout": "Timeout",
+        "ongoing": "En cours",
+        "standby": "StandBy",
+        "ended": "Terminée"
+    },
+    "adverts": {
+        "singular": "Annonce",
+        "plural": "Annonces",
+        "expires": "Expire le",
+        "createdBy": "Créer par"
+    }
+}

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="855" height="484" viewBox="0 0 855 560">
+  <line x1="0" y1="0" x2="855" y2="0" stroke="currentColor" strokeWidth="30" />
+  <line x1="0" y1="150" x2="855" y2="150" stroke="currentColor" strokeWidth="30" />
+  <line x1="0" y1="300" x2="855" y2="300" stroke="currentColor" strokeWidth="30" />
+  <line x1="0" y1="450" x2="855" y2="450" stroke="currentColor" strokeWidth="30" />
+  <line x1="0" y1="600" x2="855" y2="600" stroke="currentColor" strokeWidth="30" />
+</svg>
