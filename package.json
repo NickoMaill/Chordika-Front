@@ -1,5 +1,5 @@
 {
-    "name": "aven",
+    "name": "chordika",
     "private": true,
     "version": "1.0.0",
     "description": "",
@@ -76,6 +76,7 @@
         "mui-color-input": "^8.0.0",
         "mui-file-dropzone": "^4.0.2",
         "mui-file-input": "^8.0.1",
+        "mui-nested-menu": "^4.0.3",
         "mui-one-time-password-input": "^7.0.0",
         "mui-player": "^1.8.1",
         "mui-tel-input": "^11.0.0",

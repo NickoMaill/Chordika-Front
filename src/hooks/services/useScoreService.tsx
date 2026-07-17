@@ -3,7 +3,7 @@ import useServiceBase from '../useServiceBase';
 import { FormMakerContentType, FormMakerPartEnum } from '~/types/FormMakerCoreTypes';
 import useService from '../useService';
 import { QueryResult } from '~/types/serverCoreType';
-import { Score } from '~/models/Score';
+import { Score, ScorePage } from '~/models/Score';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
@@ -50,6 +50,12 @@ export default function useScoreService(): IUseScoreService {
         return added.inserted;
     };
 
+    const saveScore = async (id: number, datas: ScorePage[]): Promise<{ success: boolean }> => {
+        const payload = { datas }
+        const saved = await asServicePromise<{ success: boolean }>(() => Service.put(`scores/${id}/content`, payload));
+        return saved;
+    }
+
     const deleteScore = async (id: number): Promise<void> => {
         await asServicePromise<{ success: boolean }>(() => Service.del(`scores/${id}`));
     };
@@ -66,6 +72,7 @@ export default function useScoreService(): IUseScoreService {
         getScoreLists,
         getScore,
         addScore,
+        saveScore,
         deleteScore,
     };
     // #endregion RENDER --> ///////////////////////////////////
@@ -79,6 +86,7 @@ interface IUseScoreService {
     getScore: (id: number) => Promise<Score>;
     getScoreLists: () => Promise<QueryResult<Score>>;
     addScore: (form: FormData) => Promise<Score>;
+    saveScore: (id: number, datas: ScorePage[]) => Promise<{ success: boolean }>;
     deleteScore: (id: number) => Promise<void>;
 }
 // #enderegion IPROPS --> //////////////////////////////////

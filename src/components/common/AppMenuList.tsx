@@ -1,7 +1,7 @@
 // #region IMPORTS -> /////////////////////////////////////
 import { JSX, MouseEvent, ReactNode, useState } from 'react';
 import AppIcon, { IconNameType } from './AppIcon';
-import { IconButton, ListItemIcon, ListItemText, Menu, MenuItem, MenuItemProps, SxProps, Theme } from '@mui/material';
+import { IconButton, ListItemIcon, ListItemText, Menu, MenuItem, MenuItemProps, PopoverPosition, SxProps, Theme } from '@mui/material';
 import { Link } from 'react-router-dom';
 // #endregion IMPORTS -> //////////////////////////////////
 
@@ -15,10 +15,20 @@ export type MenuListOptionType<T = unknown> = T & {
 };
 // #endregion SINGLETON --> /////////////////////////////////
 
-export default function AppMenuList({ options, buttonIcon, buttonStyle, iconButtonStyle, buttonClassName, iconButtonClassName, outlined = 'true', anchorComponent }: IAppMenuList): JSX.Element {
+export default function AppMenuList({
+    options,
+    buttonIcon,
+    buttonStyle,
+    iconButtonStyle,
+    buttonClassName,
+    iconButtonClassName,
+    outlined = 'true',
+    anchorComponent,
+    anchorPosition,
+}: IAppMenuList): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const open = Boolean(anchorEl);
+    const open = Boolean(anchorEl ?? anchorPosition);
     // #endregion STATE --> ////////////////////////////////////
 
     // #region HOOKS --> ///////////////////////////////////////
@@ -46,9 +56,9 @@ export default function AppMenuList({ options, buttonIcon, buttonStyle, iconButt
                     <AppIcon name={buttonIcon ?? 'MoreVertRounded'} sx={iconButtonStyle} className={iconButtonClassName} />
                 </IconButton>
             )}
-            <Menu open={open} onClose={handleClose} anchorEl={anchorEl}>
+            <Menu open={open} disableAutoFocusItem onClose={handleClose} anchorEl={anchorPosition ? null : anchorEl} anchorReference={anchorPosition ? 'anchorPosition' : "anchorEl"} anchorPosition={anchorPosition}>
                 {options.map((a, i) => (
-                    <MenuElement key={i} handleClose={handleClose} onClick={a.onClick} href={a.href}>
+                    <MenuElement autoFocus tabIndex={i+1} key={i} handleClose={handleClose} onClick={a.onClick} href={a.href}>
                         {a.icon && (
                             <ListItemIcon>
                                 <AppIcon sx={{ fontSize: '1.4rem!important' }} name={a.icon} color={a.iconColor} />
@@ -73,6 +83,7 @@ interface IAppMenuList {
     iconButtonClassName?: string;
     outlined?: 'true' | 'false';
     anchorComponent?: (props: { onClick: (event: MouseEvent<HTMLElement>) => void }) => ReactNode;
+    anchorPosition?: PopoverPosition;
 }
 // #enderegion IPROPS --> //////////////////////////////////
 

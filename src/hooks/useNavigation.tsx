@@ -7,6 +7,7 @@ import { RecursiveKeyOf } from '~/types/custom';
 import { RouteNameReference, RouterDescription } from '~/types/route';
 import NotFound from '~/pages/NotFound';
 import { LevelAccessEnum } from '~/models/Session';
+import configManager from '~/managers/configManager';
 
 // const urlRegex = /^(https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)|http:\/\/localhost:\d+)$/i;
 
@@ -78,15 +79,14 @@ export default function useNavigation(): IUseNavigation {
             if (route) {
                 return route;
             } else {
-                return { name: 'NotFound', element: NotFound, path: '*', title: 'Aven', isAuthRequired: false, levelAccess: LevelAccessEnum.NOBODY } as RouterDescription;
+                return { name: 'NotFound', element: NotFound, path: '*', title: configManager.getConfig.APP_NAME, isAuthRequired: false, levelAccess: LevelAccessEnum.NOBODY } as RouterDescription;
             }
         },
         [location.pathname]
     );
 
-    const findRoute = useCallback(
-        (loadedRoutes: RouterDescription[], url: string): RouterDescription | undefined => {
-            const routeDescription = loadedRoutes.find((item) => !!matchPath(item.path, url));
+    const findRoute = useCallback((loadedRoutes: RouterDescription[], url: string): RouterDescription | undefined => {
+            const routeDescription = loadedRoutes.find((item) => !!matchPath(item?.path, url));
             if (query && routeDescription) {
                 routeDescription.query = query;
             }

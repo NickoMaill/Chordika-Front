@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-label="Preset 1 temps puis 3 temps">
+    <path
+    d="M 0 0 L 50 50 L 0 100"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="3"
+    stroke-linecap="square"
+    stroke-linejoin="miter"
+  />
+</svg>

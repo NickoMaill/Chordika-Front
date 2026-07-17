@@ -50,34 +50,41 @@ export default function EditorMain({ id }: { id: number }): JSX.Element {
     // #endregion STATE --> ////////////////////////////////////
 
     // #region HOOKS --> ///////////////////////////////////////
-    const EditorCtx = useEditorContext();
-    const Actions = useEditorActions();
+    const { state, dispatch } = useEditorContext();
+    const { loadScore, addBars, deleteGroup, saveContent } = useEditorActions();
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////
     const handleMenuClick = (trigger: string): void => {
         switch (trigger) {
             case 'bars':
-                EditorCtx.dispatch({ type: 'IS_FORM_BAR_OPEN', payload: true });
+                dispatch({ type: 'IS_FORM_BAR_OPEN', payload: true });
                 break;
             default:
                 return;
         }
     };
+
+    const handleDragStop = (index: number, groupId: number, position: { x: number; y: number }): void => {
+        const datas = state.data;
+        datas.content[0].content[index].position = position;
+        dispatch({ type: 'SET_DATA', payload: datas });
+    }
+
     // #endregion METHODS --> //////////////////////////////////
 
     // #region USEEFFECT --> ///////////////////////////////////
     useEffect(() => {
-        Actions.loadScore(id);
-        return (): void => EditorCtx.dispatch({ type: 'RESET' });
+        loadScore(id);
+        return (): void => dispatch({ type: 'RESET' });
     }, []);
     // #endregion USEEFFECT --> ////////////////////////////////
 
     // #region RENDER --> //////////////////////////////////////
     return (
         <Container id="ChordEditorContainer">
-            <ContentLayout isLoading={EditorCtx.state.isDataLoading} title="" showTitle={false}>
-                <Box id="toolbar">
+            <ContentLayout isLoading={state.isDataLoading} title="" showTitle={false}>
+                <Box id="toolbar" className="d-flex justify-content-between align-items-center">
                     <Box className="mb-2 d-flex">
                         {menu.map((m, i) => {
                             if (m.id === 'divider') {
@@ -93,10 +100,17 @@ export default function EditorMain({ id }: { id: number }): JSX.Element {
                             }
                         })}
                     </Box>
-                    <Divider />
+                    <Box>
+                        <Tooltip title={"Sauvegarder les modifications"}>
+                            <IconButton onClick={saveContent} className="me-2" outline="true">
+                                <AppIcon name={"Save"} />
+                            </IconButton>
+                        </Tooltip>
+                    </Box>
                 </Box>
-                <EditorDisplay data={EditorCtx.state.data} onClickDeleteGroup={Actions.deleteGroup} onClickEditBar={null} onClickEditGroup={null} />
-                <EditorAddBars onSubmit={Actions.addBars} />
+                <Divider />
+                <EditorDisplay data={state.data} onClickDeleteGroup={deleteGroup} onClickEditGroup={null} onDragStop={handleDragStop} />
+                <EditorAddBars onSubmit={addBars} />
             </ContentLayout>
         </Container>
     );

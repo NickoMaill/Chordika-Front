@@ -8,9 +8,9 @@ import checker from 'vite-plugin-checker';
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => {
     const buildVersion = command === 'build' ? Date.now().toString() : 'dev';
-    const env = loadEnv(command, process.cwd(), "");
+    const env = loadEnv(command, process.cwd(), '');
     return {
-        base: env.VITE_BASE_PATH || "/",
+        base: env.VITE_BASE_PATH || '/',
         plugins: [
             {
                 name: 'html-build-version',
@@ -57,6 +57,9 @@ export default defineConfig(({ command }) => {
             watch: {
                 ignored: ['**/node_modules/**', '**/dist/**', '**/build/**', '**/.git/**', '**/logs/**'],
             },
+        },
+        define: {
+            'process.env.DRAGGABLE_DEBUG': JSON.stringify(false),
         },
     };
 });

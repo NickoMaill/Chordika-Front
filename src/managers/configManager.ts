@@ -12,7 +12,9 @@ class ConfigManager {
             APP_FILEURL: import.meta.env.VITE_APP_FILEURL,
             API_PUBLIC_URL: import.meta.env.VITE_API_PUBLIC_URL,
             AUTH_MFA_ENABLED: import.meta.env.VITE_AUTH_MFA_ENABLED,
-            BASE_PATH: import.meta.env.VITE_BASE_PATH
+            BASE_PATH: import.meta.env.VITE_BASE_PATH,
+            APP_ENABLE_NOTIFS: import.meta.env.VITE_APP_ENABLE_NOTIFS === 'true',
+            APP_NAME: import.meta.env.VITE_APP_NAME,
         };
     }
 

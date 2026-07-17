@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"
+  aria-label="Preset quatre fois 1 temps">
+  <path d="M 0 0 L 100 100 M 100 0 L 0 100" fill="none"
+    stroke="currentColor"
+    stroke-width="3"
+    stroke-linecap="square"
+    stroke-linejoin="miter" />
+</svg>

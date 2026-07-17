@@ -7,6 +7,7 @@ import ContentLayout from '~/components/layout/ContentLayout';
 import DateTime from '~/core/classes/DateTime';
 import useToolService from '~/hooks/services/useToolService';
 import { MonitorInfoType } from '~/types/config';
+import configManager from '~/managers/configManager';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
@@ -75,7 +76,7 @@ export default function Monitor(): JSX.Element {
         <ContentLayout title="Monitor" icon="Monitor">
             <Container maxWidth="md" sx={{ py: 4 }}>
                 <Typography variant="h4" gutterBottom>
-                    Monitoring Page for AVEN
+                    Monitoring Page for {configManager.getConfig.APP_NAME}
                 </Typography>
 
                 <SectionCard title="General Parameters" items={generalParameters} />

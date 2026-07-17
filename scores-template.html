@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<title>Grille musicale</title>
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f6f8;
+        color: #1f2937;
+    }
+
+    .page {
+        padding: 32px;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+
+    .header h1 {
+        margin: 0;
+        font-size: 28px;
+    }
+
+    .actions button {
+        border: none;
+        padding: 10px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .btn-primary {
+        background: #2563eb;
+        color: white;
+    }
+
+    .btn-secondary {
+        background: white;
+        color: #374151;
+        border: 1px solid #d1d5db !important;
+    }
+
+    .toolbar {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .toolbar input,
+    .toolbar select {
+        padding: 10px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        background: white;
+    }
+
+    .grid {
+        background: white;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,.06);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th {
+        background: #111827;
+        color: white;
+        text-align: left;
+        padding: 14px;
+        font-size: 13px;
+        text-transform: uppercase;
+    }
+
+    td {
+        padding: 14px;
+        border-bottom: 1px solid #e5e7eb;
+        vertical-align: middle;
+    }
+
+    tr:hover {
+        background: #f9fafb;
+    }
+
+    .cover {
+        width: 48px;
+        height: 48px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #6366f1, #ec4899);
+    }
+
+    .title {
+        font-weight: 700;
+    }
+
+    .artist {
+        font-size: 13px;
+        color: #6b7280;
+        margin-top: 4px;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .rock {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .pop {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+
+    .jazz {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .status {
+        color: #16a34a;
+        font-weight: 700;
+    }
+
+    .row-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .icon-btn {
+        border: 1px solid #d1d5db;
+        background: white;
+        border-radius: 8px;
+        padding: 7px 10px;
+        cursor: pointer;
+    }
+
+    .icon-btn:hover {
+        background: #f3f4f6;
+    }
+</style>
+</head>
+<body>
+
+<div class="page">
+    <div class="header">
+        <div>
+            <h1>Grille musicale</h1>
+            <p>Édition et visualisation des morceaux programmés</p>
+        </div>
+
+        <div class="actions">
+            <button class="btn-secondary">Prévisualiser</button>
+            <button class="btn-primary">Ajouter un morceau</button>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <input type="text" placeholder="Rechercher un titre ou un artiste..." />
+        <select>
+            <option>Tous les genres</option>
+            <option>Rock</option>
+            <option>Pop</option>
+            <option>Jazz</option>
+        </select>
+        <select>
+            <option>Tous les statuts</option>
+            <option>Publié</option>
+            <option>Brouillon</option>
+        </select>
+    </div>
+
+    <div class="grid">
+        <table>
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Titre</th>
+                    <th>Genre</th>
+                    <th>Durée</th>
+                    <th>BPM</th>
+                    <th>Tonalité</th>
+                    <th>Statut</th>
+                    <th>Ordre</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td><div class="cover"></div></td>
+                    <td>
+                        <div class="title">A Hard Day's Night</div>
+                        <div class="artist">The Beatles</div>
+                    </td>
+                    <td><span class="badge rock">Rock</span></td>
+                    <td>2:34</td>
+                    <td>138</td>
+                    <td>G</td>
+                    <td><span class="status">Publié</span></td>
+                    <td>#01</td>
+                    <td>
+                        <div class="row-actions">
+                            <button class="icon-btn">Voir</button>
+                            <button class="icon-btn">Modifier</button>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><div class="cover"></div></td>
+                    <td>
+                        <div class="title">Can't Buy Me Love</div>
+                        <div class="artist">The Beatles</div>
+                    </td>
+                    <td><span class="badge pop">Pop</span></td>
+                    <td>2:12</td>
+                    <td>170</td>
+                    <td>C</td>
+                    <td><span class="status">Publié</span></td>
+                    <td>#02</td>
+                    <td>
+                        <div class="row-actions">
+                            <button class="icon-btn">Voir</button>
+                            <button class="icon-btn">Modifier</button>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><div class="cover"></div></td>
+                    <td>
+                        <div class="title">Ticket To Ride</div>
+                        <div class="artist">The Beatles</div>
+                    </td>
+                    <td><span class="badge jazz">Ballade</span></td>
+                    <td>3:10</td>
+                    <td>124</td>
+                    <td>A</td>
+                    <td><span class="status">Publié</span></td>
+                    <td>#03</td>
+                    <td>
+                        <div class="row-actions">
+                            <button class="icon-btn">Voir</button>
+                            <button class="icon-btn">Modifier</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

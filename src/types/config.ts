@@ -7,6 +7,8 @@ export interface IConfigEnv {
     EXTRA_BASEURL?;
     AUTH_MFA_ENABLED?;
     BASE_PATH?;
+    APP_ENABLE_NOTIFS?;
+    APP_NAME?;
     [key: string]: unknown;
 }
 

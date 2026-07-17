@@ -2,6 +2,7 @@
 import useEditorContext from '~/context/EditorContext';
 import useScoreService from './services/useScoreService';
 import { BarsPayload, ScoreBarGroup } from '~/models/Score';
+import useToast from './useToast';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
@@ -14,6 +15,7 @@ export default function useEditorActions(): IUseEditorActions {
     // #region HOOKS --> ///////////////////////////////////////
     const EditorCtx = useEditorContext();
     const ScoreService = useScoreService();
+    const { success } = useToast();
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////
@@ -61,7 +63,7 @@ export default function useEditorActions(): IUseEditorActions {
         EditorCtx.dispatch({ type: 'IS_FORM_BAR_OPEN', payload: false });
     };
 
-    const updateGroup = async (index: number, obj: BarsPayload) => {
+    const updateGroup = async (index: number, obj: BarsPayload): Promise<void> => {
         const datas = EditorCtx.state.data;
         const nb = Number(obj.nb);
         datas.content[0].content[index].title = obj.title;
@@ -105,6 +107,15 @@ export default function useEditorActions(): IUseEditorActions {
             payload: datas,
         });
     };
+
+    const saveContent = async (): Promise<void> => {
+        const datas = EditorCtx.state.data;
+        await ScoreService.saveScore(datas.id, datas.content)
+            .then((res) => {
+                if (res.success)  success("Grille sauvegardée avec succès !");
+            })
+            .finally(() => EditorCtx.dispatch({ type: 'SET_DATA_LOADING_OFF' }));
+    }
     // #endregion METHODS --> //////////////////////////////////
 
     // #region USEEFFECT --> ///////////////////////////////////
@@ -114,6 +125,8 @@ export default function useEditorActions(): IUseEditorActions {
     return {
         loadScore,
         addBars,
+        saveContent,
+        updateGroup,
         deleteGroup,
     };
     // #endregion RENDER --> ///////////////////////////////////
@@ -124,5 +137,7 @@ interface IUseEditorActions {
     loadScore: (id: number) => Promise<void>;
     addBars: (obj: { nb: number; perLines: number }) => void;
     deleteGroup: (index: number) => void;
+    updateGroup: (index: number, obj: BarsPayload) => Promise<void>;
+    saveContent: () => Promise<void>;
 }
 // #enderegion IPROPS --> //////////////////////////////////

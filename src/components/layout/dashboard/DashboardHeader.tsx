@@ -15,6 +15,7 @@ import { LevelAccessEnum } from '~/models/Session';
 import NavigationResource from '~/resources/navigationResources';
 import useSessionContext from '~/context/sessionContext';
 import NotificationMenu from '../header/NotificationMenu';
+import configManager from '~/managers/configManager';
 
 const AppBar = styled(MuiAppBar)(({ theme }) => ({
     borderWidth: 0,
@@ -104,7 +105,7 @@ export default function DashboardHeader({ logo, title, menuOpen, onToggleMenu }:
                     </Stack>
                     <Stack direction="row" alignItems="center" spacing={1}>
                         <Stack direction="row" alignItems="center" spacing={1}>
-                            <NotificationMenu />
+                            {configManager.getConfig.APP_ENABLE_NOTIFS && <NotificationMenu />}
                             {accessLevel === LevelAccessEnum.ADMIN && <SetupMenu />}
                         </Stack>
                     </Stack>

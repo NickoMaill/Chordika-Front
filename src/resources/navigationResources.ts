@@ -27,6 +27,8 @@ class NavigationResource {
             monitor: '/monitor',
             proxy: '/proxy',
             scores: '/scores',
+            reset: '/reset',
+            register: '/register',
             scoreEditor: '/scores/:scoreId',
             scoreAdd: '/scores/add',
             scoreImport: '/scores/import',

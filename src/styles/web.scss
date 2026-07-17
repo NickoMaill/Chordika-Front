@@ -343,3 +343,190 @@ td .col-action {
 td:hover .col-action {
     display: inline-flex;
 }
+
+@page {
+    size: A4;
+    margin: 0;
+}
+
+@media print and (orientation: landscape) {
+    @page {
+        size: A4 landscape;
+    }
+}
+
+@media print and (orientation: portrait) {
+    @page {
+        size: A4 portrait;
+    }
+}
+
+@media screen {
+    .editor-page-portrait {
+        width: min(100%, 210mm);
+        aspect-ratio: 190 / 277;
+        margin: 1rem auto;
+        box-sizing: border-box;
+    }
+
+    .editor-page-landscape {
+        width: min(100%, 297mm);
+        aspect-ratio: 277 / 190;
+        margin: 1rem auto;
+        box-sizing: border-box;
+    }
+}
+.ProseMirror {
+    min-height: 100px;
+}
+
+.b1t-1t-1t-1t {
+    background-image: url(../assets/svg/bars/1t-1t-1t-1t.svg);
+}
+
+.b1t-1t-1t {
+    background-image: url(../assets/svg/bars/1t-1t-1t.svg);
+}
+
+.b1t-1t-2t {
+    background-image: url(../assets/svg/bars/1t-1t-2t.svg);
+}
+
+.b1t-2t-1t {
+    background-image: url(../assets/svg/bars/1t-2t-1t.svg);
+}
+
+.b1t-3t {
+    background-image: url(../assets/svg/bars/1t-3t.svg);
+}
+
+.b2t-1t-1t {
+    background-image: url(../assets/svg/bars/2t-1t-1t.svg);
+}
+
+.b2t-2t {
+    background-image: url(../assets/svg/bars/2t-2t.svg);
+}
+
+.b3t-1t {
+    background-image: url(../assets/svg/bars/3t-1t.svg);
+}
+
+.b4t {
+    background-image: url(../assets/svg/bars/4t.svg);
+}
+
+@media print {
+    /* Masquer toute la chrome d'UI */
+    header,
+    footer,
+    #avatar,
+    #toolbar,
+    nav,
+    button,
+    #sidebarContainer,
+    #groupActions,
+    .bar-edit,
+    .dragger,
+    #poweredBy,
+    #nprogress {
+        /* cache aussi la barre de chargement */
+        display: none !important;
+    }
+
+    html,
+    body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        background: #ffffff !important;
+    }
+
+    /* Le canevas d'édition occupe toute la page PDF */
+    #Editor {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* Chaque page éditeur devient une page PDF, sans bordure ni ombre */
+    .editor-page-landscape,
+    .editor-page-portrait {
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        width: auto !important;
+        height: auto !important;
+        // min-height: 100vh;
+        break-after: page; /* alias moderne de page-break-after */
+        page-break-after: always; /* compat old */
+        position: relative !important;
+        border-radius: 0;
+        overflow: hidden !important;
+    }
+    .editor-page-portrait {
+        width: 190mm !important;
+        height: 274mm !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+    .editor-page-landscape {
+        width: 277 !important;
+        height: 190 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+    /* Pas de saut après la dernière page */
+    .editor-page-landscape:last-child,
+    .editor-page-portrait:last-child {
+        break-after: auto;
+        page-break-after: auto;
+    }
+
+    /* Footer fixe en bas de page */
+    .page-footer {
+        display: block !important;
+        position: absolute !important;
+        left: 0;
+        right: 0;
+        bottom: 8mm; /* espace de sécurité pour les imprimantes */
+        text-align: center;
+        font-size: 10pt;
+        line-height: 1.2;
+        color: #000;
+        pointer-events: none;
+        background: transparent;
+    }
+
+    /* Réserve de place pour le footer dans le contenu */
+    [id^='content-page-'] {
+        padding-bottom: 14mm !important;
+        box-sizing: border-box;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    /* Éléments interactifs non imprimables ou à neutraliser */
+    .dragger,
+    .handle {
+        cursor: default !important;
+    }
+
+    /* Si react-draggable applique des transforms, on les neutralise pour l'impression */
+    // .react-draggable,
+    // .react-draggable * {
+    //     transform: none !important;
+    // }
+
+    /* Éviter les coupures intempestives dans les blocs importants */
+    .score-list-item,
+    .ProseMirror,
+    .progress,
+    .progress-bar,
+    .MuiDataGrid-overlayWrapper {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+    #ChordEditorContainer {
+        margin: 0 !important;
+    }
+    // #Editor .p-1, #Editor .p-2, #Editor .p-3 { padding-left: 0 !important; padding-right: 0 !important; }
+}

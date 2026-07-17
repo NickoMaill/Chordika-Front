@@ -1,12 +1,10 @@
 import { JSX } from 'react';
-import RawLogo from '~/assets/svg/aven.svg?react';
-import { Box } from '@mui/material';
-import { Regular } from '../common/Text';
-import stylesResources from '~/resources/stylesResources';
+import rawLogo from '~/assets/pictures/logo.png';
+import Box from '@mui/material/Box';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
-const imgSize = 25;
+const size = 35;
 // #endregion SINGLETON --> /////////////////////////////////
 
 export default function Logo(): JSX.Element {
@@ -23,14 +21,7 @@ export default function Logo(): JSX.Element {
     // #endregion USEEFFECT --> ////////////////////////////////
 
     // #region RENDER --> //////////////////////////////////////
-    return (
-        <Box className="d-flex align-items-center gap-2">
-            <RawLogo width={imgSize} height={imgSize} style={{ fill: stylesResources.theme.palette.primary.main }} />
-            <Regular component="h3" variant="h3" color="primary" className="ms-2" sx={{ letterSpacing: '0.4em' }}>
-                VEN
-            </Regular>
-        </Box>
-    );
+    return <img alt="logo" src={rawLogo} />;
     // #endregion RENDER --> ///////////////////////////////////
 }
 
