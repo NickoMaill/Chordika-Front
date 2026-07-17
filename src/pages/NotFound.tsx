@@ -25,7 +25,7 @@ export default function NotFound(): JSX.Element {
     // #region RENDER --> //////////////////////////////////////
     return (
         <Box>
-            <Regular>{translate("nav.notFound")}</Regular>
+            <Regular>{translate('nav.notFound')}</Regular>
         </Box>
     );
     // #endregion RENDER --> ///////////////////////////////////

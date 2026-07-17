@@ -223,7 +223,7 @@ export interface ICenterConfig<T> {
     levelBulkUpdate: LevelAccessEnum;
     levelBulkDelete: LevelAccessEnum;
     updateUrlFallback?: string;
-    overrideLayoutAction?: (props: { data?: QueryResult<T>, action?: GenericActionEnum }) => JSX.Element
+    overrideLayoutAction?: (props: { data?: QueryResult<T>; action?: GenericActionEnum }) => JSX.Element;
     viewComponent?: ({ data }: { data: T }) => JSX.Element;
     deleteComponent?: ({ data }: { data: T }) => JSX.Element;
 }

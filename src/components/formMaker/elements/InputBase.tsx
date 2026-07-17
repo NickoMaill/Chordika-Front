@@ -12,7 +12,23 @@ import { FormHelperText } from '@mui/material';
 // #region SINGLETON --> ////////////////////////////////////
 // #endregion SINGLETON --> /////////////////////////////////
 
-export default function InputBase({ className, disabled, children, label, helpText, error, size = { lg: 3, md: 3, xs: 12 }, id, required, showLabel = true, sx, errorMessage, success, warning, showErrorContainer = true }: IInputBase): JSX.Element {
+export default function InputBase({
+    className,
+    disabled,
+    children,
+    label,
+    helpText,
+    error,
+    size = { lg: 3, md: 3, xs: 12 },
+    id,
+    required,
+    showLabel = true,
+    sx,
+    errorMessage,
+    success,
+    warning,
+    showErrorContainer = true,
+}: IInputBase): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
     const [focused, setFocused] = useState(false);
     const elRef = useRef<HTMLDivElement>(null);
@@ -41,7 +57,14 @@ export default function InputBase({ className, disabled, children, label, helpTe
 
     // #region RENDER --> //////////////////////////////////////
     return (
-        <Grid size={typeof size === "number" ? { lg: size, md: size, xs: 12 } : size} sx={{ ...sx }} ref={elRef} className={`divForm_${id as string} ${className}`} onFocus={handleFocus} onBlur={handleBlur}>
+        <Grid
+            size={typeof size === 'number' ? { lg: size, md: size, xs: 12 } : size}
+            sx={{ ...sx }}
+            ref={elRef}
+            className={`divForm_${id as string} ${className}`}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+        >
             <FormControl variant="outlined" disabled={disabled} margin="none" fullWidth error={error} focused={focused} sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                 {showLabel && (
                     <FormLabel

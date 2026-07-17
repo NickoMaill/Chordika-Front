@@ -25,7 +25,7 @@ export default function AppCenterSearch<T>({ searchFormStruct, onSubmitSearchFor
     const [isSearchFormVisible, setIsSearchFormVisible] = useState<boolean>(false);
     const [isNew, setIsNew] = useState<boolean>(true);
     // #endregion STATE --> ////////////////////////////////////
- 
+
     // #region HOOKS --> ///////////////////////////////////////
     const { filters, sortedBy, setFilters, setPage } = useSearchContext();
     const { translate } = useResources();
@@ -82,10 +82,7 @@ export default function AppCenterSearch<T>({ searchFormStruct, onSubmitSearchFor
                             <Chip label={translate('center.search.nothing')} />
                         )}
                         {sortedBy && (
-                            <Chip
-                                label={`${translate('center.search.orderBy')} ${sortedBy.sortLabel}`}
-                                icon={<AppIcon name={sortedBy.order === 'asc' ? 'ArrowUpward' : 'ArrowDownward'} />}
-                            />
+                            <Chip label={`${translate('center.search.orderBy')} ${sortedBy.sortLabel}`} icon={<AppIcon name={sortedBy.order === 'asc' ? 'ArrowUpward' : 'ArrowDownward'} />} />
                         )}
                     </Box>
                 </Grid>

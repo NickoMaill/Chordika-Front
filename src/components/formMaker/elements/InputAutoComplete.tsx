@@ -205,7 +205,6 @@ export default function InputAutoComplete({
                             }),
                         },
                     },
-                    
                 }}
                 renderOption={(props, option, { inputValue }) => {
                     const { key, ...optionProps } = props;
@@ -241,7 +240,6 @@ export default function InputAutoComplete({
                         helperText={errorMessage}
                         placeholder={placeholder}
                         error={isError || error}
-                        
                         onBlur={onBlur}
                         sx={{ marginTop: '4px', marginBottom: '4px', borderRadius: 1, ...sx }}
                         {...params}
@@ -267,7 +265,13 @@ export default function InputAutoComplete({
                     />
                 )}
             />
-            <input type="hidden" required={required} id={id as string} name={id as string} value={selected ? (isSearchForm ? `${selected.value}¤${selected.label}` : (selected.value as string)) : ''} />
+            <input
+                type="hidden"
+                required={required}
+                id={id as string}
+                name={id as string}
+                value={selected ? (isSearchForm ? `${selected.value}¤${selected.label}` : (selected.value as string)) : ''}
+            />
         </>
     );
 }

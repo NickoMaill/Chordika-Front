@@ -114,8 +114,8 @@ export default function AppCenterTable<T>({ baseProps, tableProps, handleMiniAct
     } else {
         return (
             <CenterBase {...baseProps}>
-                <Grid container component={"section"} spacing={2}>
-                    <Grid size={state.config.tableStructure.SideComponent ? { xl: 9, lg: 8, md: 12, xs: 12 } : 12} component={"article"}>
+                <Grid container component={'section'} spacing={2}>
+                    <Grid size={state.config.tableStructure.SideComponent ? { xl: 9, lg: 8, md: 12, xs: 12 } : 12} component={'article'}>
                         {state.config.tableStructure.OverrideComponent ? (
                             <state.config.tableStructure.OverrideComponent key={6} baseProps={baseProps} tableProps={tableProps as IAppTable<unknown>} />
                         ) : (
@@ -123,7 +123,7 @@ export default function AppCenterTable<T>({ baseProps, tableProps, handleMiniAct
                         )}
                     </Grid>
                     {state.config.tableStructure.SideComponent && (
-                        <Grid component={"aside"} size={{ xl: 3, lg: 4, md: 12, xs: 12 }}>
+                        <Grid component={'aside'} size={{ xl: 3, lg: 4, md: 12, xs: 12 }}>
                             <state.config.tableStructure.SideComponent />
                         </Grid>
                     )}

@@ -51,10 +51,10 @@ export default function useScoreService(): IUseScoreService {
     };
 
     const saveScore = async (id: number, datas: ScorePage[]): Promise<{ success: boolean }> => {
-        const payload = { datas }
+        const payload = { datas };
         const saved = await asServicePromise<{ success: boolean }>(() => Service.put(`scores/${id}/content`, payload));
         return saved;
-    }
+    };
 
     const deleteScore = async (id: number): Promise<void> => {
         await asServicePromise<{ success: boolean }>(() => Service.del(`scores/${id}`));

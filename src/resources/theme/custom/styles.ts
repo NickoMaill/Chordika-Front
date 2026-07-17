@@ -10,6 +10,6 @@ export const hoverElStyle: SxProps<Theme> = {
     },
     '&:active': {
         bgcolor: 'background.paper',
-        borderColor: "secondary.light"
+        borderColor: 'secondary.light',
     },
 };

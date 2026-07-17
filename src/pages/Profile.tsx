@@ -59,7 +59,7 @@ export default function Profile(): JSX.Element {
             colors = colors.filter((c) => c !== (value ?? ''));
         } else {
             if ((currentColor ?? '').trim() === '') {
-                Toast.warning(translate("profile.colors.needSelect") as string);
+                Toast.warning(translate('profile.colors.needSelect') as string);
                 return;
             }
             setIsColorLoading(true);
@@ -74,10 +74,10 @@ export default function Profile(): JSX.Element {
             }
             setCurrentColor(null);
             if (action === 'add') {
-                Toast.success(translate("profile.colors.saved") as string);
+                Toast.success(translate('profile.colors.saved') as string);
                 setIsColorLoading(false);
             } else {
-                Toast.info(translate("profile.colors.noSaved") as string);
+                Toast.info(translate('profile.colors.noSaved') as string);
             }
         });
     };
@@ -116,22 +116,22 @@ export default function Profile(): JSX.Element {
                         </InputBase>
                         <InputBase size={2} id="submitColor" className="d-flex align-items-end justify-content-end">
                             <Button onClick={() => handleOnManageColor('add')} variant="outlined" loading={isColorLoading} sx={{ bgcolor: 'background.default', marginTop: '30px' }}>
-                                {translate("common.add")}
+                                {translate('common.add')}
                             </Button>
                         </InputBase>
                     </AppGridContainer>
                     <Box component={'article'}>
-                        <Bold>{translate("profile.colors.savedColor")}</Bold>
+                        <Bold>{translate('profile.colors.savedColor')}</Bold>
                         <Grid container spacing={3} component={'ul'} className="list-unstyled">
                             {me?.preferences.favColors.length > 0 ? (
                                 me?.preferences.favColors.map((c, i) => <ColorElement key={i} color={c} onDelete={() => handleOnManageColor('delete', c)} />)
                             ) : (
-                                <Regular>{translate("profile.colors.noSaved")}</Regular>
+                                <Regular>{translate('profile.colors.noSaved')}</Regular>
                             )}
                         </Grid>
                     </Box>
                 </AppAccordion>
-                <AppAccordion title={translate("profile.history") as string}>{me && <LogActivities data={me as unknown as UserApiModel} />}</AppAccordion>
+                <AppAccordion title={translate('profile.history') as string}>{me && <LogActivities data={me as unknown as UserApiModel} />}</AppAccordion>
             </Box>
         </ContentLayout>
     );

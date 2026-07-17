@@ -74,7 +74,13 @@ export default function ScoreLists({ data, currentPage, isLoading, onRefresh }: 
             ) : (
                 <AppGridContainer>
                     {data.records.map((d) => (
-                        <ScoreCard onDeleteClick={() => handleActions('del', d.id)} onEditClick={() => handleActions('edit', d.id)} onExportClick={() => handleActions('exp', d.id)} data={d} key={d.id} />
+                        <ScoreCard
+                            onDeleteClick={() => handleActions('del', d.id)}
+                            onEditClick={() => handleActions('edit', d.id)}
+                            onExportClick={() => handleActions('exp', d.id)}
+                            data={d}
+                            key={d.id}
+                        />
                     ))}
                 </AppGridContainer>
             )}
@@ -114,7 +120,8 @@ function ScoreCard({ data, onEditClick, onDeleteClick, onExportClick }: IScoreCa
                             {data.composer}
                         </Bold>
                         <Regular>
-                            {data.tempo} BPM <AppIcon name="Circle" className="mx-1" sx={{ fontSize: '11px' }} /> {data.nume}/{data.denom} <AppIcon name="Circle" sx={{ fontSize: '11px' }} className="mx-1" /> {data.key}
+                            {data.tempo} BPM <AppIcon name="Circle" className="mx-1" sx={{ fontSize: '11px' }} /> {data.nume}/{data.denom}{' '}
+                            <AppIcon name="Circle" sx={{ fontSize: '11px' }} className="mx-1" /> {data.key}
                         </Regular>
                     </Box>
                     <Box>{data.updatedAt && <Italic>Modifié le : {dayjs(data.updatedAt).format('DD/MM/YYYY HH:mm:ss')}</Italic>}</Box>

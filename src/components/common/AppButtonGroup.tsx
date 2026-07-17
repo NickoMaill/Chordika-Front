@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
-export type ButtonGroupOptionsType = MenuListOptionType<{ externalLink?: string; iconPosition?: 'right' | 'left'; iconFontSize?: string | number, isLoading?: boolean }>;
+export type ButtonGroupOptionsType = MenuListOptionType<{ externalLink?: string; iconPosition?: 'right' | 'left'; iconFontSize?: string | number; isLoading?: boolean }>;
 // #endregion SINGLETON --> /////////////////////////////////
 
 export default function AppButtonGroup({ options, size = 'medium', color, labelAsTip = false }: IAppButtonGroup): JSX.Element {
@@ -47,6 +47,7 @@ export default function AppButtonGroup({ options, size = 'medium', color, labelA
                             startIcon={isLabelAndIcon && o.iconPosition === 'left' ? <AppIcon name={o.icon} /> : null}
                             endIcon={isLabelAndIcon && o.iconPosition === 'right' ? <AppIcon name={o.icon} /> : null}
                             loading={o.isLoading}
+                            id={o.id}
                             {...props}
                         >
                             {isLabelAndIcon || labelVisible ? o.label : o.icon && !labelVisible ? <AppIcon name={o.icon} sx={{ fontSize: o.iconFontSize }} /> : null}

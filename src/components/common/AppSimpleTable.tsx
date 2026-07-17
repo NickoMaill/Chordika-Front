@@ -115,12 +115,12 @@ export default function AppSimpleTable<T extends object>({
                 <TableHead>
                     <TableRow>
                         {checkable && (
-                            <TableCell padding="checkbox" component={"th"} variant="head" align={'center'}>
+                            <TableCell padding="checkbox" component={'th'} variant="head" align={'center'}>
                                 <Checkbox onChange={(e) => onSelectAll(e.target.checked)} defaultChecked />{' '}
                             </TableCell>
                         )}
                         {columns.map((h, i) => (
-                            <TableCell variant="head" component={"th"} sx={{ fontWeight: 'bold' }} align={h.align ?? 'left'} key={i}>
+                            <TableCell variant="head" component={'th'} sx={{ fontWeight: 'bold' }} align={h.align ?? 'left'} key={i}>
                                 {h.label}
                             </TableCell>
                         ))}

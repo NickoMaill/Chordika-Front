@@ -7,7 +7,12 @@ export type EditorState = {
     data: Score;
 };
 
-export type EditorStateAction = { type: 'IS_FORM_BAR_OPEN'; payload: boolean } | { type: 'SET_DATA'; payload: Score } | { type: 'SET_DATA_LOADING_ON' } | { type: 'SET_DATA_LOADING_OFF' } | { type: 'RESET' };
+export type EditorStateAction =
+    | { type: 'IS_FORM_BAR_OPEN'; payload: boolean }
+    | { type: 'SET_DATA'; payload: Score }
+    | { type: 'SET_DATA_LOADING_ON' }
+    | { type: 'SET_DATA_LOADING_OFF' }
+    | { type: 'RESET' };
 
 export const EditorInitialState = {
     /**

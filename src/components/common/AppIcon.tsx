@@ -28,7 +28,7 @@ const customIcons = {
     Segno,
     Microphone,
     MusicScore,
-    ScoreRaw
+    ScoreRaw,
 };
 // #endregion IMPORTS -> //////////////////////////////////
 

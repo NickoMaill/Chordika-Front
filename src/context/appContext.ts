@@ -32,7 +32,7 @@ const initialContext: IAppContext = {
     isOnline: true,
     boxOptions: null,
     isSearchFocused: false,
-    layoutLinks: []
+    layoutLinks: [],
 };
 
 export type AlertContextType = {

@@ -116,7 +116,17 @@ export default function Reset(): JSX.Element {
     // #endregion USEEFFECT --> ////////////////////////////////
 
     // #region RENDER --> //////////////////////////////////////
-    return <Container>{isLoading ? <AppFullPageLoader isLoading /> : accessGranted ? <ResetForm onSubmit={onResetSubmit} opt={pwdOpt} onChange={onChange} errorMsg={errorMsg} isSuccess={isSuccess} isLoading={isSubmitLoading} isError={isError} /> : <Expired />}</Container>;
+    return (
+        <Container>
+            {isLoading ? (
+                <AppFullPageLoader isLoading />
+            ) : accessGranted ? (
+                <ResetForm onSubmit={onResetSubmit} opt={pwdOpt} onChange={onChange} errorMsg={errorMsg} isSuccess={isSuccess} isLoading={isSubmitLoading} isError={isError} />
+            ) : (
+                <Expired />
+            )}
+        </Container>
+    );
     // #endregion RENDER --> ///////////////////////////////////
 }
 
@@ -187,7 +197,12 @@ function ResetForm({ opt, onSubmit, onChange, errorMsg, isSuccess, isError, isLo
                         <TextField
                             color={isSuccess ? 'success' : null}
                             focused={isSuccess}
-                            slotProps={{ input: { startAdornment: <AppIcon name="Lock" color="secondary" sx={{ marginRight: 1 }} />, endAdornment: isSuccess ? <AppIcon name="CheckRounded" color="success" /> : null } }}
+                            slotProps={{
+                                input: {
+                                    startAdornment: <AppIcon name="Lock" color="secondary" sx={{ marginRight: 1 }} />,
+                                    endAdornment: isSuccess ? <AppIcon name="CheckRounded" color="success" /> : null,
+                                },
+                            }}
                             margin="normal"
                             fullWidth
                             label="Nouveau mot de passe"
@@ -202,7 +217,12 @@ function ResetForm({ opt, onSubmit, onChange, errorMsg, isSuccess, isError, isLo
                             error={isError}
                             color={isSuccess ? 'success' : null}
                             focused={isSuccess}
-                            slotProps={{ input: { startAdornment: <AppIcon name="Lock" color="secondary" sx={{ marginRight: 1 }} />, endAdornment: isSuccess ? <AppIcon name="CheckRounded" color="success" /> : null } }}
+                            slotProps={{
+                                input: {
+                                    startAdornment: <AppIcon name="Lock" color="secondary" sx={{ marginRight: 1 }} />,
+                                    endAdornment: isSuccess ? <AppIcon name="CheckRounded" color="success" /> : null,
+                                },
+                            }}
                             margin="normal"
                             fullWidth
                             label="Confirmer mot de passe"
@@ -211,13 +231,24 @@ function ResetForm({ opt, onSubmit, onChange, errorMsg, isSuccess, isError, isLo
                             required
                             placeholder="********"
                         />
-                        <AppAlert isVisible={isError || isSuccess} title={isError ? errorMsg : isSuccess ? 'Mot de passe modifié !' : null} severity={isSuccess ? 'success' : 'warning'} subtitle={isSuccess ? `Vous allez être redirigé vers la page de connexion dans ${count} sec` : ''} />
+                        <AppAlert
+                            isVisible={isError || isSuccess}
+                            title={isError ? errorMsg : isSuccess ? 'Mot de passe modifié !' : null}
+                            severity={isSuccess ? 'success' : 'warning'}
+                            subtitle={isSuccess ? `Vous allez être redirigé vers la page de connexion dans ${count} sec` : ''}
+                        />
                     </Box>
                     <Box className="row mb-3 w-100" id="confirm">
                         <Box id="popover-password w-100">
                             <Box minWidth={'260px'}>
                                 <Box className="progress">
-                                    <LinearProgress variant="determinate" className="p-1 rounded" sx={{ width: '100%', backgroundColor: stylesResources.theme.palette.text.disabled }} color={width < 2 ? 'error' : width < 4 ? 'warning' : 'success'} value={width * 25} />
+                                    <LinearProgress
+                                        variant="determinate"
+                                        className="p-1 rounded"
+                                        sx={{ width: '100%', backgroundColor: stylesResources.theme.palette.text.disabled }}
+                                        color={width < 2 ? 'error' : width < 4 ? 'warning' : 'success'}
+                                        value={width * 25}
+                                    />
                                 </Box>
                                 <Box className="my-2 fst-italic fw-bold w-100 text-center d-flex justify-content-center">{monitorMsg}</Box>
                             </Box>

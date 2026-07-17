@@ -2,7 +2,7 @@
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import EditorHeader from './EditorHeader';
-import { Score, ScoreOrientation } from '~/models/Score';
+import { Score, ScoreBar, ScoreBarPayload, ScoreOrientation } from '~/models/Score';
 import { JSX, ReactNode, useRef, useState } from 'react';
 import { Bold, Regular } from '../common/Text';
 import Draggable from 'react-draggable';
@@ -10,6 +10,9 @@ import AppIcon from '../common/AppIcon';
 import IconButton from '@mui/material/IconButton';
 import { Grid } from '@mui/material';
 import EditorBar from './EditorBar';
+import useModal, { ModalOptions } from '~/hooks/useModal';
+import EditorBarForm from './EditorBarForm';
+import appTool from '~/helpers/appTool';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
@@ -45,12 +48,15 @@ const GroupDraggable = ({ dragger, position, onStop, children, parent }: IGroupD
     );
 };
 
-export default function EditorDisplay({ data, onClickDeleteGroup, onClickEditGroup, onDragStop }: IEditor): JSX.Element {
+export default function EditorDisplay({ data, onClickDeleteGroup, onClickEditGroup, onDragStop, onUpdateBar }: IEditor): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
     const [positions, setPositions] = useState<Record<number, { x: number; y: number }>>({});
+    const [isModalSubmitLoading, setisModalSubmitLoading] = useState<boolean>(false);
+    const barRef = useRef<HTMLFormElement>(null);
     // #endregion STATE --> ////////////////////////////////////
 
     // #region HOOKS --> ///////////////////////////////////////
+    const { openModal, closeModal,  } = useModal();
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////
@@ -59,6 +65,33 @@ export default function EditorDisplay({ data, onClickDeleteGroup, onClickEditGro
         setPositions((prev) => ({ ...prev, [groupId]: position }));
         onDragStop(index, groupId, position);
     };
+
+    const handleUpdateBar = (gi: number, bi: number, data?: ScoreBar): void => {
+        const options: ModalOptions = {
+            title: `Modifier mesure n°${gi}.${bi}`,
+            content: <EditorBarForm data={data} ref={barRef} />,
+            isLoading: false,
+            modalActionOptions: {
+                modalActionLabel: "Modifier",
+                modalAction: () => initUpdateBar(gi, bi),
+                modalDismissLabel: "Annuler",
+                modalActionLoading: isModalSubmitLoading
+            } 
+        }
+        openModal(options)
+    }
+
+    const initUpdateBar = (gi: number, bi: number): void => {
+        if (!barRef.current) return;
+        const formData = new FormData(barRef.current)
+        const obj = appTool.formToObj(formData);
+        onUpdateBar(gi, bi, obj as unknown as ScoreBarPayload);
+        closeModal();
+    }
+
+    const handleDeleteBar = (gi: number, bi: number): void => {
+        
+    }
     // #endregion METHODS --> //////////////////////////////////
 
     // #region USEEFFECT --> ///////////////////////////////////
@@ -70,7 +103,7 @@ export default function EditorDisplay({ data, onClickDeleteGroup, onClickEditGro
             {data &&
                 /* Score Pages */
                 data.content.map((page) => (
-                    <Paper key={page.index} className={`bg-transparent p-3 editor-page-${data.orientation === ScoreOrientation.LANDSCAPE ? 'landscape' : 'portrait'}`} elevation={3}>
+                    <Paper key={page.index} className={`p-3 bg-transparent editor-page-${data.orientation === ScoreOrientation.LANDSCAPE ? 'landscape' : 'portrait'}`} elevation={3}>
                         <Box className="position-relative h-100">
                             {/* HEADER */}
                             {page.index === 0 && <EditorHeader data={data} />}
@@ -94,12 +127,14 @@ export default function EditorDisplay({ data, onClickDeleteGroup, onClickEditGro
                                             <Grid size={g.title ? 10 : 12}>
                                                 <Grid container className="position-relative">
                                                     {g.content.map((b) => (
-                                                        <EditorBar
-                                                            key={b.index}
-                                                            bar={b}
-                                                            group={g}
-                                                            isFirstBar={isFirstBar}
-                                                            isLastBar={isLastBar}
+                                                        <EditorBar 
+                                                            key={b.index} 
+                                                            bar={b} 
+                                                            group={g} 
+                                                            isFirstBar={isFirstBar} 
+                                                            isLastBar={isLastBar} 
+                                                            onClickUpdate={() => handleUpdateBar(g.index, b.index, b)} 
+                                                            onClickDelete={() => handleDeleteBar(g.index, b.index)} 
                                                         />
                                                     ))}
                                                 </Grid>
@@ -138,5 +173,6 @@ interface IEditor {
     onClickEditGroup: (index: number) => void;
     onClickDeleteGroup: (index: number) => void;
     onDragStop: (index: number, groupId: number, position: { x: number; y: number }) => void;
+    onUpdateBar: (gi: number, bi: number, data: ScoreBarPayload) => void;
 }
 // #enderegion IPROPS --> //////////////////////////////////

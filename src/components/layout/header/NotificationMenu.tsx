@@ -27,7 +27,7 @@ export default function NotificationMenu(): JSX.Element {
     const [totalNotifs, setTotalNotifs] = useState<number>(0);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [offset, setOffset] = useState<number>(0);
-    const [mode, setMode] = useState<"all" | "notSeen">("all");
+    const [mode, setMode] = useState<'all' | 'notSeen'>('all');
     const isLoadingRef = useRef<boolean>(false);
     // #endregion STATE --> ////////////////////////////////////
 
@@ -42,7 +42,7 @@ export default function NotificationMenu(): JSX.Element {
         setIsMenuOpen(!isMenuOpen);
     };
 
-    const load = async (nextOffset: number = 0, nextMode: "all" | "notSeen" = mode, append: boolean = false): Promise<void> => {
+    const load = async (nextOffset: number = 0, nextMode: 'all' | 'notSeen' = mode, append: boolean = false): Promise<void> => {
         if (isLoadingRef.current) {
             return;
         }
@@ -51,7 +51,7 @@ export default function NotificationMenu(): JSX.Element {
         setIsLoading(true);
 
         try {
-            const res = await getNotifications(nextMode === "all", nextOffset, limit);
+            const res = await getNotifications(nextMode === 'all', nextOffset, limit);
 
             setData((prevState) => (append ? [...prevState, ...res.records].distinctBy((n) => n.id) : res.records));
             setTotalNotifs(res.totalAllRecords);
@@ -116,7 +116,7 @@ export default function NotificationMenu(): JSX.Element {
         load(0, mode, false);
     }, [mode]);
     // #endregion USEEFFECT --> ////////////////////////////////
-    
+
     // #region RENDER --> //////////////////////////////////////
     return (
         <Box>
@@ -127,7 +127,12 @@ export default function NotificationMenu(): JSX.Element {
                     </IconButton>
                 </Badge>
             </Tooltip>
-            <Drawer slotProps={{ paper: { sx: { width: { xs: '100%', sm: 400 }, height: { xs: '94vh', sm: "92.7vh" }, top: { xs: '56px', sm: '64px' }, overflow: "auto" }, onScroll } }} anchor="right" open={isMenuOpen} onClose={openCloseMenu}>
+            <Drawer
+                slotProps={{ paper: { sx: { width: { xs: '100%', sm: 400 }, height: { xs: '94vh', sm: '92.7vh' }, top: { xs: '56px', sm: '64px' }, overflow: 'auto' }, onScroll } }}
+                anchor="right"
+                open={isMenuOpen}
+                onClose={openCloseMenu}
+            >
                 <Box sx={{ width: '100%', height: '100%' }}>
                     <Box className="p-3">
                         <Bold component={'h3'} variant="h4">
@@ -135,8 +140,18 @@ export default function NotificationMenu(): JSX.Element {
                         </Bold>
                         <Box className="d-flex justify-content-between align-items-center" sx={{ mt: 1, mb: 0 }}>
                             <ButtonGroup variant="outlined" size="small">
-                                <Button onClick={() => setMode("all")} sx={{ bgcolor: mode === "all" ? gray[200] : null, ...theme.applyStyles("dark", { bgcolor:  mode === "all" ? gray[800] : null }) }}>Tout</Button>
-                                <Button onClick={() => setMode("notSeen")} sx={{ bgcolor: mode === "notSeen" ? gray[200] : null, ...theme.applyStyles("dark", { bgcolor:  mode === "notSeen" ? gray[800] : null }) }}>Non lu</Button>
+                                <Button
+                                    onClick={() => setMode('all')}
+                                    sx={{ bgcolor: mode === 'all' ? gray[200] : null, ...theme.applyStyles('dark', { bgcolor: mode === 'all' ? gray[800] : null }) }}
+                                >
+                                    Tout
+                                </Button>
+                                <Button
+                                    onClick={() => setMode('notSeen')}
+                                    sx={{ bgcolor: mode === 'notSeen' ? gray[200] : null, ...theme.applyStyles('dark', { bgcolor: mode === 'notSeen' ? gray[800] : null }) }}
+                                >
+                                    Non lu
+                                </Button>
                             </ButtonGroup>
                             <Button component={Link} onClick={openCloseMenu} to={NavigationResource.routesPath.notifications} variant="text">
                                 Voir tout

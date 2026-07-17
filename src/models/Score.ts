@@ -83,7 +83,7 @@ export type ScoreBarGroup = {
  * @description Mesure de la grille
  */
 export type ScoreBar = {
-    type: string;
+    type: BarTypeEnum;
     index: number;
     timeBar?: {
         nume: number;
@@ -96,6 +96,17 @@ export type ScoreBar = {
     content: ScoreBarContent[];
     isTheEnd?: boolean;
 };
+
+export type ScoreBarPayload = {
+    type: BarTypeEnum;
+    timeBar?: {
+        nume: number;
+        denom: number;
+    };
+    tempo?: number;
+    key?: string;
+    isRepeat?: boolean;
+}
 
 /**
  * @description Division de la mesure
@@ -124,3 +135,15 @@ export type BarsPayload = {
     nb: number;
     perLines: number;
 };
+
+export enum BarTypeEnum {
+    B1T_1T_1T_1T = "1t-1t-1t-1t",
+    B1T_1T_1T = "1t-1t-1t",
+    B1T_1T_2T = "1t-1t-2t",
+    B1T_2T_1T = "1t-2t-1t",
+    B1T_3T = "1t-3t",
+    B2T_1T_1T = "2t-1t-1t",
+    B2T_2T = "2t-2t",
+    B3T_1T = "3t-1t",
+    B4T = "4t",
+}

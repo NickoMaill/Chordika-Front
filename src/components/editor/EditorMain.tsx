@@ -11,6 +11,7 @@ import useEditorContext from '~/context/EditorContext';
 import EditorDisplay from './EditorDisplay';
 import ContentLayout from '../layout/ContentLayout';
 import useEditorActions from '~/hooks/useEditorActions';
+import { ScoreBarPayload } from '~/models/Score';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
@@ -69,6 +70,12 @@ export default function EditorMain({ id }: { id: number }): JSX.Element {
         const datas = state.data;
         datas.content[0].content[index].position = position;
         dispatch({ type: 'SET_DATA', payload: datas });
+    };
+
+    const handleUpdateBar = (gi: number, bi: number, data: ScoreBarPayload): void => {
+        const datas = state.data;
+        datas.content[0].content[gi].content[bi].type = data.type;
+        dispatch({ type: 'SET_DATA', payload: datas });
     }
 
     // #endregion METHODS --> //////////////////////////////////
@@ -101,15 +108,15 @@ export default function EditorMain({ id }: { id: number }): JSX.Element {
                         })}
                     </Box>
                     <Box>
-                        <Tooltip title={"Sauvegarder les modifications"}>
+                        <Tooltip title={'Sauvegarder les modifications'}>
                             <IconButton onClick={saveContent} className="me-2" outline="true">
-                                <AppIcon name={"Save"} />
+                                <AppIcon name={'Save'} />
                             </IconButton>
                         </Tooltip>
                     </Box>
                 </Box>
                 <Divider />
-                <EditorDisplay data={state.data} onClickDeleteGroup={deleteGroup} onClickEditGroup={null} onDragStop={handleDragStop} />
+                <EditorDisplay data={state.data} onClickDeleteGroup={deleteGroup} onClickEditGroup={null} onDragStop={handleDragStop} onUpdateBar={handleUpdateBar} />
                 <EditorAddBars onSubmit={addBars} />
             </ContentLayout>
         </Container>

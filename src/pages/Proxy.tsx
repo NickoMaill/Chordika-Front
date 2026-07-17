@@ -64,7 +64,7 @@ export default function Proxy(): JSX.Element {
 
     // #region RENDER --> //////////////////////////////////////
     return (
-        <ContentLayout icon="Person" title={translate("nav.proxy") as string + "..."}>
+        <ContentLayout icon="Person" title={(translate('nav.proxy') as string) + '...'}>
             <Box className="mt-2">
                 <Regular>{translate('proxy.message')}</Regular>
                 <Box onSubmit={getProxy} component="form" className="mt-3">

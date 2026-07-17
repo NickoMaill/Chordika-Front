@@ -141,7 +141,7 @@ export interface InputBaseType {
     error?: boolean;
     success?: boolean;
     warning?: boolean;
-    size?: GridSize | Array<GridSize | null> | { [key in Breakpoint]?: GridSize | null }
+    size?: GridSize | Array<GridSize | null> | { [key in Breakpoint]?: GridSize | null };
     helpText?: string;
     errorMessage?: string | ReactNode;
     autoComplete?: AutoCompleteType;

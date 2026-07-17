@@ -6,6 +6,7 @@ import { formHelperTextClasses } from '@mui/material/FormHelperText';
 import { iconButtonClasses } from '@mui/material/IconButton';
 import { pickersInputBaseClasses } from '@mui/x-date-pickers';
 import { brand } from '../themePrimitives';
+import { alphaColor } from '.';
 
 export const formInputCustomizations: Components<Theme> = {
     MuiFormControl: {
@@ -36,7 +37,7 @@ export const formInputCustomizations: Components<Theme> = {
                     },
                     [`&.${pickersInputBaseClasses.error}`]: {
                         borderColor: (theme.vars || theme).palette.error.main,
-                        backgroundColor: alpha((theme.vars || theme).palette.error.main, 0.04),
+                        backgroundColor: alphaColor(theme, "error", 0.04),
                         ' .MuiPickersOutlinedInput-notchedOutline': {
                             border: 'none',
                         },
@@ -54,7 +55,7 @@ export const formInputCustomizations: Components<Theme> = {
                     },
                     [`&.${pickersInputBaseClasses.error}.Mui-focused`]: {
                         borderColor: (theme.vars || theme).palette.error.main,
-                        outline: `3px solid ${alpha((theme.vars || theme).palette.error.main, 0.18)}`,
+                        outline: `3px solid ${alphaColor(theme, "error", 0.18)}`,
                     },
                     [` .${iconButtonClasses.root}`]: {
                         border: 'none',

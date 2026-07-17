@@ -27,16 +27,7 @@ export default function CenterRoute(): JSX.Element {
     // #region RENDER --> //////////////////////////////////////
     if (!centerRoute) return <NotFound />;
 
-    return (
-        <AppCenter
-            key={centerRoute.currentPath}
-            entity={centerRoute.entity}
-            id={centerRoute.id}
-            action={centerRoute.action}
-            parents={centerRoute.parents}
-            basePath={centerRoute.basePath}
-        />
-    );
+    return <AppCenter key={centerRoute.currentPath} entity={centerRoute.entity} id={centerRoute.id} action={centerRoute.action} parents={centerRoute.parents} basePath={centerRoute.basePath} />;
     // #endregion RENDER --> ///////////////////////////////////
 }
 

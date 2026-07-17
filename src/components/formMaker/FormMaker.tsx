@@ -65,7 +65,7 @@ export default function FormMaker<T>({
     isSearchForm = false,
     isFormLoading = false,
     resetCount = 0,
-    recordId
+    recordId,
 }: IFormMaker<T>): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
     const [file, setFile] = useState<File>(null);
@@ -287,7 +287,7 @@ export default function FormMaker<T>({
             );
         } else {
             return (
-                <Box key={index} display="flex" justifyContent="center" flexDirection="column" alignItems="center" >
+                <Box key={index} display="flex" justifyContent="center" flexDirection="column" alignItems="center">
                     {groupedElement}
                 </Box>
             );
@@ -503,13 +503,13 @@ export default function FormMaker<T>({
     useEffect(() => {
         setFormValues(extractInitialValues());
     }, [structure, data]);
-    
+
     useEffect(() => {
         console.log(resetCount);
         if (resetCount > 0) {
             resetValues();
         }
-    }, [resetCount])
+    }, [resetCount]);
     // #endregion USEEFFECT --> ////////////////////////////////
 
     // #region RENDER --> //////////////////////////////////////

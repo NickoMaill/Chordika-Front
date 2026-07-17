@@ -1,7 +1,7 @@
 // #region IMPORTS -> /////////////////////////////////////
 import useEditorContext from '~/context/EditorContext';
 import useScoreService from './services/useScoreService';
-import { BarsPayload, ScoreBarGroup } from '~/models/Score';
+import { BarsPayload, BarTypeEnum, ScoreBarGroup } from '~/models/Score';
 import useToast from './useToast';
 // #endregion IMPORTS -> //////////////////////////////////
 
@@ -39,7 +39,7 @@ export default function useEditorActions(): IUseEditorActions {
                 y: 0,
             },
             content: [...Array(Number(obj.nb)).keys()].map((o, i) => ({
-                type: '1',
+                type: BarTypeEnum.B4T,
                 index: i,
                 timeBar: {
                     nume: Number(EditorCtx.state.data.nume),
@@ -74,7 +74,7 @@ export default function useEditorActions(): IUseEditorActions {
             } else if (nb > datas.content[0].content.length) {
                 const diff = nb - datas.content[0].content.length;
                 const newBars = [...Array(diff).keys()].map((d, i) => ({
-                    type: '1',
+                    type: BarTypeEnum.B4T,
                     index: i,
                     timeBar: {
                         nume: Number(datas.nume),
@@ -112,10 +112,10 @@ export default function useEditorActions(): IUseEditorActions {
         const datas = EditorCtx.state.data;
         await ScoreService.saveScore(datas.id, datas.content)
             .then((res) => {
-                if (res.success)  success("Grille sauvegardée avec succès !");
+                if (res.success) success('Grille sauvegardée avec succès !');
             })
             .finally(() => EditorCtx.dispatch({ type: 'SET_DATA_LOADING_OFF' }));
-    }
+    };
     // #endregion METHODS --> //////////////////////////////////
 
     // #region USEEFFECT --> ///////////////////////////////////

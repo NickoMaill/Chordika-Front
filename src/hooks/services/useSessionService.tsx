@@ -201,7 +201,7 @@ function useSessionService(): IUseSessionService {
             }
         });
     };
-        const resetPassword = async (form: FormData): Promise<{ success: boolean }> => {
+    const resetPassword = async (form: FormData): Promise<{ success: boolean }> => {
         const res = await post<{ success: boolean }, null>('auth/forgotPassword', null, form);
         return res;
     };

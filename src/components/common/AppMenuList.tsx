@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 export type MenuListOptionType<T = unknown> = T & {
     label?: string;
     icon?: IconNameType;
+    id?: string;
     iconColor?: 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning';
     onClick?: () => void;
     href?: string;
@@ -56,9 +57,16 @@ export default function AppMenuList({
                     <AppIcon name={buttonIcon ?? 'MoreVertRounded'} sx={iconButtonStyle} className={iconButtonClassName} />
                 </IconButton>
             )}
-            <Menu open={open} disableAutoFocusItem onClose={handleClose} anchorEl={anchorPosition ? null : anchorEl} anchorReference={anchorPosition ? 'anchorPosition' : "anchorEl"} anchorPosition={anchorPosition}>
+            <Menu
+                open={open}
+                disableAutoFocusItem
+                onClose={handleClose}
+                anchorEl={anchorPosition ? null : anchorEl}
+                anchorReference={anchorPosition ? 'anchorPosition' : 'anchorEl'}
+                anchorPosition={anchorPosition}
+            >
                 {options.map((a, i) => (
-                    <MenuElement autoFocus tabIndex={i+1} key={i} handleClose={handleClose} onClick={a.onClick} href={a.href}>
+                    <MenuElement autoFocus tabIndex={i + 1} key={i} handleClose={handleClose} onClick={a.onClick} id={a.id} href={a.href}>
                         {a.icon && (
                             <ListItemIcon>
                                 <AppIcon sx={{ fontSize: '1.4rem!important' }} name={a.icon} color={a.iconColor} />

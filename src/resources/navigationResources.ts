@@ -87,22 +87,22 @@ class NavigationResource {
 
     public static get navigationHeaderInfo(): HeaderLinkType[] {
         return [
-            { name: 'nav.myScore', link: `${NavigationResource.routesPath.scores}`, icon: "MusicScore", redirect: true, levelAccess: LevelAccessEnum.USER },
+            { name: 'nav.myScore', link: `${NavigationResource.routesPath.scores}`, icon: 'MusicScore', redirect: true, levelAccess: LevelAccessEnum.USER },
             // { name: 'nav.scoreAdd', link: `${NavigationResource.routesPath.scoreAdd}`, icon: "AddCircleRounded", redirect: true, levelAccess: LevelAccessEnum.USER },
             // { name: 'nav.scoreImport', link: `${NavigationResource.routesPath.scoreImport}`, icon: "CloudUploadRounded", redirect: true, levelAccess: LevelAccessEnum.USER },
             { name: 'divider', levelAccess: LevelAccessEnum.ADMIN },
-            { name: 'nav.users', link: `${NavigationResource.routesPath.center}/users`, icon: "Person", redirect: true, levelAccess: LevelAccessEnum.ADMIN },
-            { name: 'nav.adverts', link: `${NavigationResource.routesPath.center}/annonces`, icon: "Campaign", redirect: true, levelAccess: LevelAccessEnum.ADMIN },
-            { name: 'nav.activity', link: `${NavigationResource.routesPath.center}/logs`, icon: "ManageSearch", redirect: true, levelAccess: LevelAccessEnum.ADMIN },
+            { name: 'nav.users', link: `${NavigationResource.routesPath.center}/users`, icon: 'Person', redirect: true, levelAccess: LevelAccessEnum.ADMIN },
+            { name: 'nav.adverts', link: `${NavigationResource.routesPath.center}/annonces`, icon: 'Campaign', redirect: true, levelAccess: LevelAccessEnum.ADMIN },
+            { name: 'nav.activity', link: `${NavigationResource.routesPath.center}/logs`, icon: 'ManageSearch', redirect: true, levelAccess: LevelAccessEnum.ADMIN },
         ];
     }
 
     public static get userNavigationLinks(): HeaderLinkType[] {
         return [
-            { name: 'nav.profile', link: NavigationResource.routesPath.profile, icon: "Key", redirect: true, levelAccess: LevelAccessEnum.USER },
+            { name: 'nav.profile', link: NavigationResource.routesPath.profile, icon: 'Key', redirect: true, levelAccess: LevelAccessEnum.USER },
             { name: 'divider', levelAccess: LevelAccessEnum.USER },
-            { name: 'nav.proxy', link: NavigationResource.routesPath.proxy, icon: "Person", redirect: true, levelAccess: LevelAccessEnum.ADMIN },
-            { name: 'nav.logout', icon: "Logout", redirect: false, method: 'logout', levelAccess: LevelAccessEnum.USER },
+            { name: 'nav.proxy', link: NavigationResource.routesPath.proxy, icon: 'Person', redirect: true, levelAccess: LevelAccessEnum.ADMIN },
+            { name: 'nav.logout', icon: 'Logout', redirect: false, method: 'logout', levelAccess: LevelAccessEnum.USER },
         ];
     }
 

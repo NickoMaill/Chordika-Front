@@ -7,7 +7,7 @@ export type Notification = {
     content: string;
     url: string;
     addedAt: string;
-}
+};
 
 export enum NotificationTypeEnum {
     INFO = 'INFO',

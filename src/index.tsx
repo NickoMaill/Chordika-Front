@@ -1,5 +1,5 @@
-import '~/core/custom/array.extensions.ts'
-import '~/core/custom/string.extensions.ts'
+import '~/core/custom/array.extensions.ts';
+import '~/core/custom/string.extensions.ts';
 import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
 import dayjs from 'dayjs';

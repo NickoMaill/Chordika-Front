@@ -11,6 +11,9 @@ import { darkScrollbar } from '@mui/material';
 class StylesResources {
     public get theme(): Theme {
         return createTheme({
+            cssVariables: {
+                colorSchemeSelector: 'data',
+            },
             components: {
                 ...inputsCustomizations,
                 ...dataDisplayCustomizations,

@@ -44,7 +44,7 @@ export default function CenterProvider<T>({ initialState, children, isSub, force
     const [state, dispatch] = useReducer(centerReducer<T>, init);
     const [HandlerHook, setHandlerHook] = useState<(() => CenterHandlerConfigType<T>) | null>(null);
     const { tableName } = useParams();
-    const table = isSub ? forcedTableName.split('/').pop() : centerTableName ?? tableName;
+    const table = isSub ? forcedTableName.split('/').pop() : (centerTableName ?? tableName);
 
     useEffect(() => {
         setHandlerHook(null);

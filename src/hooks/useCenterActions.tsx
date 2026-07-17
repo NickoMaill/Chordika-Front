@@ -57,9 +57,7 @@ export function useCenterActions<T>({ props, action, id }: ICenterActionsProps<T
     const getConfig = async (): Promise<ICenterConfig<T>> => {
         try {
             const parentParams = centerRouteHelper.getParentConfigParams(props.isSubCenter, props.parentField, props.parentId, props.parents);
-            const config = await asServicePromise<ICenterConfig<T>>(() =>
-                get(centerRouteHelper.buildApiUrl(`${props.entity.toLowerCase()}/config`, parentParams))
-            );
+            const config = await asServicePromise<ICenterConfig<T>>(() => get(centerRouteHelper.buildApiUrl(`${props.entity.toLowerCase()}/config`, parentParams)));
 
             const vocabularyRegex = /^\$.*\..*/;
             const mapObj = (obj: Record<string, unknown> | null): void => {
@@ -129,7 +127,7 @@ export function useCenterActions<T>({ props, action, id }: ICenterActionsProps<T
                     );
                     if (!props.isSubCenter) {
                         if (state.config?.updateUrlFallback) {
-                            const url = state.config.updateUrlFallback.replace(":id", id);
+                            const url = state.config.updateUrlFallback.replace(':id', id);
                             Nav.navigateByPath(url);
                         } else {
                             goBackToTable();
@@ -277,9 +275,7 @@ export function useCenterActions<T>({ props, action, id }: ICenterActionsProps<T
         if (state.bulkSelection.length > 0) {
             query.append('ID', state.bulkSelection.join(','));
         }
-        await asServicePromise(() =>
-            downloadFile(`${props.entity.toLowerCase()}/bulkUpdateTemplate?${query}`).finally(() => dispatch({ type: 'SET_BULK_TEMP_LOADING', payload: false }))
-        );
+        await asServicePromise(() => downloadFile(`${props.entity.toLowerCase()}/bulkUpdateTemplate?${query}`).finally(() => dispatch({ type: 'SET_BULK_TEMP_LOADING', payload: false })));
     };
 
     const getBulkAddTemplate = async (): Promise<void> => {

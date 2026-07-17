@@ -441,9 +441,7 @@ export default function AppTable<T>({
                     isMini
                         ? null
                         : (e): void =>
-                              actions.includes('update')
-                                  ? Nav.navigateByPath(`${basePath ?? `/center/${entity}`}/${e.id}/update`)
-                                  : Nav.navigateByPath(`${basePath ?? `/center/${entity}`}/${e.id}`)
+                              actions.includes('update') ? Nav.navigateByPath(`${basePath ?? `/center/${entity}`}/${e.id}/update`) : Nav.navigateByPath(`${basePath ?? `/center/${entity}`}/${e.id}`)
                 }
                 sortingMode="server"
                 getRowHeight={() => (columns.colStruct.findIndex((c) => c.type === 'html') > -1 ? 'auto' : undefined)}

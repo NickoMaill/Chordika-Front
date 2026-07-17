@@ -85,7 +85,8 @@ export default function useNavigation(): IUseNavigation {
         [location.pathname]
     );
 
-    const findRoute = useCallback((loadedRoutes: RouterDescription[], url: string): RouterDescription | undefined => {
+    const findRoute = useCallback(
+        (loadedRoutes: RouterDescription[], url: string): RouterDescription | undefined => {
             const routeDescription = loadedRoutes.find((item) => !!matchPath(item?.path, url));
             if (query && routeDescription) {
                 routeDescription.query = query;

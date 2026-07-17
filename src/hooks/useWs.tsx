@@ -38,7 +38,7 @@ export default function useWs<T>({ url, onMessage, reconnectIntervalMs = 5000 }:
         setError(null);
         const route = `ws://${configManager.getConfig.WS_BASEURL}/${url}`;
         const ws = new WebSocket(route);
-        
+
         ws.onopen = (): void => {
             setIsConnected(true);
             setIsConnecting(false);

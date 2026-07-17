@@ -23,7 +23,7 @@ export default function SearchProvider({ children }: ISearchProvider): JSX.Eleme
 
     // #region HOOKS --> ///////////////////////////////////////
     const { isItemExist, getParsedItem } = useStorage();
-    const { perfMode } = useAppContext()
+    const { perfMode } = useAppContext();
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////

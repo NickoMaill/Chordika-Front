@@ -17,8 +17,8 @@ const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
     },
     '&.notistack-MuiContent-default': {
         backgroundColor: stylesResources.theme.palette.background.paper,
-        color: "inherit"
-    }
+        color: 'inherit',
+    },
 }));
 
 export default {

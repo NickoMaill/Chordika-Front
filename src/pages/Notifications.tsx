@@ -1,12 +1,12 @@
 // #region IMPORTS -> /////////////////////////////////////
-import { JSX } from 'react'
+import { JSX } from 'react';
 import ContentLayout from '~/components/layout/ContentLayout';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
 // #endregion SINGLETON --> /////////////////////////////////
 
-export default function Notifications (): JSX.Element {
+export default function Notifications(): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
     // #endregion STATE --> ////////////////////////////////////
 
@@ -21,7 +21,7 @@ export default function Notifications (): JSX.Element {
 
     // #region RENDER --> //////////////////////////////////////
     return (
-        <ContentLayout title='Notifications'>
+        <ContentLayout title="Notifications">
             <></>
         </ContentLayout>
     );
