@@ -49,13 +49,13 @@ export default function useEditorActions(): IUseEditorActions {
                 key: EditorCtx.state.data.key,
                 mesureNumber: null,
                 isRepeat: false,
-                content: [],
+                content: [{ chordName: null, chordID: null, index: 0, symbols: null }],
                 isTheEnd: false,
             })),
         };
 
         datas.content[0].content.push(bars);
-
+        console.log(datas);
         EditorCtx.dispatch({
             type: 'SET_DATA',
             payload: datas,
@@ -84,7 +84,7 @@ export default function useEditorActions(): IUseEditorActions {
                     key: datas.key,
                     mesureNumber: null,
                     isRepeat: false,
-                    content: [],
+                    content: [{ chordName: null, chordID: null, index: 0, symbols: null }],
                     isTheEnd: false,
                 }));
                 datas.content[0].content[index].content = [...datas.content[0].content[index].content, ...newBars];

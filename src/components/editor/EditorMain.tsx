@@ -74,9 +74,27 @@ export default function EditorMain({ id }: { id: number }): JSX.Element {
 
     const handleUpdateBar = (gi: number, bi: number, data: ScoreBarPayload): void => {
         const datas = state.data;
+        const nbToCreate = data.type.split('-').length;
+        const nb = datas.content[0].content[gi].content[bi].type.split('-').length;
+        if (nbToCreate !== nb) {
+            const bar = datas.content[0].content[gi].content[bi]
+            if (nbToCreate > nb) {
+                const newContent = new Set(bar.content);
+                let i = newContent.size;
+                while (i < nbToCreate) {
+                    newContent.add({ chordName: null, chordID: null, index: i, symbols: null });
+                    i++;
+                }
+                bar.content = [...newContent];
+            } else {
+                bar.content = bar.content.slice(0, nbToCreate);
+            }
+            bar.content.sort((a, b) => a.index - b.index);
+            datas.content[0].content[gi].content[bi] = bar;
+        }
         datas.content[0].content[gi].content[bi].type = data.type;
         dispatch({ type: 'SET_DATA', payload: datas });
-    }
+    };
 
     // #endregion METHODS --> //////////////////////////////////
 

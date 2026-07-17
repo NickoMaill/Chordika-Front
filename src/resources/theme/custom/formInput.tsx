@@ -37,7 +37,7 @@ export const formInputCustomizations: Components<Theme> = {
                     },
                     [`&.${pickersInputBaseClasses.error}`]: {
                         borderColor: (theme.vars || theme).palette.error.main,
-                        backgroundColor: alphaColor(theme, "error", 0.04),
+                        backgroundColor: alphaColor(theme, 'error', 0.04),
                         ' .MuiPickersOutlinedInput-notchedOutline': {
                             border: 'none',
                         },
@@ -55,7 +55,7 @@ export const formInputCustomizations: Components<Theme> = {
                     },
                     [`&.${pickersInputBaseClasses.error}.Mui-focused`]: {
                         borderColor: (theme.vars || theme).palette.error.main,
-                        outline: `3px solid ${alphaColor(theme, "error", 0.18)}`,
+                        outline: `3px solid ${alphaColor(theme, 'error', 0.18)}`,
                     },
                     [` .${iconButtonClasses.root}`]: {
                         border: 'none',

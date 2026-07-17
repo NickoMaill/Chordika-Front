@@ -56,7 +56,7 @@ export default function EditorDisplay({ data, onClickDeleteGroup, onClickEditGro
     // #endregion STATE --> ////////////////////////////////////
 
     // #region HOOKS --> ///////////////////////////////////////
-    const { openModal, closeModal,  } = useModal();
+    const { openModal, closeModal } = useModal();
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////
@@ -72,26 +72,24 @@ export default function EditorDisplay({ data, onClickDeleteGroup, onClickEditGro
             content: <EditorBarForm data={data} ref={barRef} />,
             isLoading: false,
             modalActionOptions: {
-                modalActionLabel: "Modifier",
+                modalActionLabel: 'Modifier',
                 modalAction: () => initUpdateBar(gi, bi),
-                modalDismissLabel: "Annuler",
-                modalActionLoading: isModalSubmitLoading
-            } 
-        }
-        openModal(options)
-    }
+                modalDismissLabel: 'Annuler',
+                modalActionLoading: isModalSubmitLoading,
+            },
+        };
+        openModal(options);
+    };
 
     const initUpdateBar = (gi: number, bi: number): void => {
         if (!barRef.current) return;
-        const formData = new FormData(barRef.current)
+        const formData = new FormData(barRef.current);
         const obj = appTool.formToObj(formData);
         onUpdateBar(gi, bi, obj as unknown as ScoreBarPayload);
         closeModal();
-    }
+    };
 
-    const handleDeleteBar = (gi: number, bi: number): void => {
-        
-    }
+    const handleDeleteBar = (gi: number, bi: number): void => {};
     // #endregion METHODS --> //////////////////////////////////
 
     // #region USEEFFECT --> ///////////////////////////////////
@@ -127,14 +125,14 @@ export default function EditorDisplay({ data, onClickDeleteGroup, onClickEditGro
                                             <Grid size={g.title ? 10 : 12}>
                                                 <Grid container className="position-relative">
                                                     {g.content.map((b) => (
-                                                        <EditorBar 
-                                                            key={b.index} 
-                                                            bar={b} 
-                                                            group={g} 
-                                                            isFirstBar={isFirstBar} 
-                                                            isLastBar={isLastBar} 
-                                                            onClickUpdate={() => handleUpdateBar(g.index, b.index, b)} 
-                                                            onClickDelete={() => handleDeleteBar(g.index, b.index)} 
+                                                        <EditorBar
+                                                            key={b.index}
+                                                            bar={b}
+                                                            group={g}
+                                                            isFirstBar={isFirstBar}
+                                                            isLastBar={isLastBar}
+                                                            onClickUpdate={() => handleUpdateBar(g.index, b.index, b)}
+                                                            onClickDelete={() => handleDeleteBar(g.index, b.index)}
                                                         />
                                                     ))}
                                                 </Grid>
