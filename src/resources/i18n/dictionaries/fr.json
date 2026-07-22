@@ -454,5 +454,10 @@
         "delete": {
             "success": "{{entity}} supprimé{{fem}} avec succès"
         }
+    },
+    "repertoire": {
+        "singular": "Repertoire",
+        "plural": "Repertoires",
+        "navLib": "Mes Repertoires"
     }
 }

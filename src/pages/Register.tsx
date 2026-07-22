@@ -26,7 +26,7 @@ export default function Register(): JSX.Element {
 
     // #region HOOKS --> ///////////////////////////////////////
     const { registerUser } = useSessionService();
-    const { navigate } = useNavigation()
+    const { navigate } = useNavigation();
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////
@@ -108,7 +108,7 @@ export default function Register(): JSX.Element {
             .then((res) => {
                 if (res.id) {
                     setTimeout(() => {
-                        navigate("Home");
+                        navigate('Home');
                     }, 50);
                 }
             })

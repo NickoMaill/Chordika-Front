@@ -1,12 +1,12 @@
 // #region IMPORTS -> /////////////////////////////////////
 import { Box } from '@mui/material';
-import { JSX } from 'react'
+import { JSX } from 'react';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
 // #endregion SINGLETON --> /////////////////////////////////
 
-export default function SplashBg (): JSX.Element {
+export default function SplashBg(): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
     // #endregion STATE --> ////////////////////////////////////
 

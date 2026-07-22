@@ -1,5 +1,5 @@
 import { JSX } from 'react';
-import rawLogo from '~/assets/pictures/logo.png';
+import FullLogo from '~/assets/svg/logo-full.svg?react';
 import Box from '@mui/material/Box';
 // #endregion IMPORTS -> //////////////////////////////////
 
@@ -21,7 +21,7 @@ export default function Logo(): JSX.Element {
     // #endregion USEEFFECT --> ////////////////////////////////
 
     // #region RENDER --> //////////////////////////////////////
-    return <img alt="logo" src={rawLogo} />;
+    return <FullLogo width={"140px"} height={"unset"} />;
     // #endregion RENDER --> ///////////////////////////////////
 }
 

@@ -25,7 +25,7 @@ export default function InputSubmit({ label, onBackPress, isLoading, title, show
         <>
             {showSubmit ? (
                 <>
-                    <Button title={title} className={fullWidth ? "w-100" : null} loading={isLoading} variant="contained" type="submit">
+                    <Button title={title} className={fullWidth ? 'w-100' : null} loading={isLoading} variant="contained" type="submit">
                         {label}
                     </Button>
                     {showBackPress && (

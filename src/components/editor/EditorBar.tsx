@@ -107,7 +107,7 @@ function BarContent({ bar, onUpdateChord }: IBarContent): JSX.Element {
     };
 
     const handleValidate = (e: FocusEvent<HTMLInputElement, Element>): void => {
-        if (e.relatedTarget?.id === "symbols") return;
+        if (e.relatedTarget?.id === 'symbols') return;
         if (elementEditing === null) {
             return;
         }

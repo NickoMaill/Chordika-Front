@@ -49,7 +49,7 @@ export default function EditorAddForm(): JSX.Element {
         form.append('comment', e.has('comment') ? e.get('comment').toString() : '');
         form.append('orientation', e.get('orientation'));
         await ScoreService.addScore(form)
-            .then((res) => Navigation.navigate("Editor", { scoreId: res.id }))
+            .then((res) => Navigation.navigate('Editor', { scoreId: res.id }))
             .finally(() => setIsSubmitLoading(false));
     };
     // #endregion METHODS --> //////////////////////////////////

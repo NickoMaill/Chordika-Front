@@ -13,6 +13,7 @@ export type MenuListOptionType<T = unknown> = T & {
     iconColor?: 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning';
     onClick?: () => void;
     href?: string;
+    disabled?: boolean;
 };
 // #endregion SINGLETON --> /////////////////////////////////
 

@@ -38,7 +38,7 @@ export default function useEditorActions(): IUseEditorActions {
             id: appTool.uuidv4(),
             title: obj.title,
             index: datas.content[0].content.length,
-            maxLength: obj.perLines === '' ? Number(obj.nb) : Number(obj.perLines),  
+            maxLength: obj.perLines === '' ? Number(obj.nb) : Number(obj.perLines),
             position: {
                 x: 0,
                 y: lastBar ? lastBar.position.y + 15 : 15,
@@ -147,19 +147,19 @@ export default function useEditorActions(): IUseEditorActions {
         dispatch({ type: 'SET_DATA', payload: datas });
     };
 
-    const updateChord = async ({ gi, bi, ci, c }: { gi: number, bi: number, ci: number, c: string }): Promise<void> => {
+    const updateChord = async ({ gi, bi, ci, c }: { gi: number; bi: number; ci: number; c: string }): Promise<void> => {
         const datas = state.data;
-        const res = await searchByCode(c, "?type=chord");
+        const res = await searchByCode(c, '?type=chord');
         if (res.records.length !== 1) {
-            error("Accord non valide");
+            error('Accord non valide');
             return;
-        } 
+        }
         const chord = datas.content[0].content[gi].content[bi].content[ci];
         chord.chordID = res.records[0].code;
         chord.chordName = res.records[0].description;
         datas.content[0].content[gi].content[bi].content[ci] = chord;
         dispatch({ type: 'SET_DATA', payload: datas });
-    }
+    };
     // #endregion METHODS --> //////////////////////////////////
 
     // #region USEEFFECT --> ///////////////////////////////////
@@ -173,7 +173,7 @@ export default function useEditorActions(): IUseEditorActions {
         updateGroup,
         deleteGroup,
         updateBar,
-        updateChord
+        updateChord,
     };
     // #endregion RENDER --> ///////////////////////////////////
 }
@@ -186,6 +186,6 @@ interface IUseEditorActions {
     updateGroup: (index: number, obj: BarsPayload) => Promise<void>;
     saveContent: () => Promise<void>;
     updateBar: (payload: { gi: number; bi: number; data: ScoreBarPayload }) => void;
-    updateChord: ({ gi, bi, ci, c }: { gi: number, bi: number, ci: number, c: string }) => Promise<void>;
+    updateChord: ({ gi, bi, ci, c }: { gi: number; bi: number; ci: number; c: string }) => Promise<void>;
 }
 // #enderegion IPROPS --> //////////////////////////////////

@@ -14,7 +14,17 @@ import useAppContext from '~/context/appContext';
 const AppIcon = lazy(() => import('~/components/common/AppIcon'));
 // #endregion SINGLETON --> /////////////////////////////////
 
-export default function ContentLayout({ children, title, subtitle = null, icon, isLoading = false, loaderMessage = null, actions, showTitle = true, showBreadcrumbs = true }: IContentLayout): JSX.Element {
+export default function ContentLayout({
+    children,
+    title,
+    subtitle = null,
+    icon,
+    isLoading = false,
+    loaderMessage = null,
+    actions,
+    showTitle = true,
+    showBreadcrumbs = true,
+}: IContentLayout): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
     // #endregion STATE --> ////////////////////////////////////
 

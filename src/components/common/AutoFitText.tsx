@@ -6,7 +6,7 @@ import { JSX, ReactNode, useCallback, useLayoutEffect, useRef, useState } from '
 // #region SINGLETON --> ////////////////////////////////////
 // #endregion SINGLETON --> /////////////////////////////////
 
-export default function AutoFitText ({ children, minFontSize = 7, maxFontSize = 12, precision = 0.25, sx, ...props }: IAutoFitText): JSX.Element {
+export default function AutoFitText({ children, minFontSize = 7, maxFontSize = 12, precision = 0.25, sx, ...props }: IAutoFitText): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
     const containerRef = useRef<HTMLDivElement>(null);
     const textRef = useRef<HTMLSpanElement>(null);

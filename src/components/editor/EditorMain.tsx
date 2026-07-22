@@ -52,7 +52,7 @@ export default function EditorMain({ id }: { id: number }): JSX.Element {
     // #region HOOKS --> ///////////////////////////////////////
     const { state, dispatch } = useEditorContext();
     const { loadScore, addBars, deleteGroup, saveContent, updateBar, updateChord } = useEditorActions();
-    
+
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////

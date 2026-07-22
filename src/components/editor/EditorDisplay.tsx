@@ -27,7 +27,7 @@ const isLastBar = (i: number, perLines: number, total: number): boolean => {
     // if (i === 0) return false;
     // if ((i + 1) % perLines === 0) return true;
 
-    return  i + 1 === total;
+    return i + 1 === total;
 };
 
 type IGroupDraggable = {
@@ -123,7 +123,10 @@ export default function EditorDisplay({ data, onClickDeleteGroup, onClickEditGro
                                                 </Grid>
                                             )}
                                             <Grid size={g.title ? 10 : 12}>
-                                                <Box sx={{ display: 'grid', width: "fit-content", gridTemplateColumns: [...new Array(g.maxLength).keys()].map(_ => "1fr").join(" "), gap: 0 }} className="position-relative">
+                                                <Box
+                                                    sx={{ display: 'grid', width: 'fit-content', gridTemplateColumns: [...new Array(g.maxLength).keys()].map((_) => '1fr').join(' '), gap: 0 }}
+                                                    className="position-relative"
+                                                >
                                                     {g.content.map((b) => (
                                                         <EditorBar
                                                             key={b.index}
@@ -172,7 +175,7 @@ interface IEditor {
     onClickEditGroup: (index: number) => void;
     onClickDeleteGroup: (index: number) => void;
     onDragStop: (index: number, groupId: number, position: { x: number; y: number }) => void;
-    onUpdateBar: (payload: { gi: number, bi: number, data: ScoreBarPayload }) => void;
-    onUpdateChord: ({ gi, bi, ci, c }: { gi: number, bi: number, ci: number, c: string }) => void;
+    onUpdateBar: (payload: { gi: number; bi: number; data: ScoreBarPayload }) => void;
+    onUpdateChord: ({ gi, bi, ci, c }: { gi: number; bi: number; ci: number; c: string }) => void;
 }
 // #enderegion IPROPS --> //////////////////////////////////

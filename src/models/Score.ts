@@ -12,6 +12,7 @@ export interface Score {
     id: number;
     userId: number;
     isLib: boolean;
+    isFavorite: boolean;
     title: string;
     composer: string;
     key: string;

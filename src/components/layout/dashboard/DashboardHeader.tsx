@@ -1,4 +1,4 @@
-import { styled, useTheme } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiAppBar from '@mui/material/AppBar';
 import IconButton from '@mui/material/IconButton';
@@ -44,7 +44,6 @@ export interface DashboardHeaderProps {
 }
 
 export default function DashboardHeader({ logo, title, menuOpen, onToggleMenu }: DashboardHeaderProps): JSX.Element {
-    const theme = useTheme();
     const { accessLevel } = useSessionContext();
 
     const handleMenuOpen = useCallback(() => {
@@ -88,14 +87,14 @@ export default function DashboardHeader({ logo, title, menuOpen, onToggleMenu }:
                                 {logo ? <LogoContainer>{logo}</LogoContainer> : null}
                                 {title ? (
                                     <Typography
-                                        variant="h6"
-                                        sx={{
-                                            color: (theme.vars ?? theme).palette.primary.main,
-                                            fontWeight: '700',
+                                        variant="h3"
+                                        sx={(theme) => ({
+                                            color: (theme.vars ?? theme).palette.text.primary,
+                                            fontWeight: 500,
                                             ml: 1,
                                             whiteSpace: 'nowrap',
                                             lineHeight: 1,
-                                        }}
+                                        })}
                                     >
                                         {title}
                                     </Typography>

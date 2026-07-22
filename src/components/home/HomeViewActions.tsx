@@ -1,8 +1,6 @@
 // #region IMPORTS -> /////////////////////////////////////
 import { JSX } from 'react';
 import AppCard from '../common/AppCard';
-import { Button, Stack } from '@mui/material';
-import AppIcon from '../common/AppIcon';
 import AppButtonGroup, { ButtonGroupOptionsType } from '../common/AppButtonGroup';
 // #endregion IMPORTS -> //////////////////////////////////
 
@@ -18,10 +16,10 @@ export default function HomeViewActions(): JSX.Element {
 
     // #region METHODS --> /////////////////////////////////////
     const options: ButtonGroupOptionsType[] = [
-        { label: 'Créer une grille', icon: 'AddRounded', iconPosition: "left" },
-        { label: 'Créer un repertoire', icon: 'FolderOpenRounded', iconPosition: "left" },
-        { label: 'Afficher vos favoris', icon: 'StarRounded', iconPosition: "left" },
-        { label: 'Importer une grille', icon: 'DownloadRounded', iconPosition: "left" },
+        { label: 'Créer une grille', icon: 'AddRounded', iconPosition: 'left', href: "/center/scores/new" },
+        { label: 'Créer un repertoire', icon: 'FolderOpenRounded', iconPosition: 'left', href: '/center/repertoires/new' },
+        { label: 'Afficher vos favoris', icon: 'StarRounded', iconPosition: 'left' },
+        { label: 'Importer une grille', icon: 'DownloadRounded', iconPosition: 'left', disabled: true },
     ];
     // #endregion METHODS --> //////////////////////////////////
 

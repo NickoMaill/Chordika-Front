@@ -13,6 +13,7 @@ import LayoutFallback from '../LayoutFallback';
 import ErrorBoundaryWrapper from '../ErrorBoundaryWrapper';
 import useSessionContext from '~/context/sessionContext';
 import useAppContext from '~/context/appContext';
+import configManager from '~/managers/configManager';
 // import SitemarkIcon from "./SitemarkIcon";
 
 export default function DashboardLayout(): JSX.Element {

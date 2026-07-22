@@ -239,7 +239,7 @@ export default function FormMaker<T>({
                 label: element.label,
                 error: focusOnError.some((f) => f.field.toLowerCase() === element.id.toLowerCase()) || element.error,
                 errorMessage: focusOnError.find((f) => f.field.toLowerCase() === element.id.toLowerCase())?.message ?? element.errorMessage,
-                showErrorContainer: element.showErrorContainer
+                showErrorContainer: element.showErrorContainer,
             };
             if (element.index === 1) {
                 if (currentGroup.length > 0) {
@@ -314,8 +314,8 @@ export default function FormMaker<T>({
             required: element.required,
             disabled: element.disabled,
             value: formValues[element.id] ?? '',
-            errorMessage: element.type !== "checkbox" ? focusOnError.find((f) => f.field.toLowerCase() === element.id.toLowerCase())?.message ?? element.errorMessage : null,
-            error: element.type !== "checkbox" ? focusOnError.some((f) => f.field.toLowerCase() === element.id.toLowerCase()) || element.error : false,
+            errorMessage: element.type !== 'checkbox' ? (focusOnError.find((f) => f.field.toLowerCase() === element.id.toLowerCase())?.message ?? element.errorMessage) : null,
+            error: element.type !== 'checkbox' ? focusOnError.some((f) => f.field.toLowerCase() === element.id.toLowerCase()) || element.error : false,
             isLoading: element.isLoading,
             success: element.success,
             warning: element.warning,
@@ -355,8 +355,8 @@ export default function FormMaker<T>({
                     break;
                 case 'radio':
                     founded = null;
-                    if (baseProps.value) {
-                        founded = element.radioOptions.find((e) => e.value === baseProps.value);
+                    if (String(baseProps.value)) {
+                        founded = element.radioOptions.find((e) => String(e.value) === String(baseProps.value));
                         if (founded) {
                             baseProps.value = founded.label;
                         }
@@ -397,7 +397,7 @@ export default function FormMaker<T>({
             case 'value': {
                 return <InputTextField {...baseProps} key={i} type={elementType} />;
             }
-            case "password": {
+            case 'password': {
                 return <InputTextField {...baseProps} key={i} showPasswordMeasure={element.showPasswordMeasure} passwordMeasureMsg={element.passwordMeasureMsg} type="password" />;
             }
             case 'hidden': {
@@ -410,7 +410,17 @@ export default function FormMaker<T>({
                 return <JSONView {...baseProps} />;
             }
             case 'checkbox': {
-                return <InputCheckBoxField {...baseProps} key={i} options={element.checkboxOptions} spacing={element.spacing} checkboxError={focusOnError.some((f) => f.field.toLowerCase() === element.id.toLowerCase()) ? focusOnError.find((f) => f.field.toLowerCase() === element.id.toLowerCase()) : null} />;
+                return (
+                    <InputCheckBoxField
+                        {...baseProps}
+                        key={i}
+                        options={element.checkboxOptions}
+                        spacing={element.spacing}
+                        checkboxError={
+                            focusOnError.some((f) => f.field.toLowerCase() === element.id.toLowerCase()) ? focusOnError.find((f) => f.field.toLowerCase() === element.id.toLowerCase()) : null
+                        }
+                    />
+                );
             }
             case 'select': {
                 return <InputSelectField {...baseProps} key={i} options={element.selectOptions} />;

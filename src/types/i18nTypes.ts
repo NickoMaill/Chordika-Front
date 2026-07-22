@@ -453,6 +453,11 @@ export type TranslationResourcesType = {
             success;
         };
     };
+    repertoire: {
+        singular;
+        plural;
+        navLib;
+    };
 };
 
 export type LangType = 'fr' | 'en';

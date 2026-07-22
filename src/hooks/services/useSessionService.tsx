@@ -130,6 +130,7 @@ function useSessionService(): IUseSessionService {
                 switch ((error as AppError).code) {
                     case 'no_session':
                     case 'no_access_granted':
+                    case "token_invalid":
                         return false;
                     case 'session_expired':
                         return false;

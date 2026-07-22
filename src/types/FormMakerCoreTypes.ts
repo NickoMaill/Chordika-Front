@@ -227,5 +227,5 @@ export enum PasswordStrengthEnum {
     POOR = 0,
     INSUFFISANT = 1,
     PASSABLE = 2,
-    OK = 3
+    OK = 3,
 }

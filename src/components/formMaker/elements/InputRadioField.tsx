@@ -24,9 +24,9 @@ export default function InputRadioField({ disabled, id, onChange, value, options
     // #region RENDER --> //////////////////////////////////////
     return (
         <>
-            <RadioGroup id={id} name={id} value={value || options[0]?.value} onChange={onChange}>
+            <RadioGroup id={id} name={id} value={String(value) || String(options[0]?.value)} onChange={onChange}>
                 {options.map((option, i) => {
-                    return <FormControlLabel disabled={disabled} key={i} value={option.value} control={<Radio disabled={disabled} />} label={option.label} />;
+                    return <FormControlLabel disabled={disabled} key={i} value={String(option.value)} control={<Radio disabled={disabled} />} label={option.label} />;
                 })}
             </RadioGroup>
         </>

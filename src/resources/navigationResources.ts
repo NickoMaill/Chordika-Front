@@ -86,6 +86,7 @@ class NavigationResource {
     public static get navigationHeaderInfo(): HeaderLinkType[] {
         return [
             { name: 'nav.myScore', link: `${NavigationResource.routesPath.center}/scores`, icon: 'MusicScore', redirect: true, levelAccess: LevelAccessEnum.USER },
+            { name: "repertoire.navLib", link: `${NavigationResource.routesPath.center}/repertoires`, icon: "FolderRounded", redirect: true, levelAccess: LevelAccessEnum.USER },
             { name: 'divider', levelAccess: LevelAccessEnum.ADMIN },
             { name: 'nav.users', link: `${NavigationResource.routesPath.center}/users`, icon: 'Person', redirect: true, levelAccess: LevelAccessEnum.ADMIN },
             { name: 'nav.adverts', link: `${NavigationResource.routesPath.center}/annonces`, icon: 'Campaign', redirect: true, levelAccess: LevelAccessEnum.ADMIN },

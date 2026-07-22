@@ -34,7 +34,7 @@ export default function InputAutoComplete({
     includeTextField = false,
     freeSolo = true,
     limitChar = 2,
-    filedComponent
+    filedComponent,
 }: IInputAutoComplete): JSX.Element {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [choices, setChoices] = useState<SelectOptionsType[]>(options);
@@ -234,39 +234,43 @@ export default function InputAutoComplete({
                         </li>
                     );
                 }}
-                renderInput={filedComponent ? filedComponent : (params): ReactNode => (
-                    <TextField
-                        margin="dense"
-                        disabled={disabled}
-                        variant="outlined"
-                        required={required}
-                        helperText={errorMessage}
-                        placeholder={placeholder}
-                        error={isError || error}
-                        onBlur={onBlur}
-                        sx={{ marginTop: '4px', marginBottom: '4px', borderRadius: 1, ...sx }}
-                        {...params}
-                        slotProps={{
-                            input: {
-                                ...params.InputProps,
-                                className: 'autocomplete-textfield-override',
-                                style: style,
-                                name: includeTextField ? id + 'Field' : null,
-                                startAdornment: icon && (
-                                    <InputAdornment position="start">
-                                        <AppIcon name={icon} />
-                                    </InputAdornment>
-                                ),
-                                endAdornment: (
-                                    <>
-                                        {isLoading && <CircularProgress color="inherit" size={18} />}
-                                        {params.InputProps.endAdornment}
-                                    </>
-                                ),
-                            },
-                        }}
-                    />
-                )}
+                renderInput={
+                    filedComponent
+                        ? filedComponent
+                        : (params): ReactNode => (
+                              <TextField
+                                  margin="dense"
+                                  disabled={disabled}
+                                  variant="outlined"
+                                  required={required}
+                                  helperText={errorMessage}
+                                  placeholder={placeholder}
+                                  error={isError || error}
+                                  onBlur={onBlur}
+                                  sx={{ marginTop: '4px', marginBottom: '4px', borderRadius: 1, ...sx }}
+                                  {...params}
+                                  slotProps={{
+                                      input: {
+                                          ...params.InputProps,
+                                          className: 'autocomplete-textfield-override',
+                                          style: style,
+                                          name: includeTextField ? id + 'Field' : null,
+                                          startAdornment: icon && (
+                                              <InputAdornment position="start">
+                                                  <AppIcon name={icon} />
+                                              </InputAdornment>
+                                          ),
+                                          endAdornment: (
+                                              <>
+                                                  {isLoading && <CircularProgress color="inherit" size={18} />}
+                                                  {params.InputProps.endAdornment}
+                                              </>
+                                          ),
+                                      },
+                                  }}
+                              />
+                          )
+                }
             />
             <input
                 type="hidden"
