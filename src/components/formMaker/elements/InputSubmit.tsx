@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 // #region SINGLETON --> ////////////////////////////////////
 // #endregion SINGLETON --> /////////////////////////////////
 
-export default function InputSubmit({ label, onBackPress, isLoading, title, showBackPress = true, showSubmit = true }: IInputSubmit): JSX.Element {
+export default function InputSubmit({ label, onBackPress, isLoading, title, showBackPress = true, showSubmit = true, fullWidth = false }: IInputSubmit): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
     // #endregion STATE --> ////////////////////////////////////
 
@@ -25,7 +25,7 @@ export default function InputSubmit({ label, onBackPress, isLoading, title, show
         <>
             {showSubmit ? (
                 <>
-                    <Button title={title} loading={isLoading} variant="contained" type="submit">
+                    <Button title={title} className={fullWidth ? "w-100" : null} loading={isLoading} variant="contained" type="submit">
                         {label}
                     </Button>
                     {showBackPress && (
@@ -50,5 +50,6 @@ interface IInputSubmit {
     title?: string;
     showBackPress?: boolean;
     showSubmit?: boolean;
+    fullWidth?: boolean;
 }
 // #endregion IPROPS --> //////////////////////////////////

@@ -1,8 +1,10 @@
 // #region IMPORTS -> /////////////////////////////////////
 import useEditorContext from '~/context/EditorContext';
 import useScoreService from './services/useScoreService';
-import { BarsPayload, BarTypeEnum, ScoreBarGroup } from '~/models/Score';
+import { BarsPayload, BarTypeEnum, ScoreBarGroup, ScoreBarPayload } from '~/models/Score';
 import useToast from './useToast';
+import useDataTextService from './services/useDataTextService';
+import appTool from '~/helpers/appTool';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
@@ -13,40 +15,44 @@ export default function useEditorActions(): IUseEditorActions {
     // #endregion STATE --> ////////////////////////////////////
 
     // #region HOOKS --> ///////////////////////////////////////
-    const EditorCtx = useEditorContext();
+    const { state, dispatch } = useEditorContext();
     const ScoreService = useScoreService();
-    const { success } = useToast();
+    const { success, error } = useToast();
+    const { searchByCode } = useDataTextService();
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////
     const loadScore = async (id: number): Promise<void> => {
-        EditorCtx.dispatch({ type: 'SET_DATA_LOADING_ON' });
+        dispatch({ type: 'SET_DATA_LOADING_ON' });
         await ScoreService.getScore(id)
             .then((res) => {
-                if (res) EditorCtx.dispatch({ type: 'SET_DATA', payload: res });
+                if (res) dispatch({ type: 'SET_DATA', payload: res });
             })
-            .finally(() => EditorCtx.dispatch({ type: 'SET_DATA_LOADING_OFF' }));
+            .finally(() => dispatch({ type: 'SET_DATA_LOADING_OFF' }));
     };
 
     const addBars = (obj: BarsPayload): void => {
-        const datas = EditorCtx.state.data;
+        const datas = state.data;
+        const lastBar = datas.content[0].content.last();
         const bars: ScoreBarGroup = {
+            id: appTool.uuidv4(),
             title: obj.title,
             index: datas.content[0].content.length,
-            maxLength: Number(obj.perLines),
+            maxLength: obj.perLines === '' ? Number(obj.nb) : Number(obj.perLines),  
             position: {
                 x: 0,
-                y: 0,
+                y: lastBar ? lastBar.position.y + 15 : 15,
             },
             content: [...Array(Number(obj.nb)).keys()].map((o, i) => ({
+                id: appTool.uuidv4(),
                 type: BarTypeEnum.B4T,
                 index: i,
                 timeBar: {
-                    nume: Number(EditorCtx.state.data.nume),
-                    denom: Number(EditorCtx.state.data.denom),
+                    nume: Number(state.data.nume),
+                    denom: Number(state.data.denom),
                 },
-                tempo: EditorCtx.state.data.tempo,
-                key: EditorCtx.state.data.key,
+                tempo: state.data.tempo,
+                key: state.data.key,
                 mesureNumber: null,
                 isRepeat: false,
                 content: [{ chordName: null, chordID: null, index: 0, symbols: null }],
@@ -55,16 +61,15 @@ export default function useEditorActions(): IUseEditorActions {
         };
 
         datas.content[0].content.push(bars);
-        console.log(datas);
-        EditorCtx.dispatch({
+        dispatch({
             type: 'SET_DATA',
             payload: datas,
         });
-        EditorCtx.dispatch({ type: 'IS_FORM_BAR_OPEN', payload: false });
+        dispatch({ type: 'IS_FORM_BAR_OPEN', payload: false });
     };
 
     const updateGroup = async (index: number, obj: BarsPayload): Promise<void> => {
-        const datas = EditorCtx.state.data;
+        const datas = state.data;
         const nb = Number(obj.nb);
         datas.content[0].content[index].title = obj.title;
         datas.content[0].content[index].maxLength = Number(obj.perLines);
@@ -75,6 +80,7 @@ export default function useEditorActions(): IUseEditorActions {
                 const diff = nb - datas.content[0].content.length;
                 const newBars = [...Array(diff).keys()].map((d, i) => ({
                     type: BarTypeEnum.B4T,
+                    id: appTool.uuidv4(),
                     index: i,
                     timeBar: {
                         nume: Number(datas.nume),
@@ -88,7 +94,7 @@ export default function useEditorActions(): IUseEditorActions {
                     isTheEnd: false,
                 }));
                 datas.content[0].content[index].content = [...datas.content[0].content[index].content, ...newBars];
-                EditorCtx.dispatch({
+                dispatch({
                     type: 'SET_DATA',
                     payload: datas,
                 });
@@ -97,25 +103,63 @@ export default function useEditorActions(): IUseEditorActions {
     };
 
     const deleteGroup = (index: number): void => {
-        const datas = EditorCtx.state.data;
+        const datas = state.data;
         datas.content[0].content = datas.content[0].content.filter((c) => c.index !== index);
         datas.content[0].content.forEach((c, i) => {
             c.index = i;
         });
-        EditorCtx.dispatch({
+        dispatch({
             type: 'SET_DATA',
             payload: datas,
         });
     };
 
     const saveContent = async (): Promise<void> => {
-        const datas = EditorCtx.state.data;
+        const datas = state.data;
         await ScoreService.saveScore(datas.id, datas.content)
             .then((res) => {
                 if (res.success) success('Grille sauvegardée avec succès !');
             })
-            .finally(() => EditorCtx.dispatch({ type: 'SET_DATA_LOADING_OFF' }));
+            .finally(() => dispatch({ type: 'SET_DATA_LOADING_OFF' }));
     };
+
+    const updateBar = ({ gi, bi, data }: { gi: number; bi: number; data: ScoreBarPayload }): void => {
+        const datas = state.data;
+        const nbToCreate = data.type.split('-').length;
+        const nb = datas.content[0].content[gi].content[bi].type.split('-').length;
+        if (nbToCreate !== nb) {
+            const bar = datas.content[0].content[gi].content[bi];
+            if (nbToCreate > nb) {
+                const newContent = new Set(bar.content);
+                let i = newContent.size;
+                while (i < nbToCreate) {
+                    newContent.add({ chordName: null, chordID: null, index: i, symbols: null });
+                    i++;
+                }
+                bar.content = [...newContent];
+            } else {
+                bar.content = bar.content.slice(0, nbToCreate);
+            }
+            bar.content.sort((a, b) => a.index - b.index);
+            datas.content[0].content[gi].content[bi] = bar;
+        }
+        datas.content[0].content[gi].content[bi].type = data.type;
+        dispatch({ type: 'SET_DATA', payload: datas });
+    };
+
+    const updateChord = async ({ gi, bi, ci, c }: { gi: number, bi: number, ci: number, c: string }): Promise<void> => {
+        const datas = state.data;
+        const res = await searchByCode(c, "?type=chord");
+        if (res.records.length !== 1) {
+            error("Accord non valide");
+            return;
+        } 
+        const chord = datas.content[0].content[gi].content[bi].content[ci];
+        chord.chordID = res.records[0].code;
+        chord.chordName = res.records[0].description;
+        datas.content[0].content[gi].content[bi].content[ci] = chord;
+        dispatch({ type: 'SET_DATA', payload: datas });
+    }
     // #endregion METHODS --> //////////////////////////////////
 
     // #region USEEFFECT --> ///////////////////////////////////
@@ -128,6 +172,8 @@ export default function useEditorActions(): IUseEditorActions {
         saveContent,
         updateGroup,
         deleteGroup,
+        updateBar,
+        updateChord
     };
     // #endregion RENDER --> ///////////////////////////////////
 }
@@ -135,9 +181,11 @@ export default function useEditorActions(): IUseEditorActions {
 // #region IPROPS -->  /////////////////////////////////////
 interface IUseEditorActions {
     loadScore: (id: number) => Promise<void>;
-    addBars: (obj: { nb: number; perLines: number }) => void;
+    addBars: (obj: { nb: string; perLines: string }) => void;
     deleteGroup: (index: number) => void;
     updateGroup: (index: number, obj: BarsPayload) => Promise<void>;
     saveContent: () => Promise<void>;
+    updateBar: (payload: { gi: number; bi: number; data: ScoreBarPayload }) => void;
+    updateChord: ({ gi, bi, ci, c }: { gi: number, bi: number, ci: number, c: string }) => Promise<void>;
 }
 // #enderegion IPROPS --> //////////////////////////////////

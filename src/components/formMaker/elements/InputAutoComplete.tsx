@@ -1,5 +1,5 @@
 import { InputBaseType, SelectOptionsType } from '~/types/FormMakerCoreTypes';
-import { FocusEvent, lazy, SyntheticEvent, useEffect, useRef, useState } from 'react';
+import { FocusEvent, lazy, ReactNode, SyntheticEvent, useEffect, useRef, useState } from 'react';
 import useDataTextService from '~/hooks/services/useDataTextService';
 import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
@@ -7,7 +7,7 @@ import { Bold } from '~/components/common/Text';
 import stylesResources from '~/resources/stylesResources';
 import { JSX } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
-import Autocomplete from '@mui/material/Autocomplete';
+import Autocomplete, { AutocompleteRenderInputParams } from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import { useTheme } from '@mui/material/styles';
@@ -32,6 +32,9 @@ export default function InputAutoComplete({
     placeholder,
     resetSignal,
     includeTextField = false,
+    freeSolo = true,
+    limitChar = 2,
+    filedComponent
 }: IInputAutoComplete): JSX.Element {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [choices, setChoices] = useState<SelectOptionsType[]>(options);
@@ -102,7 +105,7 @@ export default function InputAutoComplete({
             if (searchTimeout.current) {
                 clearTimeout(searchTimeout.current);
             }
-            if (nextInputValue && nextInputValue.length >= 2) {
+            if (nextInputValue && nextInputValue.length >= limitChar) {
                 searchTimeout.current = setTimeout(() => {
                     fetchData(nextInputValue);
                 }, 400);
@@ -174,11 +177,11 @@ export default function InputAutoComplete({
     return (
         <>
             <Autocomplete
-                freeSolo
+                freeSolo={freeSolo}
                 disabled={disabled}
                 options={choices}
                 value={selected}
-                inputValue={inputValue}
+                // inputValue={inputValue}
                 isOptionEqualToValue={(option, value) => option.value === value.value}
                 onChange={onSelect}
                 onInputChange={onTextFieldChange}
@@ -231,7 +234,7 @@ export default function InputAutoComplete({
                         </li>
                     );
                 }}
-                renderInput={(params) => (
+                renderInput={filedComponent ? filedComponent : (params): ReactNode => (
                     <TextField
                         margin="dense"
                         disabled={disabled}
@@ -278,10 +281,13 @@ export default function InputAutoComplete({
 
 // #region IPROPS -->  /////////////////////////////////////
 interface IInputAutoComplete extends InputBaseType {
-    options: SelectOptionsType[];
+    options?: SelectOptionsType[];
     ssr?: boolean;
     ssrUrlExtension?: string;
     onSelectAutocompleteInput?: (e: SyntheticEvent<Element, Event>, v: SelectOptionsType | null) => void;
     includeTextField?: boolean;
+    filedComponent?: (params: AutocompleteRenderInputParams) => ReactNode;
+    freeSolo?: boolean;
+    limitChar?: number;
 }
 // #endregion IPROPS --> //////////////////////////////////

@@ -61,40 +61,46 @@ export default function DashboardLayout(): JSX.Element {
             }}
         >
             {NavigationResource.noHeaderPath.includes(pathname) || !getToken() || (boxOptions && !boxOptions.showHeader) ? (
-                <></>
-            ) : (
                 <>
-                    <DashboardHeader logo={<Logo />} menuOpen={isNavigationExpanded} onToggleMenu={handleToggleHeaderMenu} />
-                    <DashboardSidebar expanded={isNavigationExpanded} setExpanded={setIsNavigationExpanded} container={layoutRef?.current ?? undefined} />
-                </>
-            )}
-            <Box
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    flex: 1,
-                    minWidth: 0,
-                }}
-            >
-                <Toolbar sx={{ displayPrint: 'none' }} />
-                <Box
-                    component="main"
-                    className="p-3"
-                    sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        flex: 1,
-                        overflow: 'auto',
-                        height: '100vh',
-                    }}
-                >
                     <ErrorBoundaryWrapper>
                         <LayoutFallback>
                             <Outlet />
                         </LayoutFallback>
                     </ErrorBoundaryWrapper>
-                </Box>
-            </Box>
+                </>
+            ) : (
+                <>
+                    <DashboardHeader logo={<Logo />} menuOpen={isNavigationExpanded} onToggleMenu={handleToggleHeaderMenu} />
+                    <DashboardSidebar expanded={isNavigationExpanded} setExpanded={setIsNavigationExpanded} container={layoutRef?.current ?? undefined} />
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            flex: 1,
+                            minWidth: 0,
+                        }}
+                    >
+                        <Toolbar sx={{ displayPrint: 'none' }} />
+                        <Box
+                            component="main"
+                            className="p-3"
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                flex: 1,
+                                overflow: 'auto',
+                                height: '100vh',
+                            }}
+                        >
+                            <ErrorBoundaryWrapper>
+                                <LayoutFallback>
+                                    <Outlet />
+                                </LayoutFallback>
+                            </ErrorBoundaryWrapper>
+                        </Box>
+                    </Box>
+                </>
+            )}
         </Box>
     );
 }

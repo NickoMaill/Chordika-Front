@@ -1,0 +1,34 @@
+// #region IMPORTS -> /////////////////////////////////////
+import { Score } from '~/models/Score';
+import { CenterHandlerConfigType, ICenterConfig } from '~/types/centerType';
+import ScoreLists from './ScoreLists';
+// #endregion IMPORTS -> //////////////////////////////////
+
+// #region SINGLETON --> ////////////////////////////////////
+// #endregion SINGLETON --> /////////////////////////////////
+
+export default function useScoresHandlers(): CenterHandlerConfigType<Score> {
+    // #region STATE --> ///////////////////////////////////////
+    // #endregion STATE --> ////////////////////////////////////
+
+    // #region HOOKS --> ///////////////////////////////////////
+    // #endregion HOOKS --> ////////////////////////////////////
+
+    // #region METHODS --> /////////////////////////////////////
+    const handleTableStruct = (config: ICenterConfig<Score>): void => {
+        config.tableStructure.OverrideComponent = ScoreLists;
+    };
+    // #endregion METHODS --> //////////////////////////////////
+
+    // #region USEEFFECT --> ///////////////////////////////////
+    // #endregion USEEFFECT --> ////////////////////////////////
+
+    // #region RENDER --> //////////////////////////////////////
+    return {
+        handleTableStruct,
+    };
+    // #endregion RENDER --> ///////////////////////////////////
+}
+
+// #region IPROPS -->  /////////////////////////////////////
+// #enderegion IPROPS --> //////////////////////////////////

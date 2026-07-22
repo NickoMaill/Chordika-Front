@@ -5,7 +5,7 @@ import AppFullPageLoader from '../common/AppFullPageLoader';
 import { IconNameType } from '~/components/common/AppIcon';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
-import { Breadcrumbs, Grid, Link as MuiLink } from '@mui/material';
+import { Breadcrumbs, Container, Grid, Link as MuiLink } from '@mui/material';
 import { Link } from 'react-router-dom';
 import useAppContext from '~/context/appContext';
 // #endregion IMPORTS -> //////////////////////////////////
@@ -14,7 +14,7 @@ import useAppContext from '~/context/appContext';
 const AppIcon = lazy(() => import('~/components/common/AppIcon'));
 // #endregion SINGLETON --> /////////////////////////////////
 
-export default function ContentLayout({ children, title, subtitle = null, icon, isLoading = false, loaderMessage = null, actions, showTitle = true }: IContentLayout): JSX.Element {
+export default function ContentLayout({ children, title, subtitle = null, icon, isLoading = false, loaderMessage = null, actions, showTitle = true, showBreadcrumbs = true }: IContentLayout): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
     // #endregion STATE --> ////////////////////////////////////
 
@@ -30,12 +30,12 @@ export default function ContentLayout({ children, title, subtitle = null, icon, 
 
     // #region RENDER --> //////////////////////////////////////
     return (
-        <Box>
+        <Container maxWidth="xl">
             {showTitle && (
                 <>
                     <Grid direction={'row'} className="mb-3" alignItems={'center'} container>
                         <Grid size={actions ? { sm: 7, xs: 12 } : 12}>
-                            {AppCtx.layoutLinks.length > 0 && (
+                            {AppCtx.layoutLinks.length > 0 && showBreadcrumbs && (
                                 <Breadcrumbs className="mb-2">
                                     {AppCtx.layoutLinks.map((b, i) => {
                                         if (b.url) {
@@ -76,7 +76,7 @@ export default function ContentLayout({ children, title, subtitle = null, icon, 
                 </>
             )}
             <Box className="p-3">{isLoading ? <AppFullPageLoader isLoading message={loaderMessage} /> : children}</Box>
-        </Box>
+        </Container>
     );
     // #endregion RENDER --> ///////////////////////////////////
 }
@@ -90,7 +90,7 @@ interface IContentLayout {
     isLoading?: boolean;
     loaderMessage?: string;
     actions?: ReactNode;
-    breadcrumbs?: { label: string; url?: string }[];
+    showBreadcrumbs?: boolean;
     showTitle?: boolean;
 }
 // #enderegion IPROPS --> //////////////////////////////////

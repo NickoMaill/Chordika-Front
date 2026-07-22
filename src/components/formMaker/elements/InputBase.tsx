@@ -79,11 +79,9 @@ export default function InputBase({
                     </FormLabel>
                 )}
                 {children}
-                {showErrorContainer && (
-                    <FormHelperText error={error} sx={{ minHeight: 20 }}>
-                        {errorMessage || ''}
-                    </FormHelperText>
-                )}
+                <FormHelperText error={error} id={id + 'ErrorMessage'} sx={{ minHeight: showErrorContainer ? 20 : 0 }}>
+                    {errorMessage || ''}
+                </FormHelperText>
             </FormControl>
         </Grid>
     );

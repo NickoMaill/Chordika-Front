@@ -7,6 +7,12 @@ export interface ISessionContext {
     userId: number;
     setUserId?: Dispatch<SetStateAction<number>>;
 
+    userFirstName: string;
+    setUserFirstName?: Dispatch<SetStateAction<string>>;
+
+    userLastName: string;
+    setUserLastName?: Dispatch<SetStateAction<string>>;
+
     username: string;
     setUsername?: Dispatch<SetStateAction<string>>;
 
@@ -59,6 +65,8 @@ export interface ISessionContext {
 
 const initialContext: ISessionContext = {
     userId: null,
+    userFirstName: null,
+    userLastName: null,
     username: null,
     fullName: null,
     email: null,

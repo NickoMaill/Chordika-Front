@@ -26,6 +26,18 @@ function useSessionService(): IUseSessionService {
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////
+    const registerUser = async (form: FormData): Promise<UserSessionApiModel> => {
+        const response = await asServicePromise<UserSessionApiModel>(() => post('auth/register', null, form));
+        const session = response;
+        setToken(session.token);
+        setNeedMfa(false);
+        setSession(session);
+        setIsNoAccess(false);
+        setNotFound(false);
+        setNoServer(false);
+        setBoxOptions(null);
+        return session;
+    };
     const login = async (form: FormData): Promise<UserSessionApiModel> => {
         try {
             const request = await asServicePromise<UserSessionApiModel | ApiErrorType>(() => post('auth/login', null, form), false);
@@ -222,6 +234,7 @@ function useSessionService(): IUseSessionService {
 
     // #region RENDER --> //////////////////////////////////////
     const out: IUseSessionService = {
+        registerUser,
         login,
         loginOpt,
         refreshSession,
@@ -246,6 +259,7 @@ function useSessionService(): IUseSessionService {
 
 // #region IPROPS -->  /////////////////////////////////////
 interface IUseSessionService {
+    registerUser: (form: FormData) => Promise<UserSessionApiModel>;
     login: (form: FormData) => Promise<UserSessionApiModel>;
     loginOpt: (form: FormData) => Promise<boolean>;
     refreshSession: () => Promise<boolean>;

@@ -81,9 +81,9 @@ function DBCount(props: ICenterBase): JSX.Element {
     const { translate } = useResources();
     return (
         <Paper variant="outlined" className="rounded px-3 py-2 d-flex flex-column" sx={{ minWidth: '180px', gap: '0.05rem' }}>
-            <Regular component="span" fontSize="0.76rem">
+            {/* <Regular component="span" fontSize="0.76rem">
                 {translate('center.search.updateSearch')}
-            </Regular>
+            </Regular> */}
             <Bolder sx={{ lineHeight: 1 }} variant="h5">
                 {props.totalDbCount}
             </Bolder>

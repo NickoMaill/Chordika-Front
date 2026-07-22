@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 export type ButtonGroupOptionsType = MenuListOptionType<{ externalLink?: string; iconPosition?: 'right' | 'left'; iconFontSize?: string | number; isLoading?: boolean }>;
 // #endregion SINGLETON --> /////////////////////////////////
 
-export default function AppButtonGroup({ options, size = 'medium', color, labelAsTip = false }: IAppButtonGroup): JSX.Element {
+export default function AppButtonGroup({ options, size = 'medium', color, labelAsTip = false, orientation = 'vertical' }: IAppButtonGroup): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
     // #endregion STATE --> ////////////////////////////////////
 
@@ -25,7 +25,7 @@ export default function AppButtonGroup({ options, size = 'medium', color, labelA
 
     // #region RENDER --> //////////////////////////////////////
     return (
-        <ButtonGroup size={size} color={color}>
+        <ButtonGroup size={size} color={color} orientation={orientation} className={orientation === "vertical" ? "w-100" : null}>
             {options.map((o, i) => {
                 const labelVisible = !!o.label && !labelAsTip;
                 const isLabelAndIcon = !!o.icon && labelVisible;
@@ -41,9 +41,10 @@ export default function AppButtonGroup({ options, size = 'medium', color, labelA
                     props.target = '_blank';
                 }
                 return (
-                    <Tooltip title={labelAsTip ? o.label : null}>
+                    <Tooltip title={labelAsTip ? o.label : null} >
                         <Button
                             key={i}
+                            sx={{ bgcolor: 'background.default' }}
                             startIcon={isLabelAndIcon && o.iconPosition === 'left' ? <AppIcon name={o.icon} /> : null}
                             endIcon={isLabelAndIcon && o.iconPosition === 'right' ? <AppIcon name={o.icon} /> : null}
                             loading={o.isLoading}
@@ -66,5 +67,6 @@ interface IAppButtonGroup {
     size?: 'small' | 'medium' | 'large';
     color?: 'inherit' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning';
     labelAsTip?: boolean;
+    orientation?: 'horizontal' | 'vertical';
 }
 // #enderegion IPROPS --> //////////////////////////////////

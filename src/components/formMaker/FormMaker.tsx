@@ -58,6 +58,7 @@ export default function FormMaker<T>({
     grammar,
     isView = false,
     submitLabel,
+    submitFullWidth = false,
     showBackPress = true,
     showBottom = true,
     idExtension = '',
@@ -238,6 +239,7 @@ export default function FormMaker<T>({
                 label: element.label,
                 error: focusOnError.some((f) => f.field.toLowerCase() === element.id.toLowerCase()) || element.error,
                 errorMessage: focusOnError.find((f) => f.field.toLowerCase() === element.id.toLowerCase())?.message ?? element.errorMessage,
+                showErrorContainer: element.showErrorContainer
             };
             if (element.index === 1) {
                 if (currentGroup.length > 0) {
@@ -312,8 +314,8 @@ export default function FormMaker<T>({
             required: element.required,
             disabled: element.disabled,
             value: formValues[element.id] ?? '',
-            errorMessage: focusOnError.find((f) => f.field.toLowerCase() === element.id.toLowerCase())?.message ?? element.errorMessage,
-            error: focusOnError.some((f) => f.field.toLowerCase() === element.id.toLowerCase()) || element.error,
+            errorMessage: element.type !== "checkbox" ? focusOnError.find((f) => f.field.toLowerCase() === element.id.toLowerCase())?.message ?? element.errorMessage : null,
+            error: element.type !== "checkbox" ? focusOnError.some((f) => f.field.toLowerCase() === element.id.toLowerCase()) || element.error : false,
             isLoading: element.isLoading,
             success: element.success,
             warning: element.warning,
@@ -395,6 +397,9 @@ export default function FormMaker<T>({
             case 'value': {
                 return <InputTextField {...baseProps} key={i} type={elementType} />;
             }
+            case "password": {
+                return <InputTextField {...baseProps} key={i} showPasswordMeasure={element.showPasswordMeasure} passwordMeasureMsg={element.passwordMeasureMsg} type="password" />;
+            }
             case 'hidden': {
                 return <input key={i} name={baseProps.id} id={baseProps.id} value={(baseProps.value as string) ?? ''} type="hidden" />;
             }
@@ -405,7 +410,7 @@ export default function FormMaker<T>({
                 return <JSONView {...baseProps} />;
             }
             case 'checkbox': {
-                return <InputCheckBoxField {...baseProps} key={i} options={element.checkboxOptions} />;
+                return <InputCheckBoxField {...baseProps} key={i} options={element.checkboxOptions} spacing={element.spacing} checkboxError={focusOnError.some((f) => f.field.toLowerCase() === element.id.toLowerCase()) ? focusOnError.find((f) => f.field.toLowerCase() === element.id.toLowerCase()) : null} />;
             }
             case 'select': {
                 return <InputSelectField {...baseProps} key={i} options={element.selectOptions} />;
@@ -505,7 +510,6 @@ export default function FormMaker<T>({
     }, [structure, data]);
 
     useEffect(() => {
-        console.log(resetCount);
         if (resetCount > 0) {
             resetValues();
         }
@@ -531,13 +535,14 @@ export default function FormMaker<T>({
                     <input type="hidden" id="action" name="action" value={action} />
                     {renderForm()}
                     {showBottom && (
-                        <Container component="div" className="d-flex align-items-center justify-content-center">
+                        <Container component="div" className="d-flex align-items-center justify-content-center w-100">
                             <InputSubmit
                                 showSubmit={action === GenericActionEnum.DELETE ? true : !isView}
                                 isLoading={isSubmitLoading}
                                 label={submitLabel ? submitLabel : `${getActionLabel(action)} ${grammar}`}
                                 showBackPress={showBackPress}
                                 onBackPress={onBackPress}
+                                fullWidth={submitFullWidth}
                             />
                         </Container>
                     )}
@@ -558,6 +563,7 @@ export interface IFormMaker<T> {
     idExtension?: string;
     isFormLoading?: boolean;
     isSubmitLoading?: boolean;
+    submitFullWidth?: boolean;
     focusOnError?: FormMakerFocusErrorType[];
     action?: GenericActionEnum;
     grammar?: string;

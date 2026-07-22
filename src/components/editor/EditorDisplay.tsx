@@ -16,18 +16,18 @@ import appTool from '~/helpers/appTool';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
-const isFirstBar = (i: number, perLines: number): boolean => {
+const isFirstBar = (i: number, perLines: number, total: number): boolean => {
     if (i === 0) return true;
     if (i % perLines === 0) return true;
 
     return false;
 };
 
-const isLastBar = (i: number, perLines: number): boolean => {
-    if (i === 0) return false;
-    if ((i + 1) % perLines === 0) return true;
+const isLastBar = (i: number, perLines: number, total: number): boolean => {
+    // if (i === 0) return false;
+    // if ((i + 1) % perLines === 0) return true;
 
-    return false;
+    return  i + 1 === total;
 };
 
 type IGroupDraggable = {
@@ -48,10 +48,10 @@ const GroupDraggable = ({ dragger, position, onStop, children, parent }: IGroupD
     );
 };
 
-export default function EditorDisplay({ data, onClickDeleteGroup, onClickEditGroup, onDragStop, onUpdateBar }: IEditor): JSX.Element {
+export default function EditorDisplay({ data, onClickDeleteGroup, onClickEditGroup, onDragStop, onUpdateBar, onUpdateChord }: IEditor): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
     const [positions, setPositions] = useState<Record<number, { x: number; y: number }>>({});
-    const [isModalSubmitLoading, setisModalSubmitLoading] = useState<boolean>(false);
+    const [isModalSubmitLoading, setIsModalSubmitLoading] = useState<boolean>(false);
     const barRef = useRef<HTMLFormElement>(null);
     // #endregion STATE --> ////////////////////////////////////
 
@@ -85,7 +85,7 @@ export default function EditorDisplay({ data, onClickDeleteGroup, onClickEditGro
         if (!barRef.current) return;
         const formData = new FormData(barRef.current);
         const obj = appTool.formToObj(formData);
-        onUpdateBar(gi, bi, obj as unknown as ScoreBarPayload);
+        onUpdateBar({ gi, bi, data: obj as unknown as ScoreBarPayload });
         closeModal();
     };
 
@@ -118,12 +118,12 @@ export default function EditorDisplay({ data, onClickDeleteGroup, onClickEditGro
                                         <Grid container id={`score-groups-${g.index}`} direction={'row'} spacing={2} alignItems={'center'} className="position-relative" sx={{ width: '100%' }}>
                                             {/* Score Bars */}
                                             {g.title && (
-                                                <Grid sx={{ width: '70px' }} size={2}>
+                                                <Grid size={1}>
                                                     <Bold className="text-end">{g.title}</Bold>
                                                 </Grid>
                                             )}
                                             <Grid size={g.title ? 10 : 12}>
-                                                <Grid container className="position-relative">
+                                                <Box sx={{ display: 'grid', width: "fit-content", gridTemplateColumns: [...new Array(g.maxLength).keys()].map(_ => "1fr").join(" "), gap: 0 }} className="position-relative">
                                                     {g.content.map((b) => (
                                                         <EditorBar
                                                             key={b.index}
@@ -133,9 +133,10 @@ export default function EditorDisplay({ data, onClickDeleteGroup, onClickEditGro
                                                             isLastBar={isLastBar}
                                                             onClickUpdate={() => handleUpdateBar(g.index, b.index, b)}
                                                             onClickDelete={() => handleDeleteBar(g.index, b.index)}
+                                                            onUpdateCord={(ci, c) => onUpdateChord({ gi: g.index, bi: b.index, ci, c })}
                                                         />
                                                     ))}
-                                                </Grid>
+                                                </Box>
                                             </Grid>
                                             <Box id="groupActions" className="position-absolute top-50 translate-middle d-flex flex-column" sx={{ left: '100% !important' }}>
                                                 <IconButton id={`dragger-${g.index}`} size="small" outline="true" className="dragger p-1 w-auto h-auto">
@@ -171,6 +172,7 @@ interface IEditor {
     onClickEditGroup: (index: number) => void;
     onClickDeleteGroup: (index: number) => void;
     onDragStop: (index: number, groupId: number, position: { x: number; y: number }) => void;
-    onUpdateBar: (gi: number, bi: number, data: ScoreBarPayload) => void;
+    onUpdateBar: (payload: { gi: number, bi: number, data: ScoreBarPayload }) => void;
+    onUpdateChord: ({ gi, bi, ci, c }: { gi: number, bi: number, ci: number, c: string }) => void;
 }
 // #enderegion IPROPS --> //////////////////////////////////

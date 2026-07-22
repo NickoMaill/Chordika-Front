@@ -1,4 +1,5 @@
 export type DataText = {
+    id: number;
     type: string;
     description: string;
     code: string;

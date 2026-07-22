@@ -219,6 +219,10 @@
         "standby": "StandBy",
         "ended": "Terminée"
     },
+    "score": {
+        "singular": "Grille",
+        "plural": "Grilles"
+    },
     "company": {
         "singular": "Société",
         "plural": "Sociétés",

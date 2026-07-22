@@ -69,8 +69,9 @@ export type ScorePage = {
  * @description Groupe de mesure
  */
 export type ScoreBarGroup = {
-    title: string;
+    id: string;
     index: number;
+    title: string;
     maxLength: number;
     position: {
         x: number;
@@ -83,6 +84,7 @@ export type ScoreBarGroup = {
  * @description Mesure de la grille
  */
 export type ScoreBar = {
+    id: string;
     type: BarTypeEnum;
     index: number;
     timeBar?: {
@@ -132,8 +134,8 @@ export type ScorePageText = {
 
 export type BarsPayload = {
     title: string;
-    nb: number;
-    perLines: number;
+    nb: string;
+    perLines: string;
 };
 
 export enum BarTypeEnum {

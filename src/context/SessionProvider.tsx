@@ -13,6 +13,8 @@ import { SessionContext } from './sessionContext';
 export default function SessionProvider({ children }: ISessionProvider): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
     const [username, setUsername] = useState<string>(null);
+    const [userFirstName, setUserFirstName] = useState<string>(null);
+    const [userLastName, setUserLastName] = useState<string>(null);
     const [fullName, setFullName] = useState<string>(null);
     const [userId, setUserId] = useState<number>(null);
     const [email, setEmail] = useState<string>(null);
@@ -39,6 +41,8 @@ export default function SessionProvider({ children }: ISessionProvider): JSX.Ele
         if (user) {
             setUserId(user.id);
             setUsername(user.name);
+            setUserFirstName(user.firstName);
+            setUserLastName(user.lastName);
             setEmail(user.email);
             setAccessLevel(user.levelAccess);
             setFullName(user.firstName + ' ' + user.lastName);
@@ -52,6 +56,8 @@ export default function SessionProvider({ children }: ISessionProvider): JSX.Ele
         } else {
             setUserId(null);
             setUsername(null);
+            setUserFirstName(null);
+            setUserLastName(null);
             setEmail(null);
             setAccessLevel(0);
             setToken(null);
@@ -69,6 +75,10 @@ export default function SessionProvider({ children }: ISessionProvider): JSX.Ele
     const sessionValue = {
         username,
         setUsername,
+        userFirstName,
+        setUserFirstName,
+        userLastName,
+        setUserLastName,
         fullName,
         setFullName,
         userId,

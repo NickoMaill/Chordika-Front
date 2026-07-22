@@ -1,5 +1,5 @@
 import { SearchField, SortField } from '~/context/searchContext';
-import { FormMakerType, FormMakerPartEnum, IFormMakerInput } from '~/types/FormMakerCoreTypes';
+import { FormMakerType, FormMakerPartEnum, IFormMakerInput, PasswordStrengthEnum } from '~/types/FormMakerCoreTypes';
 import { LevelAccessEnum } from '~/models/Session';
 import DOMPurify from 'dompurify';
 import { translate } from '~/resources/i18n/i18n';
@@ -361,6 +361,52 @@ class AppTool {
         return obj;
     }
 
+    public uuidv4(): string {
+        return '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, (c) => (+c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (+c / 4)))).toString(16));
+    }
+
+    public checkPasswordStrength(pwd: string): PasswordStrengthEnum {
+        if (!pwd) {
+            return PasswordStrengthEnum.NOTSET;
+        }
+
+        const baseRules: RegExp[] = [
+            /^.{8,}$/, // Au moins 8 caractères
+            /[a-z]/, // Une minuscule
+            /[A-Z]/, // Une majuscule
+            /\d/, // Un chiffre
+            /[^\p{L}\p{N}\s]/u, // Un caractère spécial
+        ];
+
+        const passedBaseRules = baseRules.filter((rule) => rule.test(pwd)).length;
+
+        if (passedBaseRules <= 2) {
+            return PasswordStrengthEnum.POOR;
+        }
+
+        if (passedBaseRules < baseRules.length) {
+            return PasswordStrengthEnum.INSUFFISANT;
+        }
+
+        const hasBonus = pwd.length >= 12 && !this.hasSimpleSequence(pwd) && !/(.)\1{2,}/u.test(pwd);
+
+        return hasBonus ? PasswordStrengthEnum.OK : PasswordStrengthEnum.PASSABLE;
+    }
+    private hasSimpleSequence(password: string): boolean {
+        const normalized = password.toLocaleLowerCase();
+
+        const sequences = ['abcdefghijklmnopqrstuvwxyz', 'zyxwvutsrqponmlkjihgfedcba', '0123456789', '9876543210', 'azertyuiop', 'qwertyuiop'];
+
+        return sequences.some((sequence) => {
+            for (let i = 0; i <= sequence.length - 4; i++) {
+                if (normalized.includes(sequence.slice(i, i + 4))) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
+    }
     // public --> end region ///////////////////////////////////////////////
 
     // private --> start region ////////////////////////////////////////////

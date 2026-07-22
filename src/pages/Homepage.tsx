@@ -1,9 +1,11 @@
 import { JSX, useEffect, useState } from 'react';
 import Container from '@mui/material/Container';
-import ContentLayout from '~/components/layout/ContentLayout';
-import { Link } from 'react-router-dom';
 import useSessionService from '~/hooks/services/useSessionService';
-import useNavigation from '~/hooks/useNavigation';
+import SplashBg from '~/components/layout/SplashBg';
+import ContentLayout from '~/components/layout/ContentLayout';
+import WelcomeCard from '~/components/home/WelcomeCard';
+import useSessionContext from '~/context/sessionContext';
+import HomeView from '~/components/home/HomeView';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
@@ -11,12 +13,13 @@ import useNavigation from '~/hooks/useNavigation';
 
 export default function Homepage(): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
-    const [isReady, setIsReady] = useState<boolean>(false);
+    const [isConnected, setIsConnected] = useState<boolean>(false);
+    const [isPageLoading, setIsPageLoading] = useState<boolean>(true);
     // #endregion STATE --> ////////////////////////////////////
 
     // #region HOOKS --> ///////////////////////////////////////
     const SessionService = useSessionService();
-    const Navigation = useNavigation();
+    const { userFirstName } = useSessionContext();
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////
@@ -27,23 +30,30 @@ export default function Homepage(): JSX.Element {
         SessionService.refreshSession()
             .then((res) => {
                 if (res) {
-                    Navigation.navigate('Scores');
+                    setIsConnected(true);
+                } else {
+                    setIsConnected(false);
                 }
             })
             .catch(() => {})
-            .finally(() => setIsReady(true));
+            .finally(() => setIsPageLoading(false));
     }, []);
     // #endregion USEEFFECT --> ////////////////////////////////
 
     // #region RENDER --> //////////////////////////////////////
     return (
-        <Container className="mt-3" maxWidth="lg">
-            {isReady && (
-                <ContentLayout title="Bienvenue sur Chordika !">
-                    <Link to={'/register'}>S'inscrire</Link>
-                </ContentLayout>
+        <ContentLayout showTitle={isConnected} title={`Bienvenue ${userFirstName} !`} isLoading={isPageLoading} subtitle="Retrouvez rapidement vos morceaux ou reprenez là où vous vous êtes arrêté.">
+            {isConnected ? (
+                <HomeView />
+            ) : (
+                <>
+                    <SplashBg />
+                    <Container className="mt-3 position-relative">
+                        <WelcomeCard />
+                    </Container>
+                </>
             )}
-        </Container>
+        </ContentLayout>
     );
     // #endregion RENDER --> ///////////////////////////////////
 }

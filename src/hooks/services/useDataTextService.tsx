@@ -19,12 +19,26 @@ export default function useDataTextService(): IUseDataTextService {
 
     // #region METHODS --> /////////////////////////////////////
     const search = async (q: string, urlExtension: string = ''): Promise<QueryResult<DataText>> => {
-        const req = await asServicePromise<QueryResult<DataText>>(() => Service.get(`resources${urlExtension}?q=${q}`));
+        const query = new URLSearchParams();
+        query.append('q', q);
+        if (urlExtension.includes('?')) {
+            const p = urlExtension.split('?')[1].split('&');
+            p.forEach((x) => query.append(x.split('=')[0], x.split('=')[1]));
+        }
+        const cleanedUrlExt = urlExtension.split('?')[0];
+        const req = await asServicePromise<QueryResult<DataText>>(() => Service.get(`resources${cleanedUrlExt}?${query.toString()}`));
         return req;
     };
 
     const searchByCode = async (code: string, urlExtension: string = ''): Promise<QueryResult<DataText>> => {
-        const req = await asServicePromise<QueryResult<DataText>>(() => Service.get(`resources${urlExtension}?code=${code}`));
+        const query = new URLSearchParams();
+        query.append('code', code);
+        if (urlExtension.includes('?')) {
+            const p = urlExtension.split('?')[1].split('&');
+            p.forEach((x) => query.append(x.split('=')[0], x.split('=')[1]));
+        }
+        const cleanedUrlExt = urlExtension.split('?')[0];
+        const req = await asServicePromise<QueryResult<DataText>>(() => Service.get(`resources${cleanedUrlExt}?${query.toString()}`));
         return req;
     };
     // #endregion METHODS --> //////////////////////////////////

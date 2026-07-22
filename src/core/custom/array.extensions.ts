@@ -8,6 +8,7 @@ declare global {
         sumBy(selector: (item: T) => number): number;
         sumBy(predicate: (item: T) => boolean, selector: (item: T) => number): number;
         has(value: unknown): boolean;
+        last(): T;
     }
 }
 
@@ -47,5 +48,14 @@ if (!Array.prototype.sumBy) {
 if (!Array.prototype.has) {
     Array.prototype.has = function (value: unknown): boolean {
         return new Set(this).has(value);
+    };
+}
+
+if (!Array.prototype.last) {
+    Array.prototype.last = function <T>(): T {
+        const arr = [...this];
+        const length = arr.length;
+        if (length === 0) return null;
+        return arr[length - 1];
     };
 }

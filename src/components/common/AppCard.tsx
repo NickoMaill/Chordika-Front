@@ -46,7 +46,7 @@ export default function AppCard({ children, title, icon, sx, id, className, divi
                 avatar={icon && <AppIcon name={icon} sx={{ fontSize: 26 }} />}
             />
             {divider && <Divider />}
-            <CardContent className={divider ? 'p-3' : ''}>{children}</CardContent>
+            <CardContent className={divider ? 'p-2' : ''}>{children}</CardContent>
         </Card>
     );
     // #endregion RENDER --> ///////////////////////////////////

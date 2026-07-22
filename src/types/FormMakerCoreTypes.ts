@@ -66,6 +66,9 @@ export interface IFormMakerInput extends InputBaseType {
     parentField?: string;
     centerState?: CenterState<unknown>;
     centerDispatch?: Dispatch<CenterStateAction<unknown>>;
+    spacing?: number;
+    showPasswordMeasure?: boolean;
+    passwordMeasureMsg?: string;
 }
 
 /**
@@ -216,4 +219,13 @@ export type RadioOptionsType = SelectOptionsType;
 
 export type CheckboxOptionType = SelectOptionsType & {
     defaultChecked: boolean;
+    size?: number;
 };
+
+export enum PasswordStrengthEnum {
+    NOTSET = -1,
+    POOR = 0,
+    INSUFFISANT = 1,
+    PASSABLE = 2,
+    OK = 3
+}

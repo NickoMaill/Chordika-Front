@@ -1,16 +1,22 @@
 // #region IMPORTS -> /////////////////////////////////////
-import { JSX, ReactNode, useState } from 'react';
+import { FocusEvent, JSX, ReactNode, useEffect, useState } from 'react';
 import { BarTypeEnum, ScoreBar, ScoreBarGroup } from '~/models/Score';
-import { Box, Grid } from '@mui/material';
+import { Box, IconButton } from '@mui/material';
 import AppRightClickMenu from '../common/AppRightClickMenu';
 import { MenuListOptionType } from '../common/AppMenuList';
 import { grey } from '@mui/material/colors';
+import { Bold } from '../common/Text';
+import InputAutoComplete from '../formMaker/elements/InputAutoComplete';
+import AppIcon from '../common/AppIcon';
+import useEditorContext from '~/context/EditorContext';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
+const fontSize = 17;
+const btnIconSize = 17;
 // #endregion SINGLETON --> /////////////////////////////////
 
-export default function EditorBar({ group, bar, isFirstBar, isLastBar, onClickDelete, onClickUpdate }: IEditorBar): JSX.Element {
+export default function EditorBar({ group, bar, isFirstBar, isLastBar, onClickDelete, onClickUpdate, onUpdateCord }: IEditorBar): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
     // #endregion STATE --> ////////////////////////////////////
 
@@ -22,6 +28,28 @@ export default function EditorBar({ group, bar, isFirstBar, isLastBar, onClickDe
         { label: 'Modifier la mesure', onClick: onClickUpdate, icon: 'EditRounded' },
         { label: 'Supprimer la mesure', onClick: onClickDelete, icon: 'DeleteRounded' },
     ];
+    // top-left | top-right | bottom-right | bottom-left
+    const getRadius = (): string => {
+        const total = group.content.length;
+        const perLine = group.maxLength;
+        const index = bar.index;
+
+        const row = Math.floor(index / perLine);
+        const column = index % perLine;
+        const lastRowIndex = Math.ceil(total / perLine) - 1;
+
+        const isFirstRow = row === 0;
+        const isLastRow = row === lastRowIndex;
+        const isFirstColumn = column === 0;
+        const isLastColumn = column === perLine - 1 || index === total - 1;
+
+        const topLeft = isFirstRow && isFirstColumn ? '5px' : '0px';
+        const topRight = isFirstRow && isLastColumn ? '5px' : '0px';
+        const bottomRight = isLastRow && isLastColumn ? '5px' : '0px';
+        const bottomLeft = isLastRow && isFirstColumn ? '5px' : '0px';
+
+        return `${topLeft} ${topRight} ${bottomRight} ${bottomLeft}`;
+    };
     // #endregion METHODS --> //////////////////////////////////
 
     // #region USEEFFECT --> ///////////////////////////////////
@@ -30,24 +58,24 @@ export default function EditorBar({ group, bar, isFirstBar, isLastBar, onClickDe
     // #region RENDER --> //////////////////////////////////////
     return (
         <AppRightClickMenu menuList={menuItem}>
-            <Grid
+            <Box
                 key={bar.index}
-                size={12}
                 className={`position-relative z-0 b${bar.type ? bar.type + ' bar-pattern' : ''}`}
                 component={'div'}
                 sx={(theme) => ({
                     width: group.title ? '148px' : '170px',
-                    height: '100px',
+                    height: '90px',
                     backgroundColor: theme.palette.mode === 'dark' ? 'background.paper' : null,
                     backgroundImage: 'var(--Paper-overlay)',
                     border: `3px solid`,
                     borderColor: 'text.primary',
-                    borderLeftWidth: isFirstBar(bar.index, group.maxLength) ? '3px' : '0px',
-                    borderRadius: isFirstBar(bar.index, group.maxLength) ? '5px 0px 0px 5px' : isLastBar(bar.index, group.maxLength) ? '0px 5px 5px 0px' : '0px',
+                    borderTop: bar.index + 1 > group.maxLength ? 'none' : null,
+                    borderLeftWidth: isFirstBar(bar.index, group.maxLength, group.content.length) ? '3px' : '0px',
+                    borderRadius: getRadius(),
                 })}
             >
-                <BarContent bar={bar} />
-            </Grid>
+                <BarContent bar={bar} onUpdateChord={onUpdateCord} />
+            </Box>
         </AppRightClickMenu>
     );
     // #endregion RENDER --> ///////////////////////////////////
@@ -57,38 +85,45 @@ export default function EditorBar({ group, bar, isFirstBar, isLastBar, onClickDe
 interface IEditorBar {
     group: ScoreBarGroup;
     bar: ScoreBar;
-    isFirstBar: (index: number, maxLength: number) => boolean;
-    isLastBar: (index: number, maxLength: number) => boolean;
+    isFirstBar: (index: number, maxLength: number, total: number) => boolean;
+    isLastBar: (index: number, maxLength: number, total: number) => boolean;
     onClickUpdate: () => void;
     onClickDelete: () => void;
+    onUpdateCord: (ci: number, chord: string) => void;
 }
 // #enderegion IPROPS --> //////////////////////////////////
 
-function BarContent({ bar }: IBarContent): JSX.Element {
+function BarContent({ bar, onUpdateChord }: IBarContent): JSX.Element {
     const [elementEditing, setElementEditing] = useState<number | null>(null);
-    const [editedChord, setEditedChord] = useState('');
+    const [chordValue, setChordValue] = useState<{ ci: number; chord: string }>(null);
+    const { state, dispatch } = useEditorContext();
 
-    const handleDoubleClick = (index: number, chordName: string): void => {
+    const handleDoubleClick = (index: number): void => {
         setElementEditing(index);
-        setEditedChord(chordName);
     };
 
-    const handleValidate = (): void => {
+    const handleChordChange = (ci: number, c: string): void => {
+        setChordValue({ ci, chord: c });
+    };
+
+    const handleValidate = (e: FocusEvent<HTMLInputElement, Element>): void => {
+        if (e.relatedTarget?.id === "symbols") return;
         if (elementEditing === null) {
             return;
         }
-
-        // Mettre ici la mise à jour réelle de l'accord.
-        // Exemple :
-        // updateChord(elementEditing, editedChord);
-
         setElementEditing(null);
     };
-
     const handleCancel = (): void => {
         setElementEditing(null);
-        setEditedChord('');
     };
+
+    useEffect(() => {
+        if (chordValue && chordValue.chord !== '') {
+            onUpdateChord(chordValue.ci, chordValue.chord);
+            setChordValue(null);
+            handleCancel();
+        }
+    }, [chordValue]);
 
     return (
         <Box
@@ -101,14 +136,14 @@ function BarContent({ bar }: IBarContent): JSX.Element {
                 gridTemplateRows: '1fr auto 1fr',
                 alignItems: 'center',
                 px: 0.75,
-                py: 0.25,
-                fontSize: '0.7rem',
+                py: 0,
             }}
         >
             {bar.content.map((x, i) => {
                 let col = 1;
                 let row = 2;
-                let position: 'start' | 'end' | 'center' = 'start';
+                let justify: 'start' | 'end' | 'center' = 'start';
+                let align: 'start' | 'end' | 'center' = 'start';
 
                 switch (bar.type) {
                     case BarTypeEnum.B1T_1T_1T_1T:
@@ -116,22 +151,26 @@ function BarContent({ bar }: IBarContent): JSX.Element {
                             case 0:
                                 col = 1;
                                 row = 2;
-                                position = 'start';
+                                justify = 'start';
+                                align = 'start';
                                 break;
                             case 1:
                                 col = 2;
                                 row = 1;
-                                position = 'start';
+                                justify = 'center';
+                                align = 'start';
                                 break;
                             case 2:
                                 col = 2;
                                 row = 3;
-                                position = 'end';
+                                justify = 'center';
+                                align = 'end';
                                 break;
                             case 3:
                                 col = 3;
                                 row = 2;
-                                position = 'end';
+                                justify = 'end';
+                                align = 'end';
                                 break;
                         }
                         break;
@@ -141,17 +180,20 @@ function BarContent({ bar }: IBarContent): JSX.Element {
                             case 0:
                                 col = 1;
                                 row = 2;
-                                position = 'start';
+                                justify = 'start';
+                                align = 'start';
                                 break;
                             case 1:
                                 col = 3;
                                 row = 1;
-                                position = 'center';
+                                justify = 'center';
+                                align = 'center';
                                 break;
                             case 2:
                                 col = 3;
                                 row = 3;
-                                position = 'center';
+                                justify = 'center';
+                                align = 'center';
                                 break;
                         }
                         break;
@@ -161,17 +203,20 @@ function BarContent({ bar }: IBarContent): JSX.Element {
                             case 0:
                                 col = 1;
                                 row = 2;
-                                position = 'start';
+                                justify = 'start';
+                                align = 'start';
                                 break;
                             case 1:
                                 col = 2;
                                 row = 1;
-                                position = 'start';
+                                justify = 'start';
+                                align = 'start';
                                 break;
                             case 2:
                                 col = 3;
                                 row = 3;
-                                position = 'end';
+                                justify = 'end';
+                                align = 'end';
                                 break;
                         }
                         break;
@@ -181,17 +226,20 @@ function BarContent({ bar }: IBarContent): JSX.Element {
                             case 0:
                                 col = 1;
                                 row = 2;
-                                position = 'start';
+                                justify = 'start';
+                                align = 'start';
                                 break;
                             case 1:
                                 col = 2;
                                 row = 1;
-                                position = 'start';
+                                justify = 'start';
+                                align = 'start';
                                 break;
                             case 2:
                                 col = 3;
                                 row = 2;
-                                position = 'end';
+                                justify = 'end';
+                                align = 'end';
                                 break;
                         }
                         break;
@@ -201,12 +249,14 @@ function BarContent({ bar }: IBarContent): JSX.Element {
                             case 0:
                                 col = 1;
                                 row = 2;
-                                position = 'start';
+                                justify = 'start';
+                                align = 'start';
                                 break;
                             case 1:
                                 col = 3;
                                 row = 2;
-                                position = 'end';
+                                justify = 'end';
+                                align = 'end';
                                 break;
                         }
                         break;
@@ -216,17 +266,20 @@ function BarContent({ bar }: IBarContent): JSX.Element {
                             case 0:
                                 col = 1;
                                 row = 1;
-                                position = 'start';
+                                justify = 'start';
+                                align = 'start';
                                 break;
                             case 1:
                                 col = 2;
                                 row = 3;
-                                position = 'end';
+                                justify = 'end';
+                                align = 'end';
                                 break;
                             case 2:
                                 col = 3;
                                 row = 2;
-                                position = 'end';
+                                justify = 'end';
+                                align = 'end';
                                 break;
                         }
                         break;
@@ -236,12 +289,14 @@ function BarContent({ bar }: IBarContent): JSX.Element {
                             case 0:
                                 col = 1;
                                 row = 1;
-                                position = 'start';
+                                justify = 'start';
+                                align = 'center';
                                 break;
                             case 1:
                                 col = 3;
                                 row = 3;
-                                position = 'end';
+                                justify = 'end';
+                                align = 'center';
                                 break;
                         }
                         break;
@@ -251,12 +306,14 @@ function BarContent({ bar }: IBarContent): JSX.Element {
                             case 0:
                                 col = 1;
                                 row = 2;
-                                position = 'start';
+                                justify = 'start';
+                                align = 'start';
                                 break;
                             case 1:
                                 col = 3;
                                 row = 2;
-                                position = 'end';
+                                justify = 'end';
+                                align = 'end';
                                 break;
                         }
                         break;
@@ -264,34 +321,61 @@ function BarContent({ bar }: IBarContent): JSX.Element {
                     case BarTypeEnum.B4T:
                         col = 2;
                         row = 2;
-                        position = 'center';
+                        justify = 'center';
+                        align = 'center';
                         break;
                 }
 
                 const isEditing = elementEditing === x.index;
 
                 return (
-                    <BarContentPart key={x.index} col={col} row={row} position={position} onDoubleClick={() => handleDoubleClick(x.index, x.chordName)}>
-                        <span style={{ visibility: isEditing ? 'hidden' : 'visible' }}>{x.chordName}</span>
+                    <BarContentPart key={x.index} col={col} row={row} justify={justify} align={align} onDoubleClick={() => handleDoubleClick(x.index)}>
+                        <Bold
+                            component="span"
+                            className={`rounded ${isEditing ? 'd-flex justify-content-end' : ''} text-center align-middle`}
+                            fontSize={`${fontSize}px`}
+                            lineHeight={1}
+                            sx={{
+                                backgroundColor: !x.chordID ? grey[400] : null,
+                                display: 'block',
+                                minWidth: isEditing ? '100px' : `${fontSize}px`,
+                                minHeight: `${fontSize}px`,
+                                visibility: isEditing ? 'hidden' : 'visible',
+                            }}
+                        >
+                            {x.chordName}
+                        </Bold>
                         {isEditing && (
-                            <input
-                                autoFocus
-                                type="text"
-                                value={editedChord}
-                                style={{ width: '45px', position: 'absolute', inset: 0 }}
-                                onChange={(event) => setEditedChord(event.target.value)}
-                                onBlur={handleValidate}
-                                onClick={(event) => event.stopPropagation()}
-                                onDoubleClick={(event) => event.stopPropagation()}
-                                onKeyDown={(event) => {
-                                    if (event.key === 'Enter') {
-                                        event.currentTarget.blur();
-                                    }
-
-                                    if (event.key === 'Escape') {
-                                        handleCancel();
-                                    }
-                                }}
+                            <InputAutoComplete
+                                ssr
+                                ssrUrlExtension="?type=chord"
+                                id="chord"
+                                value={x.chordID}
+                                freeSolo
+                                onChange={(v) => handleChordChange(x.index, v as string)}
+                                includeTextField
+                                limitChar={1}
+                                filedComponent={(p) => (
+                                    <div ref={p.InputProps.ref} style={{ width: '100px', position: 'absolute', inset: 0 }}>
+                                        <IconButton disableRipple className="position-absolute top-0 start-100 translate-middle" sx={{ width: btnIconSize, height: btnIconSize }} size="small">
+                                            <AppIcon name="Delete" color="error" sx={{ width: btnIconSize, height: btnIconSize }} />
+                                        </IconButton>
+                                        <input
+                                            {...p.inputProps}
+                                            autoFocus
+                                            type="text"
+                                            style={{ width: '100%' }}
+                                            onBlur={handleValidate}
+                                            onClick={(e) => e.stopPropagation()}
+                                            onDoubleClick={(e) => e.stopPropagation()}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Escape') {
+                                                    handleCancel();
+                                                }
+                                            }}
+                                        />
+                                    </div>
+                                )}
                             />
                         )}
                     </BarContentPart>
@@ -301,20 +385,27 @@ function BarContent({ bar }: IBarContent): JSX.Element {
     );
 }
 
-function BarContentPart({ col, row, position, children, onDoubleClick }: IBarContentPart): JSX.Element {
+function BarContentPart({ col, row, justify, align, children, onDoubleClick }: IBarContentPart): JSX.Element {
     return (
-        <Box className="hover-el rounded cursor-pointer position-relative" component={"div"} onDoubleClick={onDoubleClick} sx={{ backgroundColor: !children ? grey[400] : null, minWidth: "20px", minHeight: "20px", padding: '2px', gridColumn: col, gridRow: row, alignSelf: position, justifySelf: position }}>
+        <Box
+            className="hover-el rounded cursor-pointer position-relative"
+            component="div"
+            onDoubleClick={onDoubleClick}
+            sx={{ minWidth: `${fontSize}px`, minHeight: `${fontSize}px`, padding: '2px', gridColumn: col, gridRow: row, alignSelf: align, justifySelf: justify }}
+        >
             {children}
         </Box>
-    )
+    );
 }
 interface IBarContentPart {
     col: number;
     row: number;
-    position: "start" | "end" | "center";
+    justify: 'start' | 'end' | 'center';
+    align: 'start' | 'end' | 'center';
     children: ReactNode;
     onDoubleClick: () => void;
 }
 interface IBarContent {
     bar: ScoreBar;
+    onUpdateChord: (ci: number, c: string) => void;
 }

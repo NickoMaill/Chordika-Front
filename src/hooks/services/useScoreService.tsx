@@ -34,8 +34,14 @@ export default function useScoreService(): IUseScoreService {
         return form;
     };
 
-    const getScoreLists = async (): Promise<QueryResult<Score>> => {
-        const lists = await asServicePromise<QueryResult<Score>>(() => Service.get('scores'));
+    const getScoreLists = async (query?: Record<string, string>): Promise<QueryResult<Score>> => {
+        let q = new URLSearchParams();
+        if (query) {
+            for (const key in query) {
+                q.append(key, query[key]);
+            }
+        }
+        const lists = await asServicePromise<QueryResult<Score>>(() => Service.get(`scores${q.size > 0 ? '?' + q.toString() : ''}`));
         return lists;
     };
 
@@ -84,7 +90,7 @@ interface IUseScoreService {
     loadAddBarsForm: () => Promise<FormMakerContentType<FormMakerPartEnum>[]>;
     loadSearchForm: () => Promise<FormMakerContentType<FormMakerPartEnum>[]>;
     getScore: (id: number) => Promise<Score>;
-    getScoreLists: () => Promise<QueryResult<Score>>;
+    getScoreLists: (query?: Record<string, string>) => Promise<QueryResult<Score>>;
     addScore: (form: FormData) => Promise<Score>;
     saveScore: (id: number, datas: ScorePage[]) => Promise<{ success: boolean }>;
     deleteScore: (id: number) => Promise<void>;

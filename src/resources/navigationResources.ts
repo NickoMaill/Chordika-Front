@@ -13,7 +13,6 @@ import Reset from '~/pages/Reset';
 import Register from '~/pages/Register';
 import { translate } from './i18n/i18n';
 import Editor from '~/pages/Editor';
-import Scores from '~/pages/Scores';
 
 class NavigationResource {
     public static get routesPath(): Record<string, string> {
@@ -55,7 +54,6 @@ class NavigationResource {
             { name: 'Editor', element: Editor, path: this.routesPath.scoreEditor, isAuthRequired: true, isIndex: false, title: 'Éditer grille', levelAccess: LevelAccessEnum.USER },
             { name: 'ScoreAdd', element: Editor, path: this.routesPath.scoreAdd, isAuthRequired: true, isIndex: false, title: 'Ajouter une grille', levelAccess: LevelAccessEnum.USER },
             { name: 'ScoreImport', element: Editor, path: this.routesPath.scoreImport, isAuthRequired: true, isIndex: false, title: 'Ajouter une grille', levelAccess: LevelAccessEnum.USER },
-            { name: 'Scores', element: Scores, path: this.routesPath.scores, isAuthRequired: true, isIndex: false, title: 'Mes grilles', levelAccess: LevelAccessEnum.USER },
             { name: 'Notifications', element: Notifications, path: this.routesPath.notifications, isAuthRequired: true, title: 'Notifications', levelAccess: LevelAccessEnum.USER },
             // #endregion ROUTES -> ///////////////////////////////////////////////////////////
         ];
@@ -87,9 +85,7 @@ class NavigationResource {
 
     public static get navigationHeaderInfo(): HeaderLinkType[] {
         return [
-            { name: 'nav.myScore', link: `${NavigationResource.routesPath.scores}`, icon: 'MusicScore', redirect: true, levelAccess: LevelAccessEnum.USER },
-            // { name: 'nav.scoreAdd', link: `${NavigationResource.routesPath.scoreAdd}`, icon: "AddCircleRounded", redirect: true, levelAccess: LevelAccessEnum.USER },
-            // { name: 'nav.scoreImport', link: `${NavigationResource.routesPath.scoreImport}`, icon: "CloudUploadRounded", redirect: true, levelAccess: LevelAccessEnum.USER },
+            { name: 'nav.myScore', link: `${NavigationResource.routesPath.center}/scores`, icon: 'MusicScore', redirect: true, levelAccess: LevelAccessEnum.USER },
             { name: 'divider', levelAccess: LevelAccessEnum.ADMIN },
             { name: 'nav.users', link: `${NavigationResource.routesPath.center}/users`, icon: 'Person', redirect: true, levelAccess: LevelAccessEnum.ADMIN },
             { name: 'nav.adverts', link: `${NavigationResource.routesPath.center}/annonces`, icon: 'Campaign', redirect: true, levelAccess: LevelAccessEnum.ADMIN },
