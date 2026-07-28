@@ -15,6 +15,7 @@ export interface Score {
     isFavorite: boolean;
     title: string;
     composer: string;
+    version?: string;
     key: string;
     tempo: number;
     nume: string;

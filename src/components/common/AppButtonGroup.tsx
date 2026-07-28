@@ -52,7 +52,7 @@ export default function AppButtonGroup({ options, size = 'medium', color, labelA
                             id={o.id}
                             {...props}
                         >
-                            {isLabelAndIcon || labelVisible ? o.label : o.icon && !labelVisible ? <AppIcon name={o.icon} sx={{ fontSize: o.iconFontSize }} /> : null}
+                            {isLabelAndIcon || labelVisible ? o.label : o.icon && !labelVisible ? <AppIcon name={o.icon} sx={{ fontSize: o.iconFontSize, color:  o.iconColor ? `text.${o.iconColor}` : "inherit" }} /> : null}
                         </Button>
                     </Tooltip>
                 );

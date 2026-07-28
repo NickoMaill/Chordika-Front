@@ -179,6 +179,12 @@ function useSessionService(): IUseSessionService {
             }
         }
     };
+
+    const checkPrintToken = async (token: string, id: string): Promise<{ success: boolean }> => {
+        const response = await asServicePromise<{ success: boolean }>(() => get(`scores/${id}/print/check?printToken=${token}`), false);
+        return response;
+    }
+
     const getSessions = async (userId: number, limit: number = 20, offset: number = 0, showAll: boolean = false): Promise<QueryResult<UserDeviceSessions>> => {
         const res = await asServicePromise<QueryResult<UserDeviceSessions>>(() => get(`users/${userId}/sessions?limit=${limit}&offset=${offset}&showAll=${showAll}`));
         return res;
@@ -239,6 +245,7 @@ function useSessionService(): IUseSessionService {
         login,
         loginOpt,
         refreshSession,
+        checkPrintToken,
         getUserProfile,
         requestOtp,
         logout,
@@ -264,6 +271,7 @@ interface IUseSessionService {
     login: (form: FormData) => Promise<UserSessionApiModel>;
     loginOpt: (form: FormData) => Promise<boolean>;
     refreshSession: () => Promise<boolean>;
+    checkPrintToken: (token: string, id: string) => Promise<{ success: boolean }>;
     getUserProfile: () => Promise<UserSessionApiModel>;
     requestOtp: () => Promise<boolean>;
     logout: () => Promise<void>;

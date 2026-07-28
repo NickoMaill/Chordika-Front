@@ -4,6 +4,7 @@ import { Score } from '~/models/Score';
 export type EditorState = {
     isBarFormOpen: boolean;
     isDataLoading: boolean;
+    isPrintMode: boolean;
     data: Score;
 };
 
@@ -12,6 +13,8 @@ export type EditorStateAction =
     | { type: 'SET_DATA'; payload: Score }
     | { type: 'SET_DATA_LOADING_ON' }
     | { type: 'SET_DATA_LOADING_OFF' }
+    | { type: 'SET_PRINT_ON' }
+    | { type: 'SET_PRINT_OFF' }
     | { type: 'RESET' };
 
 export const EditorInitialState = {
@@ -21,6 +24,7 @@ export const EditorInitialState = {
     isBarFormOpen: false,
     data: null,
     isDataLoading: true,
+    isPrintMode: false,
 };
 
 export const editorReducer = (state: EditorState, action: EditorStateAction): EditorState => {
@@ -33,6 +37,10 @@ export const editorReducer = (state: EditorState, action: EditorStateAction): Ed
             return { ...state, isDataLoading: true };
         case 'SET_DATA_LOADING_OFF':
             return { ...state, isDataLoading: false };
+        case 'SET_PRINT_ON':
+            return { ...state, isPrintMode: true };
+        case 'SET_PRINT_OFF':
+            return { ...state, isPrintMode: false };
         case 'RESET':
             return EditorInitialState;
         default:

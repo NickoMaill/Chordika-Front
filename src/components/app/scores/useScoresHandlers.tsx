@@ -16,7 +16,7 @@ export default function useScoresHandlers(): CenterHandlerConfigType<Score> {
 
     // #region METHODS --> /////////////////////////////////////
     const handleTableStruct = (config: ICenterConfig<Score>): void => {
-        config.tableStructure.OverrideComponent = ScoreLists;
+        // config.tableStructure.OverrideComponent = ScoreLists;
     };
     // #endregion METHODS --> //////////////////////////////////
 

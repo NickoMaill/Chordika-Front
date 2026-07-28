@@ -1,7 +1,8 @@
-export interface ServerResponse<T> {
+export interface ServerResponse<T, O = null> {
     status: number;
     result: T;
     success?: boolean;
+    additionalDatas: O
 }
 
 export enum ResultStatusEnum {

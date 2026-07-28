@@ -37,7 +37,7 @@ export default function InputAutoComplete({
     filedComponent,
 }: IInputAutoComplete): JSX.Element {
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [choices, setChoices] = useState<SelectOptionsType[]>(options);
+    const [choices, setChoices] = useState<SelectOptionsType[]>(null);
     const [selected, setSelected] = useState<SelectOptionsType>(null);
     const [isError, setIsError] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string>(null);
@@ -167,6 +167,7 @@ export default function InputAutoComplete({
     }, [value]);
 
     useEffect(() => {
+        console.log(resetSignal)
         if (previousResetSignal.current !== resetSignal) {
             previousResetSignal.current = resetSignal;
             ignoreExternalValueUntilEmpty.current = true;
@@ -179,9 +180,9 @@ export default function InputAutoComplete({
             <Autocomplete
                 freeSolo={freeSolo}
                 disabled={disabled}
-                options={choices}
+                options={choices || options}
                 value={selected}
-                // inputValue={inputValue}
+                inputValue={inputValue}
                 isOptionEqualToValue={(option, value) => option.value === value.value}
                 onChange={onSelect}
                 onInputChange={onTextFieldChange}

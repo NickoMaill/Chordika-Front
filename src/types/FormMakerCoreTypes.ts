@@ -69,6 +69,7 @@ export interface IFormMakerInput extends InputBaseType {
     spacing?: number;
     showPasswordMeasure?: boolean;
     passwordMeasureMsg?: string;
+    htmlElementName?: string;
 }
 
 /**

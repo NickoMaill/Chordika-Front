@@ -36,6 +36,7 @@ export type RouteNameReference = {
     Monitor;
     Scores;
     Editor;
+    PrintEditor;
     ScoreImport;
     ScoreAdd;
     Register;

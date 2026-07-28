@@ -11,8 +11,9 @@ import IconButton from '@mui/material/IconButton';
 import { Grid } from '@mui/material';
 import EditorBar from './EditorBar';
 import useModal, { ModalOptions } from '~/hooks/useModal';
-import EditorBarForm from './EditorBarForm';
+import EditorBarForm from './forms/EditorBarForm';
 import appTool from '~/helpers/appTool';
+import AppResizableElement from '../common/AppResizableElement';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
@@ -101,11 +102,11 @@ export default function EditorDisplay({ data, onClickDeleteGroup, onClickEditGro
             {data &&
                 /* Score Pages */
                 data.content.map((page) => (
-                    <Paper key={page.index} className={`p-3 bg-transparent editor-page-${data.orientation === ScoreOrientation.LANDSCAPE ? 'landscape' : 'portrait'}`} elevation={3}>
+                    <Paper key={page.index} className={`editor-page editor-page-${data.orientation === ScoreOrientation.LANDSCAPE ? 'landscape' : 'portrait'}`} elevation={3}>
                         <Box className="position-relative h-100">
                             {/* HEADER */}
                             {page.index === 0 && <EditorHeader data={data} />}
-                            <Box id={`content-page-${page.index}`} className="p-1" sx={{ height: '100%' }}>
+                            <Box id={`content-page-${page.index}`} className="editor-page-content" sx={{ height: '100%' }}>
                                 {/* Score Bar Groups */}
                                 {page.content.map((g) => (
                                     <GroupDraggable
@@ -141,7 +142,7 @@ export default function EditorDisplay({ data, onClickDeleteGroup, onClickEditGro
                                                     ))}
                                                 </Box>
                                             </Grid>
-                                            <Box id="groupActions" className="position-absolute top-50 translate-middle d-flex flex-column" sx={{ left: '100% !important' }}>
+                                            <Box id="groupActions" className="position-absolute top-50 translate-middle d-flex flex-column end-0">
                                                 <IconButton id={`dragger-${g.index}`} size="small" outline="true" className="dragger p-1 w-auto h-auto">
                                                     <AppIcon name="ControlCameraRounded" />
                                                 </IconButton>

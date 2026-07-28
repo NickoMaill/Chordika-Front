@@ -160,10 +160,12 @@
 .hover-el {
     // background-color: unset;
     transition: background-color 0.4s ease-in-out;
+
     &:focus,
     &:hover {
         background-color: $bs-secondary-bg-subtle;
     }
+
     &:active {
         background-color: tint-color($secondary-color, 100%);
     }
@@ -193,16 +195,14 @@
     padding-inline: 1lh;
     padding-bottom: var(--f);
     // border-image: conic-gradient(#0008 0 0) 51% / var(--f);
-    clip-path: polygon(
-        100% calc(100% - var(--f)),
-        100% 100%,
-        calc(100% - var(--f)) calc(100% - var(--f)),
-        var(--f) calc(100% - var(--f)),
-        0 100%,
-        0 calc(100% - var(--f)),
-        999px calc(100% - var(--f) - 999px),
-        calc(100% - 999px) calc(100% - var(--f) - 999px)
-    );
+    clip-path: polygon(100% calc(100% - var(--f)),
+            100% 100%,
+            calc(100% - var(--f)) calc(100% - var(--f)),
+            var(--f) calc(100% - var(--f)),
+            0 100%,
+            0 calc(100% - var(--f)),
+            999px calc(100% - var(--f) - 999px),
+            calc(100% - 999px) calc(100% - var(--f) - 999px));
     transform: translate(calc((1 - cos(45deg)) * 100%), -100%) rotate(45deg);
     transform-origin: 0% 100%;
     background-color: #bd1550;
@@ -229,16 +229,14 @@
 }
 
 .progress-bar-striped {
-    background-image: linear-gradient(
-        45deg,
-        rgba(255, 255, 255, 0.15) 25%,
-        transparent 25%,
-        transparent 50%,
-        rgba(255, 255, 255, 0.15) 50%,
-        rgba(255, 255, 255, 0.15) 75%,
-        transparent 75%,
-        transparent
-    );
+    background-image: linear-gradient(45deg,
+            rgba(255, 255, 255, 0.15) 25%,
+            transparent 25%,
+            transparent 50%,
+            rgba(255, 255, 255, 0.15) 50%,
+            rgba(255, 255, 255, 0.15) 75%,
+            transparent 75%,
+            transparent);
     background-size: 1rem 1rem;
 }
 
@@ -325,38 +323,49 @@ td:hover .col-action {
     display: inline-flex;
 }
 
-@page {
-    size: A4;
+@page editor-portrait {
+    size: A4 portrait;
     margin: 0;
 }
 
-@media print and (orientation: landscape) {
-    @page {
-        size: A4 landscape;
-    }
+@page editor-landscape {
+    size: A4 landscape;
+    margin: 0;
 }
 
-@media print and (orientation: portrait) {
-    @page {
-        size: A4 portrait;
-    }
+.editor-page {
+    margin: 1rem auto;
+    padding: 10mm;
+    box-sizing: border-box;
+    background-color: var(--mui-palette-background-paper, #fff);
+    overflow: hidden;
+    position: relative;
+}
+
+.editor-page-portrait {
+    page: editor-portrait;
+    width: 210mm;
+    height: 297mm;
+}
+
+.editor-page-landscape {
+    page: editor-landscape;
+    width: 297mm;
+    height: 210mm;
+}
+
+.editor-page-content {
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 @media screen {
-    .editor-page-portrait {
-        width: min(100%, 210mm);
-        aspect-ratio: 190 / 277;
-        margin: 1rem auto;
-        box-sizing: border-box;
-    }
-
-    .editor-page-landscape {
-        width: min(100%, 297mm);
-        aspect-ratio: 277 / 190;
-        margin: 1rem auto;
-        box-sizing: border-box;
+    #Editor {
+        overflow-x: auto;
     }
 }
+
 .ProseMirror {
     min-height: 100px;
 }
@@ -401,16 +410,29 @@ td:hover .col-action {
     content: '';
     position: absolute;
     inset: 0;
-
     background-color: var(--mui-palette-text-primary);
-
     -webkit-mask: var(--bar-svg) center / 100% 100% no-repeat;
     mask: var(--bar-svg) center / 100% 100% no-repeat;
-
     pointer-events: none;
 }
 
 @media print {
+    .bar-pattern::before {
+        background-color: transparent !important;
+        -webkit-mask: none !important;
+        mask: none !important;
+        background-image: var(--bar-svg) !important;
+        background-position: center !important;
+        background-size: 100% 100% !important;
+        background-repeat: no-repeat !important;
+    }
+    .b4t::before {
+        display: none !important;
+    }
+}
+
+@media print {
+
     /* Masquer toute la chrome d'UI */
     header,
     footer,
@@ -435,39 +457,44 @@ td:hover .col-action {
         background: #ffffff !important;
     }
 
+    html:has(#Editor),
+    body:has(#Editor),
+    #root:has(#Editor),
+    #root:has(#Editor)>.MuiBox-root,
+    main:has(#Editor) {
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    main:has(#Editor) {
+        padding: 0 !important;
+    }
+
     /* Le canevas d'édition occupe toute la page PDF */
     #Editor {
         margin: 0 !important;
         padding: 0 !important;
+        overflow: visible !important;
+    }
+
+    .bar-content {
+        background-color: transparent;
     }
 
     /* Chaque page éditeur devient une page PDF, sans bordure ni ombre */
     .editor-page-landscape,
     .editor-page-portrait {
         margin: 0 !important;
-        padding: 0 !important;
         box-shadow: none !important;
-        width: auto !important;
-        height: auto !important;
-        // min-height: 100vh;
-        break-after: page; /* alias moderne de page-break-after */
-        page-break-after: always; /* compat old */
+        break-after: page;
+        /* alias moderne de page-break-after */
+        page-break-after: always;
+        /* compat old */
         position: relative !important;
         border-radius: 0;
         overflow: hidden !important;
     }
-    .editor-page-portrait {
-        width: 190mm !important;
-        height: 274mm !important;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-    }
-    .editor-page-landscape {
-        width: 277 !important;
-        height: 190 !important;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-    }
+
     /* Pas de saut après la dernière page */
     .editor-page-landscape:last-child,
     .editor-page-portrait:last-child {
@@ -481,21 +508,14 @@ td:hover .col-action {
         position: absolute !important;
         left: 0;
         right: 0;
-        bottom: 8mm; /* espace de sécurité pour les imprimantes */
+        bottom: 8mm;
+        /* espace de sécurité pour les imprimantes */
         text-align: center;
         font-size: 10pt;
         line-height: 1.2;
         color: #000;
         pointer-events: none;
         background: transparent;
-    }
-
-    /* Réserve de place pour le footer dans le contenu */
-    [id^='content-page-'] {
-        padding-bottom: 14mm !important;
-        box-sizing: border-box;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
     }
 
     /* Éléments interactifs non imprimables ou à neutraliser */
@@ -519,8 +539,26 @@ td:hover .col-action {
         break-inside: avoid;
         page-break-inside: avoid;
     }
+
     #ChordEditorContainer {
+        width: auto !important;
+        max-width: none !important;
         margin: 0 !important;
+        padding: 0 !important;
     }
-    // #Editor .p-1, #Editor .p-2, #Editor .p-3 { padding-left: 0 !important; padding-right: 0 !important; }
+
+    #ChordEditorContainer>.MuiContainer-root {
+        width: auto !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    #ChordEditorContainer>.MuiContainer-root>.p-3 {
+        padding: 0 !important;
+    }
+
+    #toolbar+.MuiDivider-root {
+        display: none !important;
+    }
 }

@@ -5,6 +5,8 @@ import { BarsPayload, BarTypeEnum, ScoreBarGroup, ScoreBarPayload } from '~/mode
 import useToast from './useToast';
 import useDataTextService from './services/useDataTextService';
 import appTool from '~/helpers/appTool';
+import { data } from 'react-router';
+import useNavigation from './useNavigation';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
@@ -19,12 +21,13 @@ export default function useEditorActions(): IUseEditorActions {
     const ScoreService = useScoreService();
     const { success, error } = useToast();
     const { searchByCode } = useDataTextService();
+    const { pathname } = useNavigation();
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////
     const loadScore = async (id: number): Promise<void> => {
         dispatch({ type: 'SET_DATA_LOADING_ON' });
-        await ScoreService.getScore(id)
+        await ScoreService.getScore(id, pathname.endsWith("/print"))
             .then((res) => {
                 if (res) dispatch({ type: 'SET_DATA', payload: res });
             })
@@ -71,13 +74,15 @@ export default function useEditorActions(): IUseEditorActions {
     const updateGroup = async (index: number, obj: BarsPayload): Promise<void> => {
         const datas = state.data;
         const nb = Number(obj.nb);
+        const perLines = Number(obj.perLines);
         datas.content[0].content[index].title = obj.title;
-        datas.content[0].content[index].maxLength = Number(obj.perLines);
-        if (nb !== datas.content[0].content.length) {
-            if (nb < datas.content[0].content.length) {
-                datas.content[0].content = datas.content[0].content.slice(0, nb - 1);
-            } else if (nb > datas.content[0].content.length) {
-                const diff = nb - datas.content[0].content.length;
+        datas.content[0].content[index].maxLength = perLines;
+        const group = datas.content[0].content[index];
+        if (nb !== group.content.length) {
+            if (nb < group.content.length) {
+                group.content = group.content.slice(0, nb);
+            } else if (nb > group.content.length) {
+                const diff = nb - group.content.length;
                 const newBars = [...Array(diff).keys()].map((d, i) => ({
                     type: BarTypeEnum.B4T,
                     id: appTool.uuidv4(),
@@ -93,13 +98,14 @@ export default function useEditorActions(): IUseEditorActions {
                     content: [{ chordName: null, chordID: null, index: 0, symbols: null }],
                     isTheEnd: false,
                 }));
-                datas.content[0].content[index].content = [...datas.content[0].content[index].content, ...newBars];
-                dispatch({
-                    type: 'SET_DATA',
-                    payload: datas,
-                });
+                group.content = [...group.content, ...newBars];
             }
         }
+        datas.content[0].content[index] = group;
+        dispatch({
+            type: 'SET_DATA',
+            payload: datas,
+        });
     };
 
     const deleteGroup = (index: number): void => {
@@ -181,7 +187,7 @@ export default function useEditorActions(): IUseEditorActions {
 // #region IPROPS -->  /////////////////////////////////////
 interface IUseEditorActions {
     loadScore: (id: number) => Promise<void>;
-    addBars: (obj: { nb: string; perLines: string }) => void;
+    addBars: (obj: BarsPayload) => void;
     deleteGroup: (index: number) => void;
     updateGroup: (index: number, obj: BarsPayload) => Promise<void>;
     saveContent: () => Promise<void>;

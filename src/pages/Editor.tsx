@@ -1,11 +1,14 @@
 // #region IMPORTS -> /////////////////////////////////////
-import { JSX } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { JSX, useEffect, useState } from 'react';
+import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import EditorMain from '~/components/editor/EditorMain';
 import EditorProvider from '~/context/EditorProvider';
 import NotFound from './NotFound';
 import { Regular } from '~/components/common/Text';
-import EditorAddForm from '~/components/editor/EditorAddForm';
+import EditorAddForm from '~/components/editor/forms/EditorAddForm';
+import useNavigation from '~/hooks/useNavigation';
+import useAppContext from '~/context/appContext';
+import useSessionService from '~/hooks/services/useSessionService';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
@@ -13,25 +16,57 @@ import EditorAddForm from '~/components/editor/EditorAddForm';
 
 export default function Editor(): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
-    const { scoreId } = useParams();
+    const [searchParams] = useSearchParams();
+    const [isChecking, setIsChecking] = useState<boolean>(true);
     // #endregion STATE --> ////////////////////////////////////
 
     // #region HOOKS --> ///////////////////////////////////////
+    const { scoreId } = useParams();
+    const { pathname } = useNavigation();
+    const { setIsNoAccess } = useAppContext();
+    const { checkPrintToken } = useSessionService();
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////
+    const checkPrint = (): void => {
+        if (!pathname.endsWith('/print')) {
+            setIsChecking(false);
+            return;
+        }
+        if (!searchParams.has('printToken') || !scoreId) {
+            setIsNoAccess(true);
+            return;
+        }
+
+        const token = searchParams.get('printToken');
+        checkPrintToken(token, scoreId)
+        .then((res) => {
+            if (res.success) {
+                setIsChecking(false);
+            } else {
+                setIsNoAccess(true);
+            }
+        })
+    };
     // #endregion METHODS --> //////////////////////////////////
 
     // #region USEEFFECT --> ///////////////////////////////////
+    useEffect(() => {
+        checkPrint();
+    }, []);
     // #endregion USEEFFECT --> ////////////////////////////////
 
     // #region RENDER --> //////////////////////////////////////
     if (scoreId) {
-        return (
-            <EditorProvider>
-                <EditorMain id={Number(scoreId)} />
-            </EditorProvider>
-        );
+        if (isChecking) {
+            return <></>;
+        } else {
+            return (
+                <EditorProvider>
+                    <EditorMain scoreId={Number(scoreId)} />
+                </EditorProvider>
+            );
+        }
     } else {
         return <EditorInit />;
     }

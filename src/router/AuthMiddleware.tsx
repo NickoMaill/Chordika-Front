@@ -1,5 +1,5 @@
 import { JSX, ReactNode, useEffect, useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { AppError } from '~/core/appError';
 import useSessionService from '~/hooks/services/useSessionService';
 import { doneProgress, isProgressStarted, startProgress } from '~/helpers/progressHelper';
@@ -7,14 +7,15 @@ import useNavigation from '~/hooks/useNavigation';
 import useSessionContext from '~/context/sessionContext';
 import useAppContext from '~/context/appContext';
 
-export default function AuthMiddleware({ children }: IAuthMiddleware): JSX.Element {
+export default function AuthMiddleware({ children, printable }: IAuthMiddleware): JSX.Element {
     const [isReady, setIsReady] = useState(false); // Contrôle de l'affichage
     const checkingRef = useRef(false); // Empêche les doublons d'appel
-
+    const [searchParams, setSearchParams] = useSearchParams();
     const { token, setToken, tokenExpire, userId, accessLevel } = useSessionContext();
     const { refreshSession } = useSessionService();
     const { getCurrentRoute, pathname } = useNavigation();
     const { setIsNoAccess } = useAppContext();
+
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -47,8 +48,6 @@ export default function AuthMiddleware({ children }: IAuthMiddleware): JSX.Eleme
                 return;
             }
         } catch (error) {
-            console.info('erreur détécté', 'Auth middleware', error);
-
             if (error instanceof AppError && error.code === 'need_mfa') {
                 const url = `/login?target=${encodeURIComponent(currentPath)}`;
                 navigate(url, { replace: true });
@@ -102,4 +101,5 @@ export default function AuthMiddleware({ children }: IAuthMiddleware): JSX.Eleme
 
 interface IAuthMiddleware {
     children: ReactNode;
+    printable?: boolean;
 }

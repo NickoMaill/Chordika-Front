@@ -377,8 +377,8 @@ export function useCenterQuery<T>({ props, action: _action, id }: ICenterActions
     const { setIsNoAccess } = useAppContext();
     // const { setSearchURL } = useCenterTools({ props, action, id });
 
-    const tableQuery = async (forcedFilters?: SearchField[]): Promise<void> => {
-        dispatch({ type: 'SET_TABLE_LOADING', payload: true });
+    const tableQuery = async (forcedFilters?: SearchField[], showLoader: boolean = true): Promise<void> => {
+        if (showLoader) dispatch({ type: 'SET_TABLE_LOADING', payload: true });
         if (!state.datas) {
             dispatch({ type: 'SET_LOADING', payload: true });
         }
@@ -408,7 +408,7 @@ export function useCenterQuery<T>({ props, action: _action, id }: ICenterActions
             })
             .finally(() => {
                 dispatch({ type: 'SET_LOADING', payload: false });
-                dispatch({ type: 'SET_TABLE_LOADING', payload: false });
+                if (showLoader) dispatch({ type: 'SET_TABLE_LOADING', payload: false });
                 dispatch({ type: 'SET_REFRESH', payload: false });
             });
     };
@@ -442,7 +442,7 @@ export function useCenterQuery<T>({ props, action: _action, id }: ICenterActions
     return { tableQuery, queryOne };
 }
 interface ICenterQuery {
-    tableQuery: (filters?: SearchField[]) => Promise<void>;
+    tableQuery: (filters?: SearchField[], showLoader?: boolean) => Promise<void>;
     queryOne: (id?: string, _action?: GenericActionEnum) => Promise<void>;
 }
 

@@ -64,7 +64,7 @@ export default function EditorBar({ group, bar, isFirstBar, isLastBar, onClickDe
                 component={'div'}
                 sx={(theme) => ({
                     width: group.title ? '148px' : '170px',
-                    height: '90px',
+                    height: '85px',
                     backgroundColor: theme.palette.mode === 'dark' ? 'background.paper' : null,
                     backgroundImage: 'var(--Paper-overlay)',
                     border: `3px solid`,
@@ -332,8 +332,9 @@ function BarContent({ bar, onUpdateChord }: IBarContent): JSX.Element {
                     <BarContentPart key={x.index} col={col} row={row} justify={justify} align={align} onDoubleClick={() => handleDoubleClick(x.index)}>
                         <Bold
                             component="span"
-                            className={`rounded ${isEditing ? 'd-flex justify-content-end' : ''} text-center align-middle`}
+                            className={`rounded ${isEditing ? 'd-flex justify-content-end' : ''} text-center align-middle bar-content`}
                             fontSize={`${fontSize}px`}
+                            
                             lineHeight={1}
                             sx={{
                                 backgroundColor: !x.chordID ? grey[400] : null,

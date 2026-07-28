@@ -57,7 +57,7 @@ export default function LayoutFallback({ children, backUrl }: ILayoutFallback): 
         <>
             {isNoAccess ? (
                 <Box display="flex" alignItems="center" flexDirection="column">
-                    <AppCard title="Accès Refusé" sx={{ width: '100%' }} icon="Lock">
+                    <AppCard title="Accès Refusé" id='noAccess' sx={{ width: '100%' }} icon="Lock">
                         <Bold>
                             <Trans i18nKey="error.noAccess.intro" />
                         </Bold>

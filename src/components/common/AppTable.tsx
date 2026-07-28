@@ -68,6 +68,8 @@ export type AppTableStructure<T = object> = {
     defaultSort?: AppGridSortModel<T>;
     bulkUpdate?: boolean;
     bulkNew?: boolean;
+    overrideComponentName?: string;
+    sideComponentName?: string;
 };
 
 export type AppGridSortModel<T> = {
