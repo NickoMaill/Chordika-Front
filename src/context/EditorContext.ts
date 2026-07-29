@@ -5,6 +5,7 @@ export type EditorState = {
     isBarFormOpen: boolean;
     isDataLoading: boolean;
     isPrintMode: boolean;
+    isDataSaving: boolean;
     data: Score;
 };
 
@@ -15,6 +16,8 @@ export type EditorStateAction =
     | { type: 'SET_DATA_LOADING_OFF' }
     | { type: 'SET_PRINT_ON' }
     | { type: 'SET_PRINT_OFF' }
+    | { type: 'SET_SAVING_ON' }
+    | { type: 'SET_SAVING_OFF' }
     | { type: 'RESET' };
 
 export const EditorInitialState = {
@@ -25,6 +28,7 @@ export const EditorInitialState = {
     data: null,
     isDataLoading: true,
     isPrintMode: false,
+    isDataSaving: false
 };
 
 export const editorReducer = (state: EditorState, action: EditorStateAction): EditorState => {
@@ -41,6 +45,10 @@ export const editorReducer = (state: EditorState, action: EditorStateAction): Ed
             return { ...state, isPrintMode: true };
         case 'SET_PRINT_OFF':
             return { ...state, isPrintMode: false };
+        case 'SET_SAVING_ON':
+            return { ...state, isDataSaving: true };
+        case 'SET_SAVING_OFF':
+            return { ...state, isDataSaving: false };
         case 'RESET':
             return EditorInitialState;
         default:

@@ -21,7 +21,7 @@ export interface Score {
     nume: string;
     denom: string;
     comment?: string;
-    fontStyle?: string;
+    fontSize?: number;
     orientation: ScoreOrientation;
     content: ScorePage[];
     addedAt: string;
@@ -127,11 +127,16 @@ export type ScoreBarContent = {
  */
 export type ScorePageText = {
     content: string;
+    index: number;
     parentPage: number;
     position: {
         x: number;
         y: number;
     };
+    size: {
+        width: number;
+        height: number;
+    }
 };
 
 export type BarsPayload = {

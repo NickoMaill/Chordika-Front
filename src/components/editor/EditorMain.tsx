@@ -4,7 +4,7 @@ import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import { JSX, lazy, useEffect, useRef, useState } from 'react';
+import { JSX, lazy, MouseEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { IconNameType } from '~/components/common/AppIcon';
 import useEditorContext from '~/context/EditorContext';
 import EditorDisplay from './EditorDisplay';
@@ -18,37 +18,13 @@ import EditorTextForm from './forms/EditorTextForm';
 import useScoreService from '~/hooks/services/useScoreService';
 import { Helmet } from 'react-helmet';
 import AppProgressBar from '../common/AppProgressBar';
+import AppMenuList from '../common/AppMenuList';
+import { Popover, Slider } from '@mui/material';
+import { Bold } from '../common/Text';
+import EditorFontSizeMenu from './EditorFontSizeMenu';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
-const menu: { id: string; title?: string; icon?: IconNameType }[] = [
-    {
-        id: 'bars',
-        title: 'Ajouter des Mesures',
-        icon: 'Staves',
-    },
-    {
-        id: 'text',
-        title: 'Ajouter du texte',
-        icon: 'TextFieldsRounded',
-    },
-    {
-        id: 'symbols',
-        title: 'Ajouter un symbole',
-        icon: 'Segno',
-    },
-    { id: 'divider' },
-    {
-        id: 'lyrics',
-        title: 'Ajouter des paroles',
-        icon: 'Microphone',
-    },
-    {
-        id: 'export',
-        title: 'Exporter',
-        icon: 'IosShareRounded',
-    },
-];
 const AppIcon = lazy(() => import('~/components/common/AppIcon'));
 // #endregion SINGLETON --> /////////////////////////////////
 
@@ -56,63 +32,125 @@ export default function EditorMain({ scoreId }: { scoreId: number }): JSX.Elemen
     // #region STATE --> ///////////////////////////////////////
     const formRef = useRef<HTMLFormElement>(null);
     const [isFormSubmitLoading, setIsFormSubmitLoading] = useState<boolean>(false);
+
+    const menu: { id: string; title?: string; icon?: IconNameType; Component?: ({ key }: { key: number }) => JSX.Element }[] = useMemo(
+        () => [
+            {
+                id: 'bars',
+                title: 'Ajouter des Mesures',
+                icon: 'MusicScore',
+            },
+            {
+                id: 'text',
+                title: 'Ajouter du texte',
+                icon: 'EditNoteRounded',
+            },
+            {
+                id: 'fontSize',
+                Component: EditorFontSizeMenu,
+            },
+            {
+                id: 'symbols',
+                title: 'Ajouter un symbole',
+                icon: 'Segno',
+            },
+            { id: 'divider' },
+            {
+                id: 'lyrics',
+                title: 'Ajouter des paroles',
+                icon: 'Microphone',
+            },
+            {
+                id: 'export',
+                title: 'Exporter',
+                icon: 'FilePdf',
+            },
+        ],
+        []
+    );
     // #endregion STATE --> ////////////////////////////////////
 
     // #region HOOKS --> ///////////////////////////////////////
     const { state, dispatch } = useEditorContext();
-    const { loadScore, addBars, deleteGroup, saveContent, updateBar, updateChord, updateGroup } = useEditorActions();
+    const { loadScore, addBars, deleteGroup, saveContent, updateBar, updateChord, updateGroup, addText, updateText, updateSizeText } = useEditorActions();
     const { openModal, closeModal } = useModal();
     const { exportScore } = useScoreService();
 
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////
-    const handleDragStop = (index: number, groupId: number, position: { x: number; y: number }): void => {
+    const handleDragStop = (type: string, index: number, groupId: number, position: { x: number; y: number }): void => {
         const datas = state.data;
-        datas.content[0].content[index].position = position;
+        switch (type) {
+            case 'bar':
+                datas.content[0].content[index].position = position;
+                break;
+            case 'text':
+                datas.content[0].texts[index].position = position;
+                break;
+            default:
+                return;
+        }
         dispatch({ type: 'SET_DATA', payload: datas });
     };
 
-    const submitBars = (index: string): void => {
+    const submitBars = (index?: number): void => {
         const formData = new FormData(formRef.current);
         const payload: BarsPayload = appTool.formToObj(formData) as BarsPayload;
-        if (index) {
-            updateGroup(Number(index), payload);
+        if (index !== undefined) {
+            updateGroup(index, payload);
         } else {
             addBars(payload);
         }
         closeModal();
     };
 
-    const handleMenuClick = (trigger: string, id?: string): void => {
+    const submitText = (index?: number): void => {
+        if (!formRef.current) return;
+        const form = new FormData(formRef.current);
+        const text = String(form.get('text'));
+        if (index !== undefined) {
+            updateText(text, index);
+        } else {
+            addText(text);
+        }
+        formRef.current = null;
+        closeModal();
+    };
+
+    const handleMenuClick = (trigger: string, index?: number): void => {
         let modalContent: ModalOptions = null;
-        console.log(trigger, id);
+        const isEditing = index !== undefined;
+
         switch (trigger) {
             case 'bars':
                 modalContent = {
-                    title: `${id ? 'Modifier' : 'Ajouter'} une section`,
-                    content: <EditorGroupForm formRef={formRef} data={id ? state.data.content[0].content.find((x) => x.index === Number(id)) : null} />,
+                    title: `${isEditing ? 'Modifier' : 'Ajouter'} une section`,
+                    content: <EditorGroupForm formRef={formRef} data={isEditing ? state.data.content[0].content.find((x) => x.index === index) : null} />,
                     modalActionOptions: {
                         modalActionLoading: false,
                         modalDismissLabel: 'Annuler',
-                        modalAction: (): void => submitBars(id),
-                        modalActionLabel: id ? 'Modifier' : 'Ajouter',
+                        modalAction: (): void => submitBars(index),
+                        modalActionLabel: isEditing ? 'Modifier' : 'Ajouter',
                     },
                 };
                 openModal(modalContent);
                 break;
             case 'text':
                 modalContent = {
-                    title: `${id ? 'Modifier' : 'Ajouter'} du texte`,
-                    content: <EditorTextForm formRef={formRef} value={''} />,
+                    title: `${isEditing ? 'Modifier' : 'Ajouter'} du texte`,
+                    content: <EditorTextForm formRef={formRef} value={isEditing ? (state.data.content[0].texts.find((x) => x.index === index)?.content ?? '') : ''} />,
+                    size: 'lg',
                     modalActionOptions: {
                         modalActionLoading: false,
                         modalDismissLabel: 'Annuler',
-                        modalAction: (): void => submitBars(id),
-                        modalActionLabel: id ? 'Modifier' : 'Ajouter',
+                        modalAction: (): void => submitText(index),
+                        modalActionLabel: isEditing ? 'Modifier' : 'Ajouter',
                     },
                 };
                 openModal(modalContent);
+                break;
+            case 'fontSize':
                 break;
             case 'export':
                 modalContent = {
@@ -130,8 +168,7 @@ export default function EditorMain({ scoreId }: { scoreId: number }): JSX.Elemen
                     },
                 };
                 openModal(modalContent);
-                exportScore(Number(scoreId))
-                .finally(closeModal);
+                exportScore(Number(scoreId)).finally(closeModal);
                 break;
             default:
                 return;
@@ -153,10 +190,13 @@ export default function EditorMain({ scoreId }: { scoreId: number }): JSX.Elemen
                 <title>{state.data?.title ?? 'Chordika'}</title>
             </Helmet>
             <Container id="ChordEditorContainer">
-                <ContentLayout isLoading={state.isDataLoading} title="" showTitle={false}>
+                <ContentLayout isLoading={state.isDataLoading} title={null} showTitle={false}>
                     <Box component={'div'} id="toolbar" className="d-flex justify-content-between align-items-center">
                         <Box className="mb-2 d-flex">
                             {menu.map((m, i) => {
+                                if (m.Component) {
+                                    return <m.Component key={i} />;
+                                }
                                 if (m.id === 'divider') {
                                     return <Divider key={i} flexItem className="me-2" orientation="vertical" />;
                                 } else {
@@ -172,7 +212,7 @@ export default function EditorMain({ scoreId }: { scoreId: number }): JSX.Elemen
                         </Box>
                         <Box>
                             <Tooltip title={'Sauvegarder les modifications'}>
-                                <IconButton onClick={saveContent} className="me-2" outline="true">
+                                <IconButton onClick={saveContent} loading={state.isDataSaving} className="me-2" outline="true">
                                     <AppIcon name={'Save'} />
                                 </IconButton>
                             </Tooltip>
@@ -182,10 +222,13 @@ export default function EditorMain({ scoreId }: { scoreId: number }): JSX.Elemen
                     <EditorDisplay
                         data={state.data}
                         onClickDeleteGroup={deleteGroup}
-                        onClickEditGroup={(id) => handleMenuClick('bars', id.toString())}
+                        onClickEditGroup={(index) => handleMenuClick('bars', index)}
+                        onClickEditText={(index) => handleMenuClick('text', index)}
+                        onClickDeleteText={null}
                         onDragStop={handleDragStop}
                         onUpdateBar={updateBar}
                         onUpdateChord={updateChord}
+                        onResizeText={(e, i) => updateSizeText(e, i)}
                     />
                 </ContentLayout>
             </Container>

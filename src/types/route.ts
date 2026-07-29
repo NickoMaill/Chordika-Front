@@ -41,6 +41,7 @@ export type RouteNameReference = {
     ScoreAdd;
     Register;
     Notifications;
+    Symbols;
 };
 
 export type RootHeaderlinkType = {

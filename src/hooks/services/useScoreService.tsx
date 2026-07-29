@@ -48,7 +48,7 @@ export default function useScoreService(): IUseScoreService {
     };
 
     const getScore = async (id: number, printMode: boolean = false): Promise<Score> => {
-        const token = printMode && query.has("printToken") ? `?printToken=${query.get("printToken")}` : ""
+        const token = printMode && query.has('printToken') ? `?printToken=${query.get('printToken')}` : '';
         const score = await asServicePromise<Score[]>(() => get(`scores/${id}${token}`), !printMode);
         if (score.length > 0) return score[0];
         return null;
@@ -56,7 +56,7 @@ export default function useScoreService(): IUseScoreService {
 
     const exportScore = async (id: number): Promise<void> => {
         await asServicePromise(() => downloadFile(`scores/${id}/print`));
-    }
+    };
 
     const setFavScore = async (id: number): Promise<ServerResponse<null, { isFavorite: boolean }>> => {
         const response = await asServicePromise<ServerResponse<null, { isFavorite: boolean }>>(() => put(`scores/${id}/setFav`));
@@ -65,12 +65,17 @@ export default function useScoreService(): IUseScoreService {
 
     const addScore = async (form: FormData): Promise<Score> => {
         const added = await asServicePromise<{ success: boolean; inserted: Score }>(() => post('scores', null, form));
-        return added.inserted; 
+        return added.inserted;
     };
 
     const saveScore = async (id: number, datas: ScorePage[]): Promise<{ success: boolean }> => {
         const payload = { datas };
         const saved = await asServicePromise<{ success: boolean }>(() => put(`scores/${id}/content`, payload));
+        return saved;
+    };
+
+    const saveScoreInfo = async (id: number, form: FormData): Promise<{ success: boolean }> => {
+        const saved = await asServicePromise<{ success: boolean }>(() => put(`scores/${id}`, null, form));
         return saved;
     };
     // #endregion METHODS --> //////////////////////////////////
@@ -88,7 +93,8 @@ export default function useScoreService(): IUseScoreService {
         addScore,
         setFavScore,
         saveScore,
-        exportScore
+        saveScoreInfo,
+        exportScore,
     };
     // #endregion RENDER --> ///////////////////////////////////
 }
@@ -103,6 +109,7 @@ interface IUseScoreService {
     addScore: (form: FormData) => Promise<Score>;
     setFavScore: (id: number) => Promise<ServerResponse<null, { isFavorite: boolean }>>;
     saveScore: (id: number, datas: ScorePage[]) => Promise<{ success: boolean }>;
+    saveScoreInfo: (id: number, form: FormData) => Promise<{ success: boolean }>;
     exportScore: (id: number) => Promise<void>;
 }
 // #enderegion IPROPS --> //////////////////////////////////

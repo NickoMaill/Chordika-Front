@@ -6,7 +6,6 @@ import AppRightClickMenu from '../common/AppRightClickMenu';
 import { MenuListOptionType } from '../common/AppMenuList';
 import { grey } from '@mui/material/colors';
 import { Bold } from '../common/Text';
-import InputAutoComplete from '../formMaker/elements/InputAutoComplete';
 import AppIcon from '../common/AppIcon';
 import useEditorContext from '~/context/EditorContext';
 // #endregion IMPORTS -> //////////////////////////////////
@@ -96,7 +95,7 @@ interface IEditorBar {
 function BarContent({ bar, onUpdateChord }: IBarContent): JSX.Element {
     const [elementEditing, setElementEditing] = useState<number | null>(null);
     const [chordValue, setChordValue] = useState<{ ci: number; chord: string }>(null);
-    const { state, dispatch } = useEditorContext();
+    const { state } = useEditorContext();
 
     const handleDoubleClick = (index: number): void => {
         setElementEditing(index);
@@ -107,7 +106,8 @@ function BarContent({ bar, onUpdateChord }: IBarContent): JSX.Element {
     };
 
     const handleValidate = (e: FocusEvent<HTMLInputElement, Element>): void => {
-        if (e.relatedTarget?.id === 'symbols') return;
+        console.log(e.relatedTarget);
+        if (e.relatedTarget?.id === 'symbols' || e.relatedTarget?.id === 'chordField') return;
         if (elementEditing === null) {
             return;
         }
@@ -118,8 +118,8 @@ function BarContent({ bar, onUpdateChord }: IBarContent): JSX.Element {
     };
 
     useEffect(() => {
-        if (chordValue && chordValue.chord !== '') {
-            onUpdateChord(chordValue.ci, chordValue.chord);
+        if (chordValue) {
+            onUpdateChord(chordValue.ci, (chordValue.chord ?? '')?.trim());
             setChordValue(null);
             handleCancel();
         }
@@ -329,55 +329,56 @@ function BarContent({ bar, onUpdateChord }: IBarContent): JSX.Element {
                 const isEditing = elementEditing === x.index;
 
                 return (
-                    <BarContentPart key={x.index} col={col} row={row} justify={justify} align={align} onDoubleClick={() => handleDoubleClick(x.index)}>
+                    <BarContentPart
+                        key={x.index}
+                        index={x.index}
+                        col={col}
+                        row={row}
+                        justify={justify}
+                        align={align}
+                        fontSize={state.data.fontSize}
+                        onSpaceBarPress={() => handleDoubleClick(x.index)}
+                        onDoubleClick={() => handleDoubleClick(x.index)}
+                    >
                         <Bold
                             component="span"
                             className={`rounded ${isEditing ? 'd-flex justify-content-end' : ''} text-center align-middle bar-content`}
-                            fontSize={`${fontSize}px`}
-                            
+                            fontSize={`${state.data.fontSize}px`}
                             lineHeight={1}
                             sx={{
-                                backgroundColor: !x.chordID ? grey[400] : null,
+                                backgroundColor: !x.chordName && !x.symbols ? grey[400] : null,
                                 display: 'block',
-                                minWidth: isEditing ? '100px' : `${fontSize}px`,
-                                minHeight: `${fontSize}px`,
+                                minWidth: isEditing ? '50px' : `${state.data.fontSize}px`,
+                                minHeight: `${state.data.fontSize}px`,
                                 visibility: isEditing ? 'hidden' : 'visible',
                             }}
                         >
-                            {x.chordName}
+                            {x.symbols ? <></> : x.chordName}
                         </Bold>
                         {isEditing && (
-                            <InputAutoComplete
-                                ssr
-                                ssrUrlExtension="?type=chord"
-                                id="chord"
-                                value={x.chordID}
-                                freeSolo
-                                onChange={(v) => handleChordChange(x.index, v as string)}
-                                includeTextField
-                                limitChar={1}
-                                filedComponent={(p) => (
-                                    <div ref={p.InputProps.ref} style={{ width: '100px', position: 'absolute', inset: 0 }}>
-                                        <IconButton disableRipple className="position-absolute top-0 start-100 translate-middle" sx={{ width: btnIconSize, height: btnIconSize }} size="small">
-                                            <AppIcon name="Delete" color="error" sx={{ width: btnIconSize, height: btnIconSize }} />
-                                        </IconButton>
-                                        <input
-                                            {...p.inputProps}
-                                            autoFocus
-                                            type="text"
-                                            style={{ width: '100%' }}
-                                            onBlur={handleValidate}
-                                            onClick={(e) => e.stopPropagation()}
-                                            onDoubleClick={(e) => e.stopPropagation()}
-                                            onKeyDown={(e) => {
-                                                if (e.key === 'Escape') {
-                                                    handleCancel();
-                                                }
-                                            }}
-                                        />
-                                    </div>
-                                )}
-                            />
+                            <div className="position-absolute top-50 start-50 translate-middle" style={{ width: '50px' }}>
+                                <AppRightClickMenu menuList={[]}>
+                                    <input
+                                        autoFocus
+                                        type="text"
+                                        id="chordField"
+                                        style={{ width: '100%' }}
+                                        onBlur={handleValidate}
+                                        onClick={(e) => e.stopPropagation()}
+                                        defaultValue={x.chordName}
+                                        onDoubleClick={(e) => e.stopPropagation()}
+                                        maxLength={20}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Escape') {
+                                                handleCancel();
+                                            }
+                                            if (e.code === 'Enter') {
+                                                handleChordChange(x.index, (e.target as HTMLInputElement)?.value);
+                                            }
+                                        }}
+                                    />
+                                </AppRightClickMenu>
+                            </div>
                         )}
                     </BarContentPart>
                 );
@@ -386,11 +387,18 @@ function BarContent({ bar, onUpdateChord }: IBarContent): JSX.Element {
     );
 }
 
-function BarContentPart({ col, row, justify, align, children, onDoubleClick }: IBarContentPart): JSX.Element {
+function BarContentPart({ index, col, row, justify, align, children, onDoubleClick, onSpaceBarPress, fontSize }: IBarContentPart): JSX.Element {
     return (
         <Box
             className="hover-el rounded cursor-pointer position-relative"
             component="div"
+            tabIndex={index}
+            onKeyDown={(e) => {
+                if (e.code === 'Space') {
+                    e.stopPropagation();
+                    onSpaceBarPress();
+                }
+            }}
             onDoubleClick={onDoubleClick}
             sx={{ minWidth: `${fontSize}px`, minHeight: `${fontSize}px`, padding: '2px', gridColumn: col, gridRow: row, alignSelf: align, justifySelf: justify }}
         >
@@ -399,12 +407,15 @@ function BarContentPart({ col, row, justify, align, children, onDoubleClick }: I
     );
 }
 interface IBarContentPart {
+    index: number;
     col: number;
     row: number;
     justify: 'start' | 'end' | 'center';
     align: 'start' | 'end' | 'center';
     children: ReactNode;
     onDoubleClick: () => void;
+    onSpaceBarPress: () => void;
+    fontSize: number;
 }
 interface IBarContent {
     bar: ScoreBar;

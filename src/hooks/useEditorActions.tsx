@@ -1,11 +1,9 @@
 // #region IMPORTS -> /////////////////////////////////////
 import useEditorContext from '~/context/EditorContext';
 import useScoreService from './services/useScoreService';
-import { BarsPayload, BarTypeEnum, ScoreBarGroup, ScoreBarPayload } from '~/models/Score';
+import { BarsPayload, BarTypeEnum, ScoreBarGroup, ScoreBarPayload, ScorePageText } from '~/models/Score';
 import useToast from './useToast';
-import useDataTextService from './services/useDataTextService';
 import appTool from '~/helpers/appTool';
-import { data } from 'react-router';
 import useNavigation from './useNavigation';
 // #endregion IMPORTS -> //////////////////////////////////
 
@@ -18,16 +16,15 @@ export default function useEditorActions(): IUseEditorActions {
 
     // #region HOOKS --> ///////////////////////////////////////
     const { state, dispatch } = useEditorContext();
-    const ScoreService = useScoreService();
-    const { success, error } = useToast();
-    const { searchByCode } = useDataTextService();
+    const { saveScore, getScore, saveScoreInfo } = useScoreService();
+    const { success } = useToast();
     const { pathname } = useNavigation();
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////
     const loadScore = async (id: number): Promise<void> => {
         dispatch({ type: 'SET_DATA_LOADING_ON' });
-        await ScoreService.getScore(id, pathname.endsWith("/print"))
+        await getScore(id, pathname.endsWith('/print'))
             .then((res) => {
                 if (res) dispatch({ type: 'SET_DATA', payload: res });
             })
@@ -121,12 +118,28 @@ export default function useEditorActions(): IUseEditorActions {
     };
 
     const saveContent = async (): Promise<void> => {
+        dispatch({ type: 'SET_SAVING_ON' });
         const datas = state.data;
-        await ScoreService.saveScore(datas.id, datas.content)
-            .then((res) => {
-                if (res.success) success('Grille sauvegardée avec succès !');
-            })
-            .finally(() => dispatch({ type: 'SET_DATA_LOADING_OFF' }));
+        const form = new FormData();
+        form.append('userId', String(state.data.userId));
+        form.append('title', String(state.data.title));
+        form.append('composer', String(state.data.composer));
+        form.append('isFavorite', String(state.data.isFavorite));
+        form.append('timeSig', `${state.data.nume}-${state.data.denom}`);
+        form.append('key', String(state.data.key));
+        form.append('tempo', String(state.data.tempo));
+        form.append('comment', String(state.data.comment));
+        form.append('fontSize', String(state.data.fontSize));
+        form.append('orientation', String(state.data.orientation));
+        form.append('version', String(state.data.version));
+        try {
+            const [content, info] = await Promise.all([saveScore(datas.id, datas.content), saveScoreInfo(datas.id, form)]);
+            if (content.success && info.success) {
+                success('Grille sauvegardée avec succès !');
+            }
+        } finally {
+            dispatch({ type: 'SET_SAVING_OFF' });
+        }
     };
 
     const updateBar = ({ gi, bi, data }: { gi: number; bi: number; data: ScoreBarPayload }): void => {
@@ -155,17 +168,57 @@ export default function useEditorActions(): IUseEditorActions {
 
     const updateChord = async ({ gi, bi, ci, c }: { gi: number; bi: number; ci: number; c: string }): Promise<void> => {
         const datas = state.data;
-        const res = await searchByCode(c, '?type=chord');
-        if (res.records.length !== 1) {
-            error('Accord non valide');
-            return;
-        }
+        // const res = await searchByCode(c, '?type=chord');
+        // if (c.length < 1) {
+        //     error('Accord non valide');
+        //     return;
+        // }
         const chord = datas.content[0].content[gi].content[bi].content[ci];
-        chord.chordID = res.records[0].code;
-        chord.chordName = res.records[0].description;
+        chord.chordID = null;
+        chord.chordName = (c ?? '').trim() === '' ? null : c.trim();
         datas.content[0].content[gi].content[bi].content[ci] = chord;
         dispatch({ type: 'SET_DATA', payload: datas });
     };
+
+    const setFontSize = (fs: number): void => {
+        const d = state.data;
+        d.fontSize = fs;
+        dispatch({ type: 'SET_DATA', payload: d });
+    };
+
+    const addText = (text: string): void => {
+        const datas = state.data;
+        const lastBar = datas.content[0].content.last();
+
+        const t: ScorePageText = {
+            content: text,
+            index: datas.content[0].texts.length,
+            position: {
+                x: 0,
+                y: lastBar ? lastBar.position.y + 15 : 15,
+            },
+            parentPage: 0,
+            size: {
+                width: 50,
+                height: 150,
+            }
+        };
+        datas.content[0].texts.push(t);
+        dispatch({ type: 'SET_DATA', payload: datas });
+    };
+
+    const updateText = (text: string, index: number): void => {
+        const datas = state.data;
+        datas.content[0].texts[index].content = text;
+        console.log(text, index)
+        dispatch({ type: 'SET_DATA', payload: datas });
+    }
+
+    const updateSizeText = (size: { width: number; height: number; }, index: number): void => {
+        const datas = state.data;
+        datas.content[0].texts[index].size = size;
+        dispatch({ type: 'SET_DATA', payload: datas });
+    }
     // #endregion METHODS --> //////////////////////////////////
 
     // #region USEEFFECT --> ///////////////////////////////////
@@ -180,6 +233,10 @@ export default function useEditorActions(): IUseEditorActions {
         deleteGroup,
         updateBar,
         updateChord,
+        setFontSize,
+        addText,
+        updateText,
+        updateSizeText
     };
     // #endregion RENDER --> ///////////////////////////////////
 }
@@ -193,5 +250,9 @@ interface IUseEditorActions {
     saveContent: () => Promise<void>;
     updateBar: (payload: { gi: number; bi: number; data: ScoreBarPayload }) => void;
     updateChord: ({ gi, bi, ci, c }: { gi: number; bi: number; ci: number; c: string }) => Promise<void>;
+    setFontSize: (fs: number) => void;
+    addText: (text: string) => void;
+    updateText: (text: string, index: number) => void;
+    updateSizeText: (size: { width: number; height: number; }, index: number) => void
 }
 // #enderegion IPROPS --> //////////////////////////////////

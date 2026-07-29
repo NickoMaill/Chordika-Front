@@ -7,7 +7,7 @@ import { FormMakerPartEnum, FormMakerType } from '~/types/FormMakerCoreTypes';
 // #region SINGLETON --> ////////////////////////////////////
 // #endregion SINGLETON --> /////////////////////////////////
 
-export default function EditorTextForm({ formRef, value }): JSX.Element {
+export default function EditorTextForm({ formRef, value }: IEditorTextForm): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
     // #endregion STATE --> ////////////////////////////////////
 
@@ -23,10 +23,12 @@ export default function EditorTextForm({ formRef, value }): JSX.Element {
                 content: [
                     {
                         id: 'text',
-                        type: "textarea",
+                        type: 'richText',
                         label: 'Texte',
                         required: true,
+                        gridRowSelector: 10,
                         size: 12,
+                        rows: 300,
                         index: 1,
                         value,
                     },
@@ -39,7 +41,9 @@ export default function EditorTextForm({ formRef, value }): JSX.Element {
     // #endregion USEEFFECT --> ////////////////////////////////
 
     // #region RENDER --> //////////////////////////////////////
-    return <FormMaker structure={struct} showBottom={false} formRef={formRef} />;
+    return (
+        <FormMaker structure={struct} showBottom={false} formRef={formRef} />
+    );
     // #endregion RENDER --> ///////////////////////////////////
 }
 

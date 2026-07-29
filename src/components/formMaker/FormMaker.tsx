@@ -444,7 +444,7 @@ export default function FormMaker<T>({
                 return <InputTextAreaField {...baseProps} key={i} limit={element.limit} rows={element.rows} />;
             }
             case 'richText': {
-                return <InputRichTextField {...baseProps} key={i} maxLength={element.limit} />;
+                return <InputRichTextField {...baseProps} key={i} maxLength={element.limit} rows={element.rows} />;
             }
             case 'date':
             case 'datetime': {

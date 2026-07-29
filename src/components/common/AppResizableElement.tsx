@@ -6,7 +6,7 @@ import { JSX, ReactNode, useEffect, useRef, useState } from 'react';
 // #region SINGLETON --> ////////////////////////////////////
 // #endregion SINGLETON --> /////////////////////////////////
 
-export default function AppResizableElement({ width, height, children, onResize }: IAppResizableElement): JSX.Element {
+export default function AppResizableElement({ width, height, children, onResize, className, onMouseOver }: IAppResizableElement): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
     const [isMouseOver, setIsMouseOver] = useState<boolean>(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -20,10 +20,12 @@ export default function AppResizableElement({ width, height, children, onResize 
     const handleMouseOver = (isOver: boolean): void => {
         if (isOver) {
             setIsMouseOver(true);
+            if (onMouseOver) onMouseOver(true)
             clearTimeout(mouseTimeout.current);
         } else {
             mouseTimeout.current = setTimeout(() => {
                 setIsMouseOver(false);
+                if (onMouseOver) onMouseOver(false)
             }, 100);
         }
     };
@@ -60,6 +62,7 @@ export default function AppResizableElement({ width, height, children, onResize 
         <Box
             ref={containerRef}
             component={'div'}
+            className={className}
             onMouseOver={() => handleMouseOver(true)}
             onMouseOut={() => handleMouseOver(false)}
             sx={{ width, height, resize: isMouseOver ? 'both' : 'none', overflow: 'hidden', boxSizing: 'border-box', border: isMouseOver ? 'solid 1px' : null }}
@@ -76,5 +79,7 @@ interface IAppResizableElement {
     height: number;
     children: ReactNode;
     onResize: (w: number, h: number) => void;
+    onMouseOver?: (isOver: boolean) => void;
+    className?: string;
 }
 // #enderegion IPROPS --> //////////////////////////////////

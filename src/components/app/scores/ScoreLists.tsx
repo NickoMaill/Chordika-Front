@@ -21,6 +21,7 @@ import useCenterContext from '~/context/centerContext';
 import appTool from '~/helpers/appTool';
 import useModal from '~/hooks/useModal';
 import AppProgressBar from '~/components/common/AppProgressBar';
+import { TimeSignature } from '~/components/music';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
@@ -140,7 +141,7 @@ const ScoreCard = memo(
                         <Grid size={6}>
                             <Italic>Version : {data.version ? data.version : '-'}</Italic>
                             <Regular>
-                                {data.tempo} BPM <AppIcon name="Circle" className="mx-1" sx={{ fontSize: '11px' }} /> {data.nume}/{data.denom}{' '}
+                                {data.tempo} BPM <AppIcon name="Circle" className="mx-1" sx={{ fontSize: '11px' }} />  {data.nume}/{data.denom}{' '}
                                 <AppIcon name="Circle" sx={{ fontSize: '11px' }} className="mx-1" /> {data.key}
                             </Regular>
                         </Grid>

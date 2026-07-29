@@ -1,6 +1,7 @@
 // #region IMPORTS -> /////////////////////////////////////
 import Document from '@tiptap/extension-document';
 import Paragraph from '@tiptap/extension-paragraph';
+import Heading from '@tiptap/extension-heading';
 import Text from '@tiptap/extension-text';
 import TextList from '@tiptap/extension-list-item';
 import TextOrderList from '@tiptap/extension-ordered-list';
@@ -35,6 +36,7 @@ import {
     LinkBubbleMenu,
     MenuButtonUndo,
     MenuButtonRedo,
+    RichTextEditorRef,
 } from 'mui-tiptap';
 import { useState, useRef, useEffect, lazy, JSX } from 'react';
 import { InputBaseType } from '~/types/FormMakerCoreTypes';
@@ -45,9 +47,10 @@ import Box from '@mui/material/Box';
 const AppIcon = lazy(() => import('~/components/common/AppIcon'));
 // #endregion IMPORTS -> //////////////////////////////////
 
-export default function InputRichTextField({ disabled, id, onChange, value, required, maxLength = 2000 }: IInputRichTextField): JSX.Element {
+export default function InputRichTextField({ disabled, id, onChange, value, required, maxLength = 2000, rows = 100 }: IInputRichTextField): JSX.Element {
     const [text, setText] = useState<string>((value as string) ?? '');
-    const editorRef = useRef<Editor | null>(null);
+    const [editor, setEditor] = useState<Editor | null>(null);
+    const richTextEditorRef = useRef<RichTextEditorRef>(null);
 
     const handleChange = (e: { editor: Editor; transaction: Transaction }): void => {
         const html = e.editor.getHTML();
@@ -59,22 +62,46 @@ export default function InputRichTextField({ disabled, id, onChange, value, requ
     };
 
     useEffect(() => {
-        if (value !== undefined && value !== text) {
-            const nextValue = (value as string) ?? '';
-            setText(nextValue);
-            editorRef.current?.commands.setContent(decodeURIComponent(nextValue));
+        setEditor(richTextEditorRef.current?.editor ?? null);
+    }, []);
+
+    useEffect(() => {
+        if (value === undefined) {
+            return;
         }
-    }, [value]);
+
+        const nextValue = (value as string) ?? '';
+
+        setText((currentText) => (currentText === nextValue ? currentText : nextValue));
+
+        if (editor) {
+            const decodedValue = decodeURIComponent(nextValue);
+
+            if (editor.getHTML() !== decodedValue) {
+                editor.commands.setContent(decodedValue, { emitUpdate: false });
+            }
+        }
+    }, [value, editor]);
 
     return (
         <Box className="mt-1">
             <RichTextEditor
+                ref={richTextEditorRef}
                 content={decodeURIComponent(text)}
+                sx={{
+                    '& .MuiTiptap-RichTextContent-root': {
+                        bgcolor: 'background.default',
+                    },
+                    '& .ProseMirror': {
+                        minHeight: rows,
+                    },
+                }}
                 extensions={[
                     Document.configure({
                         onchange: () => {},
                     }),
                     Paragraph,
+                    Heading,
                     Text.configure({
                         onChange: () => {},
                     }),
@@ -116,9 +143,6 @@ export default function InputRichTextField({ disabled, id, onChange, value, requ
                         max: maxLength.toString(),
                     },
                 }}
-                onCreate={(editor) => {
-                    editorRef.current = editor.editor;
-                }}
                 onUpdate={handleChange}
                 renderControls={() => (
                     <MenuControlsContainer>
@@ -144,7 +168,7 @@ export default function InputRichTextField({ disabled, id, onChange, value, requ
                         <MenuButtonColorPicker
                             value=""
                             onChange={(newColor) => {
-                                editorRef.current?.chain().focus().setColor(newColor).run();
+                                editor?.chain().focus().setColor(newColor).run();
                             }}
                             tooltipLabel="Couleur"
                             labels={{
@@ -173,9 +197,9 @@ export default function InputRichTextField({ disabled, id, onChange, value, requ
                     />
                 )}
             </RichTextEditor>
-            {editorRef.current && (
+            {editor && (
                 <div style={{ textAlign: 'right', fontSize: 12, color: '#888' }}>
-                    {editorRef.current.storage.characterCount.characters()}/{maxLength} caracteres
+                    {editor.storage.characterCount.characters()}/{maxLength} caracteres
                 </div>
             )}
             <input type="hidden" value={text ?? ''} id={id} name={id} readOnly />
@@ -185,4 +209,5 @@ export default function InputRichTextField({ disabled, id, onChange, value, requ
 
 interface IInputRichTextField extends InputBaseType {
     maxLength?: number;
+    rows?: number;
 }

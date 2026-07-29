@@ -1,5 +1,8 @@
 @use 'variables' as *;
-
+@font-face {
+    font-family: 'Bravura';
+    src: url(../assets/fonts/Bavura/Bravura.woff2) format('woff2');
+}
 #nprogress {
     z-index: 3000;
     position: fixed;
@@ -84,6 +87,12 @@
 
     to {
         left: 0%;
+    }
+}
+
+div[rich-text-container] {
+    p, h1, h2, h3, h4, h5, h6 {
+        margin: 0;
     }
 }
 

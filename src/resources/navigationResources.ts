@@ -13,6 +13,7 @@ import Reset from '~/pages/Reset';
 import Register from '~/pages/Register';
 import { translate } from './i18n/i18n';
 import Editor from '~/pages/Editor';
+import Symbols from '~/pages/Symbols';
 
 class NavigationResource {
     public static get routesPath(): Record<string, string> {
@@ -33,6 +34,7 @@ class NavigationResource {
             scoreAdd: '/scores/add',
             scoreImport: '/scores/import',
             notifications: '/notifications',
+            symbols: '/symbols',
         };
     }
 
@@ -45,7 +47,7 @@ class NavigationResource {
             { name: 'Home', element: Homepage, path: this.routesPath.home, isAuthRequired: false, isIndex: true, title: 'Bienvenue sur Chordika', levelAccess: LevelAccessEnum.VISITOR },
             { name: 'Register', element: Register, path: this.routesPath.register, isAuthRequired: false, isIndex: false, title: "S'inscrire", levelAccess: LevelAccessEnum.VISITOR },
             // #endregion COMMON ROUTES -> ////////////////////////////////////////////////////
-
+ 
             // #region AUTH REQUIRED -> ///////////////////////////////////////////////////////
             { name: 'Home', element: Homepage, path: this.routesPath.home, isAuthRequired: true, isIndex: true, title: 'NStream', levelAccess: LevelAccessEnum.USER },
             { name: 'Center', element: Center, path: this.routesPath.center, isAuthRequired: true, title: 'Modification', levelAccess: LevelAccessEnum.USER },
@@ -57,6 +59,7 @@ class NavigationResource {
             { name: 'ScoreAdd', element: Editor, path: this.routesPath.scoreAdd, isAuthRequired: true, isIndex: false, title: 'Ajouter une grille', levelAccess: LevelAccessEnum.USER },
             { name: 'ScoreImport', element: Editor, path: this.routesPath.scoreImport, isAuthRequired: true, isIndex: false, title: 'Ajouter une grille', levelAccess: LevelAccessEnum.USER },
             { name: 'Notifications', element: Notifications, path: this.routesPath.notifications, isAuthRequired: true, title: 'Notifications', levelAccess: LevelAccessEnum.USER },
+            { name: "Symbols", element: Symbols, path: this.routesPath.symbols, isAuthRequired: true, title: 'Dictionnaire des Symboles', levelAccess: LevelAccessEnum.USER },
             // #endregion ROUTES -> ///////////////////////////////////////////////////////////
         ];
     }
