@@ -20,12 +20,12 @@ export default function AppResizableElement({ width, height, children, onResize,
     const handleMouseOver = (isOver: boolean): void => {
         if (isOver) {
             setIsMouseOver(true);
-            if (onMouseOver) onMouseOver(true)
+            if (onMouseOver) onMouseOver(true);
             clearTimeout(mouseTimeout.current);
         } else {
             mouseTimeout.current = setTimeout(() => {
                 setIsMouseOver(false);
-                if (onMouseOver) onMouseOver(false)
+                if (onMouseOver) onMouseOver(false);
             }, 100);
         }
     };

@@ -105,7 +105,7 @@ export default function AppStepper({ steps, animate, activeStep }: IAppStepper):
             <Stepper alternativeLabel activeStep={activeStep} connector={<QontoConnector />}>
                 {steps.map((step, i) => (
                     <Step key={i}>
-                        <StepLabel error={step.isError} componentsProps={{ label: { style: { fontWeight: 'bolder', fontSize: 15 } } }} StepIconComponent={(p) => QontoStepIcon(p, animate)}>
+                        <StepLabel error={step.isError} sx={{ fontWeight: 'bolder', fontSize: 15 }} slots={{ stepIcon: (p) => QontoStepIcon(p, animate) }}>
                             {step.label}
                         </StepLabel>
                         {step.subtitle && <Regular sx={{ textAlign: 'center', fontSize: 13 }}>{step.subtitle}</Regular>}

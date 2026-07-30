@@ -32,7 +32,7 @@ export default function SectionLayout({ children, title, icon, sx, id, className
             <Box style={{ paddingBottom: 15, width: '100%' }}>
                 <Box className="d-flex align-items-center">
                     {icon && <AppIcon name={icon} className="me-2" sx={{ fontSize: 26, color: stylesResources.theme.palette.text.secondary }} />}
-                    <Bold color="textSecondary" fontSize={23}>
+                    <Bold color="textSecondary" sx={{ fontSize: 23 }}>
                         {title}
                     </Bold>
                 </Box>

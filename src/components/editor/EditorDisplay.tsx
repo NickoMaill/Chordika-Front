@@ -132,7 +132,7 @@ export default function EditorDisplay({ data, onClickDeleteGroup, onClickEditGro
                                         onStop={(p) => handleDragStop('bar', g.index, g.index, p)}
                                         axis="y"
                                     >
-                                        <Grid container id={`score-groups-${g.index}`} direction={'row'} spacing={2} alignItems={'center'} className="position-relative" sx={{ width: '100%' }}>
+                                        <Grid container id={`score-groups-${g.index}`} direction={'row'} spacing={2} className="position-relative align-items-center" sx={{ width: '100%' }}>
                                             {/* Score Bars */}
                                             {g.title && (
                                                 <Grid size={1.3}>

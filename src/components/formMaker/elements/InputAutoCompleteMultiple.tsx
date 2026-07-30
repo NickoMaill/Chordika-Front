@@ -130,7 +130,7 @@ export default function InputAutoCompleteMultiple({
                 disabled={disabled}
                 options={choices}
                 value={values}
-                isOptionEqualToValue={(option, value) => option.value === value.value}
+                isOptionEqualToValue={(option, value) => option.value === value}
                 onChange={onSelect}
                 getOptionLabel={(e: SelectOptionsType) => e.label ?? ''}
                 filterSelectedOptions
@@ -186,11 +186,13 @@ export default function InputAutoCompleteMultiple({
                         id={id + 'Field'}
                         onBlur={ssr ? onBlur : null}
                         {...params}
-                        InputProps={{
-                            ...params.InputProps,
-                            className: 'autocomplete-textfield-override',
-                            style: style,
-                            sx,
+                        slotProps={{
+                            input: {
+                                ...params.slotProps.input,
+                                className: 'autocomplete-textfield-override',
+                                style: style,
+                                sx,
+                            },
                         }}
                     />
                 )}

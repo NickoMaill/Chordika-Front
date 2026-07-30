@@ -16,7 +16,6 @@ export default function AuthMiddleware({ children, printable }: IAuthMiddleware)
     const { getCurrentRoute, pathname } = useNavigation();
     const { setIsNoAccess } = useAppContext();
 
-
     const navigate = useNavigate();
     const location = useLocation();
 

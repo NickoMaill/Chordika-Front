@@ -28,7 +28,7 @@ export const EditorInitialState = {
     data: null,
     isDataLoading: true,
     isPrintMode: false,
-    isDataSaving: false
+    isDataSaving: false,
 };
 
 export const editorReducer = (state: EditorState, action: EditorStateAction): EditorState => {

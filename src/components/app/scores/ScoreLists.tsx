@@ -141,13 +141,13 @@ const ScoreCard = memo(
                         <Grid size={6}>
                             <Italic>Version : {data.version ? data.version : '-'}</Italic>
                             <Regular>
-                                {data.tempo} BPM <AppIcon name="Circle" className="mx-1" sx={{ fontSize: '11px' }} />  {data.nume}/{data.denom}{' '}
+                                {data.tempo} BPM <AppIcon name="Circle" className="mx-1" sx={{ fontSize: '11px' }} /> {data.nume}/{data.denom}{' '}
                                 <AppIcon name="Circle" sx={{ fontSize: '11px' }} className="mx-1" /> {data.key}
                             </Regular>
                         </Grid>
-                        <Grid size={6} textAlign={'end'}>
+                        <Grid size={6} className="text-end">
                             {data.updatedAt && (
-                                <Italic component="span" className="mt-2" fontSize="0.76rem">
+                                <Italic component="span" className="mt-2" sx={{ fontSize: '0.76rem' }}>
                                     Modifié <u title={dayjs(data.updatedAt).format('DD/MM/YYYY HH:mm:ss')}>{appTool.formatFancyTime(dayjs(data.updatedAt))}</u>
                                 </Italic>
                             )}

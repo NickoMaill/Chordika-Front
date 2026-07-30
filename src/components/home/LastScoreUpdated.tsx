@@ -79,8 +79,7 @@ function ScoreElement({ score }: { score: Score }): JSX.Element {
         <Grid
             component={Link}
             sx={{ color: 'text.primary' }}
-            alignItems={'center'}
-            className="text-decoration-none p-2 px-3 m-1 hover-el rounded"
+            className="text-decoration-none p-2 px-3 m-1 hover-el rounded align-items-center"
             to={NavigationResource.buildPath('Editor', { scoreId: score.id })}
             container
         >
@@ -90,13 +89,13 @@ function ScoreElement({ score }: { score: Score }): JSX.Element {
                     {score.composer}
                 </Regular>
             </Grid>
-            <Grid size={1} alignItems={'end'}>
+            <Grid size={1} className="align-items-center">
                 <Chip color="primary" label={score.key} sx={{ minWidth: '50px' }} />
             </Grid>
-            <Grid size={1} alignItems={'end'}>
+            <Grid size={1} className="align-items-center">
                 <Chip color="primary" label={`${score.nume}/${score.denom}`} sx={{ minWidth: '50px' }} />
             </Grid>
-            <Grid size={2} justifyContent={'end'}>
+            <Grid size={2} className="justify-content-end">
                 <Regular variant="caption" className="fst-italic text-end w-100 d-block">
                     Modifiée {appTool.formatFancyTime(dayjs(score.updatedAt ?? score.addedAt))}
                 </Regular>

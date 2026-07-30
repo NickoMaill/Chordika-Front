@@ -84,14 +84,14 @@ export default function SetupMenu(): JSX.Element {
                 </IconButton>
             </Tooltip>
             <Menu disableScrollLock anchorEl={menuAnchor} onClose={openCloseMenu} open={isMenuOpen}>
-                <Box display={'flex'} flexDirection={'column'} alignItems={'center'}>
-                    <Box display={'flex'}>
-                        <Box padding={1} paddingInline={2} display="flex" alignItems="center">
+                <Box className="d-flex flex-column align-items-center">
+                    <Box className="d-flex">
+                        <Box className="d-flex align-items-center" sx={{ padding: 1, paddingInline: 2 }}>
                             <AppIcon color="warning" name="LightMode" />
                             <Switch checked={mode === 'dark'} onChange={onChangeScheme} />
                             <AppIcon name="DarkMode" />
                         </Box>
-                        <Box padding={1} paddingInline={2} display="flex" alignItems="center">
+                        <Box className="d-flex align-items-center" sx={{ padding: 1, paddingInline: 2 }}>
                             <img src={FR} width={22} />
                             <Switch checked={lang === 'en'} onChange={onSelectLang} />
                             <img src={EN} width={22} />

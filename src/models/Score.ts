@@ -136,7 +136,7 @@ export type ScorePageText = {
     size: {
         width: number;
         height: number;
-    }
+    };
 };
 
 export type BarsPayload = {

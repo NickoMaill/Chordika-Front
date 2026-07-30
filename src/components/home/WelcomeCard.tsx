@@ -26,10 +26,10 @@ export default function WelcomeCard(): JSX.Element {
     return (
         <Paper elevation={20} sx={{ bgcolor: 'background.default', maxWidth: '520px', width: '100%' }} className="p-5 text-center m-auto">
             <img src={RawLogo} width={84} height={84} className="mb-3" />
-            <Regular fontSize={'2rem'} fontWeight={600} component={'h1'} variant="h2">
+            <Regular sx={{ fontSize: '2rem', fontWeight: 600 }} component={'h1'} variant="h2">
                 Bienvenue sur Chordika
             </Regular>
-            <Regular className="mt-2 mb-4" color="secondary" lineHeight={1.6}>
+            <Regular className="mt-2 mb-4" color="secondary" sx={{ lineHeight: 1.6 }}>
                 Connectez vous pour retrouver votre bibliothèque de grilles, ou créez un compte pour commencer
             </Regular>
             <Box sx={{ display: 'grid', placeItems: 'center', gridTemplate: '1fr', width: '100%', gap: 2 }} className="mb-3">

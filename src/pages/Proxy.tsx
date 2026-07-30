@@ -81,7 +81,7 @@ export default function Proxy(): JSX.Element {
                 </Box>
             </Box>
             <Modal closable modalTitle={translate('proxy.choose') as string} onClose={openCloseModal} isOpen={isVisible}>
-                <Box minWidth="500px" className="d-flex flex-column justify-content-center align-items-center">
+                <Box sx={{ minWidth: '500px' }} className="d-flex flex-column justify-content-center align-items-center">
                     {proxies && proxies.length > 0 ? (
                         proxies.map((u, i) => (
                             <LoadingButton loading={loadingButtons[i]} key={i} onClick={() => setProxy(u.id, i)} variant="contained" sx={{ my: 1, width: '100%' }}>

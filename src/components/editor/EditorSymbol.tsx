@@ -1,5 +1,5 @@
 // #region IMPORTS -> /////////////////////////////////////
-import { JSX } from 'react'
+import { JSX } from 'react';
 import { getMusicSymbol, MusicSymbolName } from '~/types/musicSymbol';
 import { Regular } from '../common/Text';
 // #endregion IMPORTS -> //////////////////////////////////
@@ -7,7 +7,7 @@ import { Regular } from '../common/Text';
 // #region SINGLETON --> ////////////////////////////////////
 // #endregion SINGLETON --> /////////////////////////////////
 
-export default function EditorSymbol ({ symbol, fontSize = 45}: IEditorSymbols): JSX.Element {
+export default function EditorSymbol({ symbol, fontSize = 45 }: IEditorSymbols): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
     // #endregion STATE --> ////////////////////////////////////
 
@@ -21,12 +21,16 @@ export default function EditorSymbol ({ symbol, fontSize = 45}: IEditorSymbols):
     // #endregion USEEFFECT --> ////////////////////////////////
 
     // #region RENDER --> //////////////////////////////////////
-    return <Regular title={symbol} sx={{ fontFamily: "Bravura", fontSize }}>{getMusicSymbol(symbol)}</Regular>;
+    return (
+        <Regular title={symbol} sx={{ fontFamily: 'Bravura', fontSize }}>
+            {getMusicSymbol(symbol)}
+        </Regular>
+    );
     // #endregion RENDER --> ///////////////////////////////////
 }
 
 // #region IPROPS -->  /////////////////////////////////////
-interface IEditorSymbols { 
+interface IEditorSymbols {
     symbol: MusicSymbolName;
     fontSize?: number;
 }

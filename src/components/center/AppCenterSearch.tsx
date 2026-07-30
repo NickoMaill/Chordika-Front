@@ -86,7 +86,7 @@ export default function AppCenterSearch<T>({ searchFormStruct, onSubmitSearchFor
                         )}
                     </Box>
                 </Grid>
-                <Grid display="flex">
+                <Grid className="d-flex">
                     {filters && filters.length > 0 && (
                         <Button variant="outlined" sx={{ bgcolor: 'background.default' }} className="me-2" startIcon={<AppIcon name="TuneRounded" />} onClick={() => openCloseModal(false)}>
                             <Bold className="cursor-pointer">{translate('center.search.updateSearch')}</Bold>
@@ -107,7 +107,7 @@ export default function AppCenterSearch<T>({ searchFormStruct, onSubmitSearchFor
                         anchor="right"
                         onClose={() => openCloseModal(true)}
                     >
-                        <Box width={{ sm: '650px' }} display={'flex'} alignItems={'center'} justifyContent={'center'} flexDirection={'column'} className="px-5 position-relative">
+                        <Box sx={{ width: { sm: '650px' } }} className="d-flex align-items-center justify-content-center flex-column px-5 position-relative">
                             <IconButton aria-label="close" onClick={() => openCloseModal(false)} className="position-absolute top-0 start-0 m-1">
                                 <AppIcon name="Close" />
                             </IconButton>

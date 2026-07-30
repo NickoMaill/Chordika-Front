@@ -1,9 +1,7 @@
 // #region IMPORTS -> /////////////////////////////////////
-import { Box, Container, Grid, InputAdornment, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { Box, InputAdornment, MenuItem, Select, TextField, Typography } from '@mui/material';
 import { ChangeEvent, JSX, useMemo, useState } from 'react';
 import AppIcon from '~/components/common/AppIcon';
-import { Regular } from '~/components/common/Text';
-import EditorSymbol from '~/components/editor/EditorSymbol';
 import ContentLayout from '~/components/layout/ContentLayout';
 import MusicSymbolCard from '~/components/symbols/MusicSymbolCard';
 import { MusicSymbol, MusicSymbolItem, MusicSymbolList, MusicSymbolName } from '~/types/musicSymbol';
@@ -93,7 +91,7 @@ export default function Symbols(): JSX.Element {
                 </Select>
             </Box>
 
-            <Typography color="text.secondary" mb={2}>
+            <Typography color="text.secondary" sx={{ mb: 2 }}>
                 {filteredSymbols.length} symbole{filteredSymbols.length > 1 ? 's' : ''}
             </Typography>
 

@@ -91,7 +91,13 @@
 }
 
 div[rich-text-container] {
-    p, h1, h2, h3, h4, h5, h6 {
+    p,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
         margin: 0;
     }
 }
@@ -204,14 +210,16 @@ div[rich-text-container] {
     padding-inline: 1lh;
     padding-bottom: var(--f);
     // border-image: conic-gradient(#0008 0 0) 51% / var(--f);
-    clip-path: polygon(100% calc(100% - var(--f)),
-            100% 100%,
-            calc(100% - var(--f)) calc(100% - var(--f)),
-            var(--f) calc(100% - var(--f)),
-            0 100%,
-            0 calc(100% - var(--f)),
-            999px calc(100% - var(--f) - 999px),
-            calc(100% - 999px) calc(100% - var(--f) - 999px));
+    clip-path: polygon(
+        100% calc(100% - var(--f)),
+        100% 100%,
+        calc(100% - var(--f)) calc(100% - var(--f)),
+        var(--f) calc(100% - var(--f)),
+        0 100%,
+        0 calc(100% - var(--f)),
+        999px calc(100% - var(--f) - 999px),
+        calc(100% - 999px) calc(100% - var(--f) - 999px)
+    );
     transform: translate(calc((1 - cos(45deg)) * 100%), -100%) rotate(45deg);
     transform-origin: 0% 100%;
     background-color: #bd1550;
@@ -238,14 +246,16 @@ div[rich-text-container] {
 }
 
 .progress-bar-striped {
-    background-image: linear-gradient(45deg,
-            rgba(255, 255, 255, 0.15) 25%,
-            transparent 25%,
-            transparent 50%,
-            rgba(255, 255, 255, 0.15) 50%,
-            rgba(255, 255, 255, 0.15) 75%,
-            transparent 75%,
-            transparent);
+    background-image: linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.15) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.15) 50%,
+        rgba(255, 255, 255, 0.15) 75%,
+        transparent 75%,
+        transparent
+    );
     background-size: 1rem 1rem;
 }
 
@@ -441,7 +451,6 @@ td:hover .col-action {
 }
 
 @media print {
-
     /* Masquer toute la chrome d'UI */
     header,
     footer,
@@ -469,7 +478,7 @@ td:hover .col-action {
     html:has(#Editor),
     body:has(#Editor),
     #root:has(#Editor),
-    #root:has(#Editor)>.MuiBox-root,
+    #root:has(#Editor) > .MuiBox-root,
     main:has(#Editor) {
         height: auto !important;
         overflow: visible !important;
@@ -556,18 +565,18 @@ td:hover .col-action {
         padding: 0 !important;
     }
 
-    #ChordEditorContainer>.MuiContainer-root {
+    #ChordEditorContainer > .MuiContainer-root {
         width: auto !important;
         max-width: none !important;
         margin: 0 !important;
         padding: 0 !important;
     }
 
-    #ChordEditorContainer>.MuiContainer-root>.p-3 {
+    #ChordEditorContainer > .MuiContainer-root > .p-3 {
         padding: 0 !important;
     }
 
-    #toolbar+.MuiDivider-root {
+    #toolbar + .MuiDivider-root {
         display: none !important;
     }
 }

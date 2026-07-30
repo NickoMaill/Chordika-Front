@@ -18,39 +18,42 @@ export default function EditorGroupForm({ formRef, data }: IEditorAddBars): JSX.
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////
-    const formStruct: FormMakerType<FormMakerPartEnum.SEARCH> = useMemo(() => [
-        {
-            title: '',
-            type: FormMakerPartEnum.SEARCH,
-            content: [
-                {
-                    id: 'title',
-                    label: 'titre de la section',
-                    index: 1,
-                    size: 12,
-                    type: "text",
-                    value: data?.title
-                },
-                {
-                    id: 'nb',
-                    label: 'Nombre de mesures',
-                    index: 1,
-                    size: 12,
-                    required: true,
-                    type: "number",
-                    value: data?.content.length
-                },
-                {
-                    id: 'perLines',
-                    label: 'Mesures par ligne',
-                    index: 1,
-                    size: 12,
-                    type: "number",
-                    value: data?.maxLength
-                },
-            ],
-        },
-    ], [data]);
+    const formStruct: FormMakerType<FormMakerPartEnum.SEARCH> = useMemo(
+        () => [
+            {
+                title: '',
+                type: FormMakerPartEnum.SEARCH,
+                content: [
+                    {
+                        id: 'title',
+                        label: 'titre de la section',
+                        index: 1,
+                        size: 12,
+                        type: 'text',
+                        value: data?.title,
+                    },
+                    {
+                        id: 'nb',
+                        label: 'Nombre de mesures',
+                        index: 1,
+                        size: 12,
+                        required: true,
+                        type: 'number',
+                        value: data?.content.length,
+                    },
+                    {
+                        id: 'perLines',
+                        label: 'Mesures par ligne',
+                        index: 1,
+                        size: 12,
+                        type: 'number',
+                        value: data?.maxLength,
+                    },
+                ],
+            },
+        ],
+        [data]
+    );
     // #endregion METHODS --> //////////////////////////////////
 
     // #region USEEFFECT --> ///////////////////////////////////
@@ -64,6 +67,6 @@ export default function EditorGroupForm({ formRef, data }: IEditorAddBars): JSX.
 // #region IPROPS -->  /////////////////////////////////////
 interface IEditorAddBars {
     formRef: RefObject<HTMLFormElement>;
-    data?: ScoreBarGroup
+    data?: ScoreBarGroup;
 }
 // #enderegion IPROPS --> //////////////////////////////////

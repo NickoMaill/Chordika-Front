@@ -1,18 +1,15 @@
 // #region IMPORTS -> /////////////////////////////////////
 import { FocusEvent, JSX, ReactNode, useEffect, useState } from 'react';
 import { BarTypeEnum, ScoreBar, ScoreBarGroup } from '~/models/Score';
-import { Box, IconButton } from '@mui/material';
+import { Box } from '@mui/material';
 import AppRightClickMenu from '../common/AppRightClickMenu';
 import { MenuListOptionType } from '../common/AppMenuList';
 import { grey } from '@mui/material/colors';
 import { Bold } from '../common/Text';
-import AppIcon from '../common/AppIcon';
 import useEditorContext from '~/context/EditorContext';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
-const fontSize = 17;
-const btnIconSize = 17;
 // #endregion SINGLETON --> /////////////////////////////////
 
 export default function EditorBar({ group, bar, isFirstBar, isLastBar, onClickDelete, onClickUpdate, onUpdateCord }: IEditorBar): JSX.Element {
@@ -343,14 +340,14 @@ function BarContent({ bar, onUpdateChord }: IBarContent): JSX.Element {
                         <Bold
                             component="span"
                             className={`rounded ${isEditing ? 'd-flex justify-content-end' : ''} text-center align-middle bar-content`}
-                            fontSize={`${state.data.fontSize}px`}
-                            lineHeight={1}
                             sx={{
                                 backgroundColor: !x.chordName && !x.symbols ? grey[400] : null,
                                 display: 'block',
                                 minWidth: isEditing ? '50px' : `${state.data.fontSize}px`,
                                 minHeight: `${state.data.fontSize}px`,
                                 visibility: isEditing ? 'hidden' : 'visible',
+                                fontSize: `${state.data.fontSize}px`,
+                                lineHeight: 1,
                             }}
                         >
                             {x.symbols ? <></> : x.chordName}

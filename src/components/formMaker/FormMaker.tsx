@@ -289,7 +289,7 @@ export default function FormMaker<T>({
             );
         } else {
             return (
-                <Box key={index} display="flex" justifyContent="center" flexDirection="column" alignItems="center">
+                <Box key={index} className="d-flex justify-content-center flex-column align-items-center">
                     {groupedElement}
                 </Box>
             );

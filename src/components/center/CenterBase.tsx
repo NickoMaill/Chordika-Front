@@ -87,7 +87,7 @@ function DBCount(props: ICenterBase): JSX.Element {
             <Bolder sx={{ lineHeight: 1 }} variant="h5">
                 {props.totalDbCount}
             </Bolder>
-            <Regular component="span" fontSize="0.76rem">
+            <Regular component="span" sx={{ fontSize: '0.76rem' }}>
                 {translate('center.search.ref', {
                     entity: props.grammar[props.totalDbCount > 1 ? 'plural' : 'singular'].toLowerCase(),
                     fem: props.grammar.isFem ? 'e' : '',
@@ -100,8 +100,8 @@ function DBCount(props: ICenterBase): JSX.Element {
 
 function Filters(props: ICenterBase): JSX.Element {
     return (
-        <Box marginBottom={0}>
-            <Box display={'flex'} marginBottom={{ xs: 1, md: 0 }} flexWrap={'wrap'} justifyContent={'space-between'}>
+        <Box className="mb-0">
+            <Box className="d-flex flex-wrap justify-content-between" sx={{ marginBottom: { xs: 1, md: 0 } }}>
                 <AppCenterSearch grammar={props.grammar} onSubmitSearchForm={props.onSubmitSearchForm} searchFormStruct={props.searchForm} />
             </Box>
             <FilterFooter {...props} />
@@ -142,7 +142,7 @@ function SubmitSubFooter(): JSX.Element {
     const { goBack } = useNavigation();
     const { translate } = useResources();
     return (
-        <Box display="flex" justifyContent="center">
+        <Box className="d-flex justify-content-center">
             <Button variant="contained" className="ms-3" color="secondary" onClick={() => goBack()}>
                 {translate('common.back')}
             </Button>

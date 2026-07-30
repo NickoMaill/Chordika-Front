@@ -76,7 +76,7 @@ export default function AppCenterTable<T>({ baseProps, tableProps, handleMiniAct
                 <AppTable {...tableProps} isMini />
                 {allowMiniAdd && (
                     <Box className="d-flex justify-content-center p-3">
-                        <Link className="cursor-pointer" fontWeight={'bold'} onClick={() => handleMiniAction(GenericActionEnum.NEW)} component="a">
+                        <Link className="cursor-pointer fs-bold" onClick={() => handleMiniAction(GenericActionEnum.NEW)} component="a">
                             {translate('common.add')} {baseProps.grammar.singular.toLowerCase()}
                         </Link>
                     </Box>
@@ -165,7 +165,7 @@ function AppBulkModal(props: BulkModalProps): JSX.Element {
             isOpen={props.isOpen}
             dismissLabel={translate('common.close') as string}
         >
-            <Box marginBottom={2}>
+            <Box sx={{ marginBottom: 2 }}>
                 <Trans
                     i18nKey="center.bulk.bulkAddMessage"
                     values={{ grammar: props.grammar.plural, action: props.bulkType === BulkTypeEnum.ADD ? translate('common.youAdd') : translate('common.youUpdate') }}

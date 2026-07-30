@@ -167,7 +167,7 @@ export default function InputAutoComplete({
     }, [value]);
 
     useEffect(() => {
-        console.log(resetSignal)
+        console.log(resetSignal);
         if (previousResetSignal.current !== resetSignal) {
             previousResetSignal.current = resetSignal;
             ignoreExternalValueUntilEmpty.current = true;
@@ -183,7 +183,7 @@ export default function InputAutoComplete({
                 options={choices || options}
                 value={selected}
                 inputValue={inputValue}
-                isOptionEqualToValue={(option, value) => option.value === value.value}
+                isOptionEqualToValue={(option, value) => option.value === value}
                 onChange={onSelect}
                 onInputChange={onTextFieldChange}
                 getOptionLabel={(e: SelectOptionsType) => e.label ?? ''}
@@ -252,7 +252,7 @@ export default function InputAutoComplete({
                                   {...params}
                                   slotProps={{
                                       input: {
-                                          ...params.InputProps,
+                                          ...params.slotProps.input,
                                           className: 'autocomplete-textfield-override',
                                           style: style,
                                           name: includeTextField ? id + 'Field' : null,
@@ -264,7 +264,7 @@ export default function InputAutoComplete({
                                           endAdornment: (
                                               <>
                                                   {isLoading && <CircularProgress color="inherit" size={18} />}
-                                                  {params.InputProps.endAdornment}
+                                                  {params.slotProps.input.endAdornment}
                                               </>
                                           ),
                                       },

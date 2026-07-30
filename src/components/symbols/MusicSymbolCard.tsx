@@ -48,12 +48,12 @@ export default function MusicSymbolCard({ symbol, onClick }: IMusicSymbolCard): 
 
                 <Typography
                     variant="caption"
-                    textAlign="center"
                     sx={{
                         width: '100%',
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
                         whiteSpace: 'nowrap',
+                        textAlign: 'center',
                     }}
                     title={symbol.name}
                 >

@@ -1,5 +1,5 @@
 // #region IMPORTS -> /////////////////////////////////////
-import { JSX, useEffect, useState } from 'react'
+import { JSX, useEffect, useState } from 'react';
 import AppCard from '../common/AppCard';
 import { Box, CircularProgress } from '@mui/material';
 import { QueryResult } from '~/types/serverCoreType';
@@ -10,23 +10,23 @@ import { Italic } from '../common/Text';
 // #region SINGLETON --> ////////////////////////////////////
 // #endregion SINGLETON --> /////////////////////////////////
 
-export default function RepertoiresView (): JSX.Element {
+export default function RepertoiresView(): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [repertoires, setRepertoires] = useState<QueryResult<Repertoire>>(null)
+    const [repertoires, setRepertoires] = useState<QueryResult<Repertoire>>(null);
     // #endregion STATE --> ////////////////////////////////////
 
     // #region HOOKS --> ///////////////////////////////////////
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////
-    const load = (): void => {}
+    const load = (): void => {};
     // #endregion METHODS --> //////////////////////////////////
 
     // #region USEEFFECT --> ///////////////////////////////////
     useEffect(() => {
         load();
-    }, [])
+    }, []);
     // #endregion USEEFFECT --> ////////////////////////////////
 
     // #region RENDER --> //////////////////////////////////////

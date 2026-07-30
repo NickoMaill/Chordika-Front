@@ -54,22 +54,22 @@ export default function useServiceBase(): IUseServiceBase {
                     }
                 }
             }
-            
+
             if (error.code === 'need_mfa') {
                 setNeedMfa(true);
                 console.info(error);
                 return reject<T>(error);
             }
-            
+
             // gestion standard des erreurs
             if (error.code && error.message) {
                 switch (error.code) {
                     case 'error_happened':
-                        case 'sql_error': {
-                            const modalOption: ModalOptions = {
-                                title: 'Erreur',
-                                content: <StandardError error={error} />,
-                                size: 'lg',
+                    case 'sql_error': {
+                        const modalOption: ModalOptions = {
+                            title: 'Erreur',
+                            content: <StandardError error={error} />,
+                            size: 'lg',
                         };
                         openModal(modalOption);
                         return Promise.reject<T>(error);

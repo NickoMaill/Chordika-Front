@@ -66,10 +66,10 @@ export default function InputImportFile({ typeFile, filesLimit = 1, className = 
             {value && value.length > 0 ? (
                 [...value].map((file, i) => {
                     return (
-                        <Paper key={i} sx={{ padding: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 1 }}>
-                            <Box display="flex" alignItems={'center'}>
+                        <Paper key={i} className="d-flex align-items-center justify-content-between" sx={{ padding: 1, marginBottom: 1 }}>
+                            <Box className="d-flex align-items-center">
                                 <AppIcon sx={{ mr: 1 }} name={value[0].type.includes('image') ? 'Image' : 'InsertDriveFileOutlined'} />
-                                <Regular mt={0.3}>{file.name}</Regular>
+                                <Regular sx={{ mt: 0.3 }}>{file.name}</Regular>
                             </Box>
                             <IconButton onClick={() => deleteFiles(i)}>
                                 <AppIcon name="Close" />
@@ -138,12 +138,5 @@ interface IInputImportFile {
 
 export type AllowedFilesInput = FileExtension[];
 export type FileExtension =
-    | 'text/csv'
-    | 'text/pdf'
-    | 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    | 'application/xml'
-    | 'application/vnd.ms-excel'
-    | 'image/jpeg'
-    | 'image/webp'
-    | 'image/png';
+    'text/csv' | 'text/pdf' | 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' | 'application/xml' | 'application/vnd.ms-excel' | 'image/jpeg' | 'image/webp' | 'image/png';
 // #endregion IPROPS --> //////////////////////////////////

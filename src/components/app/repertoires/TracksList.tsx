@@ -29,19 +29,20 @@ export default function TracksList({ data }: ITracksList): JSX.Element {
 
     // #region METHODS --> /////////////////////////////////////
     const load = async (): Promise<void> => {
-        await getScoreLists({ limit: '1000' }).then((res) => {
-            if (res.totalRecords > 0) {
-                setScores(res.records);
-            }
-        })
-        .finally(() => setIsLoading(false));
+        await getScoreLists({ limit: '1000' })
+            .then((res) => {
+                if (res.totalRecords > 0) {
+                    setScores(res.records);
+                }
+            })
+            .finally(() => setIsLoading(false));
     };
 
     const buildOptions = (): void => {
         setOptions(scores.filter((x) => !list.some((l) => l.scoreId === x.id)).map((x) => ({ label: [x.title, x.composer, x.version].filter((y) => (y ?? '') !== '').join(' - '), value: x.id })));
     };
 
-    const resetAutocomplete = (): void => setResetCount((prev) => prev + 1)
+    const resetAutocomplete = (): void => setResetCount((prev) => prev + 1);
     // #endregion METHODS --> //////////////////////////////////
     // #region USEEFFECT --> ///////////////////////////////////
     useEffect(() => {
@@ -59,7 +60,7 @@ export default function TracksList({ data }: ITracksList): JSX.Element {
                 <InputBase id="Hello" label="Rechercher un morceau" size={10}>
                     <InputAutoComplete id="Hello" options={options} resetSignal={resetCount} disabled={isLoading} />
                 </InputBase>
-                <Grid size={{ lg: 2, md: 2, xs: 12 }} alignItems={'center'} className="mt-2">
+                <Grid size={{ lg: 2, md: 2, xs: 12 }} className="mt-2 align-items-center">
                     <Button variant="outlined" startIcon={<AppIcon name="AddRounded" />} sx={{ bgcolor: 'background.default' }} onClick={() => resetAutocomplete()}>
                         Ajouter à la liste
                     </Button>

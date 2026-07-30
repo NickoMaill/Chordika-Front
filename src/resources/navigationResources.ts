@@ -47,7 +47,7 @@ class NavigationResource {
             { name: 'Home', element: Homepage, path: this.routesPath.home, isAuthRequired: false, isIndex: true, title: 'Bienvenue sur Chordika', levelAccess: LevelAccessEnum.VISITOR },
             { name: 'Register', element: Register, path: this.routesPath.register, isAuthRequired: false, isIndex: false, title: "S'inscrire", levelAccess: LevelAccessEnum.VISITOR },
             // #endregion COMMON ROUTES -> ////////////////////////////////////////////////////
- 
+
             // #region AUTH REQUIRED -> ///////////////////////////////////////////////////////
             { name: 'Home', element: Homepage, path: this.routesPath.home, isAuthRequired: true, isIndex: true, title: 'NStream', levelAccess: LevelAccessEnum.USER },
             { name: 'Center', element: Center, path: this.routesPath.center, isAuthRequired: true, title: 'Modification', levelAccess: LevelAccessEnum.USER },
@@ -59,7 +59,7 @@ class NavigationResource {
             { name: 'ScoreAdd', element: Editor, path: this.routesPath.scoreAdd, isAuthRequired: true, isIndex: false, title: 'Ajouter une grille', levelAccess: LevelAccessEnum.USER },
             { name: 'ScoreImport', element: Editor, path: this.routesPath.scoreImport, isAuthRequired: true, isIndex: false, title: 'Ajouter une grille', levelAccess: LevelAccessEnum.USER },
             { name: 'Notifications', element: Notifications, path: this.routesPath.notifications, isAuthRequired: true, title: 'Notifications', levelAccess: LevelAccessEnum.USER },
-            { name: "Symbols", element: Symbols, path: this.routesPath.symbols, isAuthRequired: true, title: 'Dictionnaire des Symboles', levelAccess: LevelAccessEnum.USER },
+            { name: 'Symbols', element: Symbols, path: this.routesPath.symbols, isAuthRequired: true, title: 'Dictionnaire des Symboles', levelAccess: LevelAccessEnum.USER },
             // #endregion ROUTES -> ///////////////////////////////////////////////////////////
         ];
     }
@@ -91,7 +91,7 @@ class NavigationResource {
     public static get navigationHeaderInfo(): HeaderLinkType[] {
         return [
             { name: 'nav.myScore', link: `${NavigationResource.routesPath.center}/scores`, icon: 'MusicScore', redirect: true, levelAccess: LevelAccessEnum.USER },
-            { name: "repertoire.navLib", link: `${NavigationResource.routesPath.center}/repertoires`, icon: "FolderRounded", redirect: true, levelAccess: LevelAccessEnum.USER },
+            { name: 'repertoire.navLib', link: `${NavigationResource.routesPath.center}/repertoires`, icon: 'FolderRounded', redirect: true, levelAccess: LevelAccessEnum.USER },
             { name: 'divider', levelAccess: LevelAccessEnum.ADMIN },
             { name: 'nav.users', link: `${NavigationResource.routesPath.center}/users`, icon: 'Person', redirect: true, levelAccess: LevelAccessEnum.ADMIN },
             { name: 'nav.adverts', link: `${NavigationResource.routesPath.center}/annonces`, icon: 'Campaign', redirect: true, levelAccess: LevelAccessEnum.ADMIN },

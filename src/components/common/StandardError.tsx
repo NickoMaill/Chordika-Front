@@ -38,11 +38,11 @@ export default function StandardError({ error }: IStandardError): JSX.Element {
 
     return (
         <>
-            <Box className="errortext" sx={{ backgroundColor: stylesResources.theme.palette.grey[300], borderRadius: 1 }} minWidth="500px" width="100%">
+            <Box className="errortext" sx={{ backgroundColor: stylesResources.theme.palette.grey[300], borderRadius: 1, minWidth: '500px', width: '100%' }}>
                 <Box>
                     <Box className="errortext w-100 d-flex flex-column align-items-center justify-content-center pt-3">
                         <Box className="w-75" component="form" action="SQLError.aspx" method="post">
-                            <Regular fontSize={13} textAlign={'center'}>
+                            <Regular sx={{ fontSize: 13 }} className="text-center">
                                 <b>{translate('error.errorBoundary.sorry')}</b> {translate('error.errorBoundary.firstErrorMessage')}{' '}
                                 <b style={{ textDecoration: 'underline', color: 'blue' }}>
                                     <a href={translate('error.errorBoundary.supportEmail') as string}>{translate('error.errorBoundary.technicalStaff')}</a>
@@ -53,7 +53,7 @@ export default function StandardError({ error }: IStandardError): JSX.Element {
                                 <br />
                                 {translate('error.errorBoundary.toSendMessage')}
                                 <br />
-                                <Regular fontSize={13} fontWeight={'bold'} component={'span'} color={'#E00'}>
+                                <Regular sx={{ fontSize: 13 }} className="fw-bold" component={'span'} color={'#E00'}>
                                     {translate('error.errorBoundary.pleaseSend')}
                                 </Regular>{' '}
                                 {translate('error.errorBoundary.thenClick')} "<b>{translate('common.sendMessage')}</b>"
@@ -62,7 +62,7 @@ export default function StandardError({ error }: IStandardError): JSX.Element {
                             <InputTextAreaField sx={{ width: '100%' }} showLabel={false} rows={5} id="Body" label="message" />
                             <br />
                             <input type="hidden" defaultValue={email} name="From" />
-                            <Box display="flex" alignItems="center" justifyContent="center" marginBottom={1}>
+                            <Box className="d-flex align-items-center justify-content-center mb-2">
                                 <Button
                                     type="submit"
                                     variant="contained"

@@ -7,7 +7,7 @@ import { JSX } from 'react';
 export default function Text({ iText, iArgs, weight = 'Regular', ...props }: IText): JSX.Element {
     const { translate } = useResources();
     return (
-        <Typography {...props} fontWeight={weight}>
+        <Typography {...props} sx={{ fontWeight: weight }}>
             {translate(iText, iArgs)}
         </Typography>
     );
@@ -18,19 +18,19 @@ export function Regular(props: TypographyProps): JSX.Element {
 }
 
 export function Bold(props: TypographyProps): JSX.Element {
-    return <Typography {...props} fontWeight="Bold" />;
+    return <Typography {...props} sx={{ fontWeight: 'bold' }} />;
 }
 
 export function Bolder(props: TypographyProps): JSX.Element {
-    return <Typography {...props} fontWeight="Bolder" />;
+    return <Typography {...props} sx={{ fontWeight: 'bolder' }} />;
 }
 
 export function Thin(props: TypographyProps): JSX.Element {
-    return <Typography {...props} fontWeight="Thin" />;
+    return <Typography {...props} sx={{ fontWeight: 'thin' }} />;
 }
 
 export function Italic(props: TypographyProps): JSX.Element {
-    return <Typography {...props} fontStyle="italic" />;
+    return <Typography {...props} sx={{ fontStyle: 'italic' }} />;
 }
 
 interface IText {

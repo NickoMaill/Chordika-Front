@@ -201,7 +201,7 @@ export default function useEditorActions(): IUseEditorActions {
             size: {
                 width: 50,
                 height: 150,
-            }
+            },
         };
         datas.content[0].texts.push(t);
         dispatch({ type: 'SET_DATA', payload: datas });
@@ -210,15 +210,15 @@ export default function useEditorActions(): IUseEditorActions {
     const updateText = (text: string, index: number): void => {
         const datas = state.data;
         datas.content[0].texts[index].content = text;
-        console.log(text, index)
+        console.log(text, index);
         dispatch({ type: 'SET_DATA', payload: datas });
-    }
+    };
 
-    const updateSizeText = (size: { width: number; height: number; }, index: number): void => {
+    const updateSizeText = (size: { width: number; height: number }, index: number): void => {
         const datas = state.data;
         datas.content[0].texts[index].size = size;
         dispatch({ type: 'SET_DATA', payload: datas });
-    }
+    };
     // #endregion METHODS --> //////////////////////////////////
 
     // #region USEEFFECT --> ///////////////////////////////////
@@ -236,7 +236,7 @@ export default function useEditorActions(): IUseEditorActions {
         setFontSize,
         addText,
         updateText,
-        updateSizeText
+        updateSizeText,
     };
     // #endregion RENDER --> ///////////////////////////////////
 }
@@ -253,6 +253,6 @@ interface IUseEditorActions {
     setFontSize: (fs: number) => void;
     addText: (text: string) => void;
     updateText: (text: string, index: number) => void;
-    updateSizeText: (size: { width: number; height: number; }, index: number) => void
+    updateSizeText: (size: { width: number; height: number }, index: number) => void;
 }
 // #enderegion IPROPS --> //////////////////////////////////

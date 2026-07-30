@@ -29,7 +29,7 @@ export default function AppBox({ title, text, icon, customBackUrl, showBack = tr
 
     // #region RENDER --> //////////////////////////////////////
     return (
-        <Box display="flex" alignItems="center" flexDirection="column">
+        <Box className="d-flex align-items-center flex-column">
             <AppCard title={title as string} sx={{ width: '100%' }} icon={icon}>
                 <Regular>{text}</Regular>
             </AppCard>

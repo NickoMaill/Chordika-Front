@@ -56,7 +56,7 @@ export default function InputCheckBoxField({ disabled, options, id, onChange, va
     return (
         <>
             <FormGroup sx={{ flexGrow: 1 }} onChange={handleChange}>
-                <Grid container wrap="wrap" flexWrap="wrap" spacing={spacing ?? 2}>
+                <Grid container wrap="wrap" className="flex-wrap" spacing={spacing ?? 2}>
                     {options.map((item, i) => {
                         let err = null;
                         if (checkboxError && item.value === checkboxError.name) {

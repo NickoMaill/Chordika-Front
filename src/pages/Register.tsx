@@ -134,10 +134,10 @@ export default function Register(): JSX.Element {
                 <Paper elevation={20} className="px-5 py-4 m-auto mt-4">
                     <Box className="text-center">
                         <img src={RawLogo} width={50} height={50} className="mb-2" />
-                        <Regular fontSize={'2rem'} fontWeight={600} component={'h1'} variant="h2">
+                        <Regular sx={{ fontSize: '2rem', fontWeight: 600 }} component={'h1'} variant="h2">
                             Créer un compte
                         </Regular>
-                        <Regular className="mt-2 mb-4" color="secondary" lineHeight={1.6}>
+                        <Regular className="mt-2 mb-4" color="secondary" sx={{ lineHeight: 1.6 }}>
                             Commencez à organiser vos grilles et votre répertoire musical.
                         </Regular>
                     </Box>

@@ -34,8 +34,7 @@ export default function ToolTips({ textContent, children }: IToolTips): JSX.Elem
     // #region RENDER --> //////////////////////////////////////
     return (
         <Box
-            paddingLeft={0.5}
-            sx={{ marginBottom: -1 }}
+            sx={{ marginBottom: -1, paddingLeft: 0.5 }}
             className="position-relative"
             component="div"
             aria-owns={anchorEl ? 'mouse-over-popover' : null}

@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 export type ButtonGroupOptionsType = MenuListOptionType<{ externalLink?: string; iconPosition?: 'right' | 'left'; iconFontSize?: string | number; isLoading?: boolean }>;
 // #endregion SINGLETON --> /////////////////////////////////
 
-export default function AppButtonGroup({ options, size = 'medium', color, labelAsTip = false, orientation = "horizontal" }: IAppButtonGroup): JSX.Element {
+export default function AppButtonGroup({ options, size = 'medium', color, labelAsTip = false, orientation = 'horizontal' }: IAppButtonGroup): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
     // #endregion STATE --> ////////////////////////////////////
 
@@ -52,7 +52,11 @@ export default function AppButtonGroup({ options, size = 'medium', color, labelA
                             id={o.id}
                             {...props}
                         >
-                            {isLabelAndIcon || labelVisible ? o.label : o.icon && !labelVisible ? <AppIcon name={o.icon} sx={{ fontSize: o.iconFontSize, color:  o.iconColor ? `text.${o.iconColor}` : "inherit" }} /> : null}
+                            {isLabelAndIcon || labelVisible ? (
+                                o.label
+                            ) : o.icon && !labelVisible ? (
+                                <AppIcon name={o.icon} sx={{ fontSize: o.iconFontSize, color: o.iconColor ? `text.${o.iconColor}` : 'inherit' }} />
+                            ) : null}
                         </Button>
                     </Tooltip>
                 );

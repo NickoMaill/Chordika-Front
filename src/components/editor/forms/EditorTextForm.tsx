@@ -41,9 +41,7 @@ export default function EditorTextForm({ formRef, value }: IEditorTextForm): JSX
     // #endregion USEEFFECT --> ////////////////////////////////
 
     // #region RENDER --> //////////////////////////////////////
-    return (
-        <FormMaker structure={struct} showBottom={false} formRef={formRef} />
-    );
+    return <FormMaker structure={struct} showBottom={false} formRef={formRef} />;
     // #endregion RENDER --> ///////////////////////////////////
 }
 

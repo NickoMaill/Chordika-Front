@@ -56,7 +56,7 @@ export default function Modal({
                     children
                 ) : (
                     <>
-                        <Box display={'flex'} justifyContent={modalTitle ? 'space-between' : 'end'}>
+                        <Box className={`d-flex justify-content-${modalTitle ? 'between' : 'end'}`}>
                             {modalTitle && (
                                 <DialogTitle id="customized-dialog-title" sx={{ m: 0, p: 1.3 }}>
                                     {modalTitle}
@@ -90,7 +90,7 @@ export default function Modal({
                         {modalAction && (
                             <DialogActions>
                                 <Divider />
-                                <Box margin={0.6}>
+                                <Box sx={{ margin: 0.6 }}>
                                     <Button sx={{ marginRight: 2 }} autoFocus variant="contained" color="secondary" onClick={onClose}>
                                         {dismissLabel}
                                     </Button>

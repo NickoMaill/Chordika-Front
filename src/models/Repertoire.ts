@@ -1,4 +1,4 @@
-import { Score } from "./Score";
+import { Score } from './Score';
 
 export type Repertoire = {
     id: number;
@@ -8,7 +8,7 @@ export type Repertoire = {
     addedAt: string;
     updatedAt: string;
     scores?: ScoreRepertoire[];
-}
+};
 
 export type ScoreRepertoire = {
     id: number;
@@ -18,4 +18,4 @@ export type ScoreRepertoire = {
     addedAt: string;
     updatedAt: string;
     score?: Score;
-}
+};

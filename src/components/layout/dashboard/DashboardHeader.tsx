@@ -73,17 +73,16 @@ export default function DashboardHeader({ logo, title, menuOpen, onToggleMenu }:
             <Toolbar sx={{ backgroundColor: 'inherit', mx: { xs: -0.75, sm: -1 } }}>
                 <Stack
                     direction="row"
-                    justifyContent="space-between"
-                    alignItems="center"
+                    className="justify-content-between align-items-center"
                     sx={{
                         flexWrap: 'wrap',
                         width: '100%',
                     }}
                 >
-                    <Stack direction="row" alignItems="center">
+                    <Stack direction="row" className="align-items-center">
                         <Box sx={{ mr: 1 }}>{getMenuIcon(menuOpen)}</Box>
                         <Link to={NavigationResource.routesPath.home} style={{ textDecoration: 'none' }}>
-                            <Stack direction="row" alignItems="center">
+                            <Stack direction="row" className="align-items-center">
                                 {logo ? <LogoContainer>{logo}</LogoContainer> : null}
                                 {title ? (
                                     <Typography
@@ -102,8 +101,8 @@ export default function DashboardHeader({ logo, title, menuOpen, onToggleMenu }:
                             </Stack>
                         </Link>
                     </Stack>
-                    <Stack direction="row" alignItems="center" spacing={1}>
-                        <Stack direction="row" alignItems="center" spacing={1}>
+                    <Stack direction="row" className="align-items-center" spacing={1}>
+                        <Stack direction="row" className="align-items-center" spacing={1}>
                             {configManager.getConfig.APP_ENABLE_NOTIFS && <NotificationMenu />}
                             {accessLevel === LevelAccessEnum.ADMIN && <SetupMenu />}
                         </Stack>

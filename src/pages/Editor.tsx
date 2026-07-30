@@ -39,14 +39,13 @@ export default function Editor(): JSX.Element {
         }
 
         const token = searchParams.get('printToken');
-        checkPrintToken(token, scoreId)
-        .then((res) => {
+        checkPrintToken(token, scoreId).then((res) => {
             if (res.success) {
                 setIsChecking(false);
             } else {
                 setIsNoAccess(true);
             }
-        })
+        });
     };
     // #endregion METHODS --> //////////////////////////////////
 

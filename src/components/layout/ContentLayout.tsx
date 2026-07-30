@@ -43,7 +43,7 @@ export default function ContentLayout({
         <Container maxWidth="xl">
             {showTitle && (
                 <>
-                    <Grid direction={'row'} className="mb-3" alignItems={'center'} container>
+                    <Grid direction={'row'} className="mb-3 align-items-center" container>
                         <Grid size={actions ? { sm: 7, xs: 12 } : 12}>
                             {AppCtx.layoutLinks.length > 0 && showBreadcrumbs && (
                                 <Breadcrumbs className="mb-2">
@@ -77,7 +77,7 @@ export default function ContentLayout({
                             )}
                         </Grid>
                         {actions && (
-                            <Grid size={{ sm: 5, xs: 12 }} sx={{ marginTop: { xs: 1, sm: 0 } }} display={'flex'} justifyContent={{ sm: 'end', xs: 'start' }}>
+                            <Grid size={{ sm: 5, xs: 12 }} sx={{ marginTop: { xs: 1, sm: 0 }, justifyContent: { sm: 'end', xs: 'start' }, display: 'flex' }}>
                                 {actions}
                             </Grid>
                         )}

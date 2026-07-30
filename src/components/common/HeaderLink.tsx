@@ -25,7 +25,7 @@ export default function HeaderLink({ link, title, label }: IHeaderLink): JSX.Ele
 
     // #region RENDER --> //////////////////////////////////////
     return (
-        <Box position="relative" className="px-3">
+        <Box className="px-3 position-relative">
             <Link className={`nav-link text-nowrap`} to={link} title={title}>
                 {label}
             </Link>

@@ -31,9 +31,8 @@ export default function AppProgressBar({
     return (
         <Box className="progress w-100 position-relative" sx={{ height: `${height}rem`, backgroundColor: stylesResources.theme.palette.grey[300] }} role="progressbar">
             <Box
-                sx={{ backgroundColor: color }}
+                sx={{ backgroundColor: color, width: `${percent}%` }}
                 className={`progress-bar ${animate && (percent < 100 || alwaysStripped) ? 'progress-bar-striped' : ''}${animate ? ' progress-bar-animated' : ''} `}
-                width={`${percent}%`}
             />
             {showPercent && (
                 <Regular variant="caption" sx={{ transform: 'translate(-50%, -50%)' }} className="position-absolute top-50 start-50 dynamic-text">

@@ -40,13 +40,13 @@ export default function AppFullPageModal({ children, modalTitle, isOpen, onClose
     // #region RENDER --> //////////////////////////////////////
     return (
         <>
-            <Dialog fullScreen open={isOpen} onClose={onClose} TransitionComponent={Transition}>
+            <Dialog fullScreen open={isOpen} onClose={onClose} slots={{ transition: Transition }}>
                 <AppBar sx={{ justifyContent: 'center', minHeight: '56px', position: 'relative' }}>
                     <Toolbar>
                         <IconButton edge="start" color="inherit" onClick={onClose} aria-label="close">
                             <CloseIcon />
                         </IconButton>
-                        <Box display={'flex'} alignItems={'center'}>
+                        <Box className="d-flex align-items-center">
                             <Typography sx={{ ml: 2, flex: 1, alignItems: 'center', mr: 1 }} variant="h6" component="h6">
                                 {modalTitle}
                             </Typography>
@@ -54,7 +54,7 @@ export default function AppFullPageModal({ children, modalTitle, isOpen, onClose
                         </Box>
                     </Toolbar>
                 </AppBar>
-                <Box padding={2}>{children}</Box>
+                <Box sx={{ padding: 2 }}>{children}</Box>
             </Dialog>
         </>
     );

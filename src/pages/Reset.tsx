@@ -184,7 +184,7 @@ function ResetForm({ opt, onSubmit, onChange, errorMsg, isSuccess, isError, isLo
 
     return (
         <Container sx={{ display: 'flex', justifyContent: 'center' }} maxWidth={'lg'}>
-            <Box maxWidth={'400px'} sx={{ marginTop: { xs: 1, md: 8, sm: 3 } }}>
+            <Box sx={{ marginTop: { xs: 1, md: 8, sm: 3 }, maxWidth: '400px' }}>
                 <Box className="d-flex align-items-center mb-4">
                     <Box component="img" sx={{ height: { xs: 60, sm: 80 }, width: { xs: 80, sm: 100 }, marginRight: 2 }} src={logo} />
                     <Bold component="h1" variant="h4" color="secondary">
@@ -240,7 +240,7 @@ function ResetForm({ opt, onSubmit, onChange, errorMsg, isSuccess, isError, isLo
                     </Box>
                     <Box className="row mb-3 w-100" id="confirm">
                         <Box id="popover-password w-100">
-                            <Box minWidth={'260px'}>
+                            <Box sx={{ minWidth: '260px' }}>
                                 <Box className="progress">
                                     <LinearProgress
                                         variant="determinate"

@@ -130,7 +130,7 @@ function useSessionService(): IUseSessionService {
                 switch ((error as AppError).code) {
                     case 'no_session':
                     case 'no_access_granted':
-                    case "token_invalid":
+                    case 'token_invalid':
                         return false;
                     case 'session_expired':
                         return false;
@@ -183,7 +183,7 @@ function useSessionService(): IUseSessionService {
     const checkPrintToken = async (token: string, id: string): Promise<{ success: boolean }> => {
         const response = await asServicePromise<{ success: boolean }>(() => get(`scores/${id}/print/check?printToken=${token}`), false);
         return response;
-    }
+    };
 
     const getSessions = async (userId: number, limit: number = 20, offset: number = 0, showAll: boolean = false): Promise<QueryResult<UserDeviceSessions>> => {
         const res = await asServicePromise<QueryResult<UserDeviceSessions>>(() => get(`users/${userId}/sessions?limit=${limit}&offset=${offset}&showAll=${showAll}`));

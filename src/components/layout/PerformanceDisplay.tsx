@@ -51,8 +51,8 @@ export default function PerformanceDisplay({ perf }: IPerformanceDisplay): JSX.E
                     })}
                 </TableBody>
             </Table>
-            <Box paddingLeft={2} paddingBlock={2} display={'flex'}>
-                <Bold marginRight={1}>Total Execution</Bold>
+            <Box sx={{ paddingLeft: 2, paddingBlock: 2 }} className="d-flex">
+                <Bold sx={{ marginRight: 1 }}>Total Execution</Bold>
                 <Regular>{Math.round(perf.data.total).toLocaleString()} ms</Regular>
             </Box>
             <Divider />

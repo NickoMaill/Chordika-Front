@@ -205,7 +205,7 @@ function PasswordStrength({ id, strength }: { id: string; strength: PasswordStre
     return (
         <Grid container spacing={1} component={'div'} id={id + 'PasswordMonitor'} className="my-2">
             {getValues().map((c, i) => (
-                <Grid size={3} sx={{ bgcolor: c }} component={'span'} key={i} height={5} className="rounded" />
+                <Grid size={3} sx={{ bgcolor: c, height: 5 }} component={'span'} key={i} className="rounded" />
             ))}
         </Grid>
     );

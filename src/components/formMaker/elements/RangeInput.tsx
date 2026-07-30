@@ -34,16 +34,18 @@ export default function RangeInput({ style, inputStyle, disabled, required, onCh
             fullWidth
             onChange={handleChange}
             error={error}
-            InputProps={{
-                style: style,
-                inputProps: { style: inputStyle },
-                startAdornment: (
-                    <select>
-                        <option>=</option>
-                        <option>{'>'}</option>
-                        <option>{'<'}</option>
-                    </select>
-                ),
+            slotProps={{
+                input: {
+                    style: style,
+                    inputProps: { style: inputStyle },
+                    startAdornment: (
+                        <select>
+                            <option>=</option>
+                            <option>{'>'}</option>
+                            <option>{'<'}</option>
+                        </select>
+                    ),
+                },
             }}
         />
     );

@@ -82,9 +82,9 @@ export default function ErrorHandler({ error }: FallbackProps): JSX.Element {
     return (
         <Card sx={{ margin: 1, maxWidth: '800px' }}>
             <Box>
-                <Box padding={2}>
+                <Box sx={{ padding: 2 }}>
                     <Box component="form" method="POST" style={{ maxWidth: 800 }}>
-                        <Regular fontSize={13} textAlign={'center'}>
+                        <Regular sx={{ fontSize: 13, textAlign: 'center' }}>
                             <b>{translate('error.errorBoundary.sorry')}</b> {translate('error.errorBoundary.firstErrorMessage')}{' '}
                             <b style={{ textDecoration: 'underline', color: 'blue' }}>
                                 <a href={translate('error.errorBoundary.supportEmail') as string}>{translate('error.errorBoundary.technicalStaff')}</a>
@@ -95,7 +95,7 @@ export default function ErrorHandler({ error }: FallbackProps): JSX.Element {
                             <br />
                             {translate('error.errorBoundary.toSendMessage')}
                             <br />
-                            <Regular fontSize={13} fontWeight={'bold'} component={'span'} color={'#E00'}>
+                            <Regular sx={{ fontSize: 13, fontWeight: 'bold' }} component={'span'} color={'#E00'}>
                                 {translate('error.errorBoundary.pleaseSend')}
                             </Regular>{' '}
                             {translate('error.errorBoundary.thenClick')} "<b>{translate('common.sendMessage')}</b>"
@@ -104,7 +104,7 @@ export default function ErrorHandler({ error }: FallbackProps): JSX.Element {
                         <InputTextAreaField sx={{ width: '100%' }} showLabel={false} rows={5} id="Body" label="message" />
                         <br />
                         <input type="hidden" defaultValue={email} name="From" />
-                        <Box display="flex" alignItems="center" justifyContent="center" marginBottom={1}>
+                        <Box className="d-flex align-items-center justify-content-center" sx={{ marginBottom: 1 }}>
                             <Button
                                 type="submit"
                                 variant="contained"

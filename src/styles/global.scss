@@ -1635,15 +1635,15 @@
 }
 
 .shadow-sm {
-    box-shadow: var($bs-box-shadow-sm) !important;
+    box-shadow: $bs-box-shadow-sm !important;
 }
 
 .shadow {
-    box-shadow: var($bs-box-shadow) !important;
+    box-shadow: $bs-box-shadow !important;
 }
 
 .shadow-lg {
-    box-shadow: var($bs-box-shadow-lg) !important;
+    box-shadow: $bs-box-shadow-lg !important;
 }
 
 @media (min-width: 576px) {

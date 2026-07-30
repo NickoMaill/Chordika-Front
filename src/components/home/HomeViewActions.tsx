@@ -16,7 +16,7 @@ export default function HomeViewActions(): JSX.Element {
 
     // #region METHODS --> /////////////////////////////////////
     const options: ButtonGroupOptionsType[] = [
-        { label: 'Créer une grille', icon: 'AddRounded', iconPosition: 'left', href: "/center/scores/new" },
+        { label: 'Créer une grille', icon: 'AddRounded', iconPosition: 'left', href: '/center/scores/new' },
         { label: 'Créer un repertoire', icon: 'FolderOpenRounded', iconPosition: 'left', href: '/center/repertoires/new' },
         { label: 'Afficher vos favoris', icon: 'StarRounded', iconPosition: 'left' },
         { label: 'Importer une grille', icon: 'DownloadRounded', iconPosition: 'left', disabled: true },

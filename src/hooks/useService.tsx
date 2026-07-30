@@ -174,12 +174,17 @@ export default function useService(): IUseServiceApi {
 
         let fileName = 'default-filename.txt';
         const content = response.headers.get('Content-Disposition');
-        console.log([...response.headers.entries()])
+        console.log([...response.headers.entries()]);
         if (content) {
             const parts = content.split(';');
             const founded = parts.find((p) => p.trim().startsWith('filename='));
             if (founded) {
-                fileName = decodeURIComponent(founded.trim().replace('filename=', '').replace(/^["']|["']$/g, ""));
+                fileName = decodeURIComponent(
+                    founded
+                        .trim()
+                        .replace('filename=', '')
+                        .replace(/^["']|["']$/g, '')
+                );
             }
         }
 

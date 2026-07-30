@@ -161,6 +161,7 @@ export default function RangeDateField({ id, required, value = '', openTo = 'day
                                 textField: {
                                     required,
                                     className: 'w-100',
+
                                     sx: {
                                         margin: 0,
                                         [`& .MuiPickersInputBase-root`]: {
@@ -170,6 +171,7 @@ export default function RangeDateField({ id, required, value = '', openTo = 'day
                                             padding: '0px 9px 0px 9px',
                                         },
                                     },
+
                                     startAdornment: (
                                         <Select
                                             renderValue={renderValue}
@@ -195,10 +197,13 @@ export default function RangeDateField({ id, required, value = '', openTo = 'day
                                             <MenuItem value="del">Effacer</MenuItem>
                                         </Select>
                                     ),
-                                    InputProps: {
-                                        sx: {
-                                            borderStartEndRadius: rangeType?.includes('d') && isOverMdViewport ? 0 : null,
-                                            borderEndEndRadius: rangeType?.includes('d') && isOverMdViewport ? 0 : null,
+
+                                    slotProps: {
+                                        input: {
+                                            sx: {
+                                                borderStartEndRadius: rangeType?.includes('d') && isOverMdViewport ? 0 : null,
+                                                borderEndEndRadius: rangeType?.includes('d') && isOverMdViewport ? 0 : null,
+                                            },
                                         },
                                     },
                                 },
@@ -217,18 +222,19 @@ export default function RangeDateField({ id, required, value = '', openTo = 'day
                                 slotProps={{
                                     textField: {
                                         required,
-                                        placeholder: 'JJ/MM/AAAA',
                                         className: 'w-100',
                                         sx: {
                                             [`& .${pickersInputBaseClasses.root} .${pickersInputBaseClasses.root.replace('root', 'sectionsContainer')}`]: {
                                                 padding: '10px 0px',
                                             },
                                         },
-                                        InputProps: {
-                                            startAdornment: <b className="pe-2">Au</b>,
-                                            sx: {
-                                                borderStartStartRadius: rangeType?.includes('d') && isOverMdViewport ? 0 : null,
-                                                borderEndStartRadius: rangeType?.includes('d') && isOverMdViewport ? 0 : null,
+                                        slotProps: {
+                                            input: {
+                                                startAdornment: <b className="pe-2">Au</b>,
+                                                sx: {
+                                                    borderStartStartRadius: rangeType?.includes('d') && isOverMdViewport ? 0 : null,
+                                                    borderEndStartRadius: rangeType?.includes('d') && isOverMdViewport ? 0 : null,
+                                                },
                                             },
                                         },
                                     },

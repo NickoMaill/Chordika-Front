@@ -213,8 +213,8 @@ export default function Login(): JSX.Element {
                 <></>
             ) : (
                 <Container sx={{ display: 'flex', justifyContent: 'center' }} maxWidth={'lg'}>
-                    <Box maxWidth={'400px'} sx={{ marginTop: { xs: 1, md: 8, sm: 3 } }}>
-                        <Box display="flex" alignItems="end" justifyContent="start" marginBottom={2}>
+                    <Box sx={{ marginTop: { xs: 1, md: 8, sm: 3 }, maxWidth: '400px' }}>
+                        <Box className="d-flex align-items-center justify-content-start" sx={{ marginBottom: 2 }}>
                             <Bold component="h1" variant="h4" color="primary">
                                 {title}
                             </Bold>
@@ -254,7 +254,9 @@ function LoginForm({ isError, onSubmit, isLoading, messageError, showError, onCl
             <Box component="form" onSubmit={onSubmit} noValidate sx={{ mt: 1 }}>
                 <TextField
                     required={true}
-                    InputProps={{ startAdornment: <EmailIcon color="primary" sx={{ marginRight: 1 }} /> }}
+                    slotProps={{
+                        input: { startAdornment: <EmailIcon color="primary" sx={{ marginRight: 1 }} /> },
+                    }}
                     error={isError}
                     margin="normal"
                     fullWidth
@@ -268,7 +270,10 @@ function LoginForm({ isError, onSubmit, isLoading, messageError, showError, onCl
                 />
                 <TextField
                     required
-                    InputProps={{ startAdornment: <LockIcon color="primary" sx={{ marginRight: 1 }} /> }}
+                    slotProps={{
+                        input: { startAdornment: <LockIcon color="primary" sx={{ marginRight: 1 }} /> },
+                    }}
+
                     error={isError}
                     margin="normal"
                     fullWidth
@@ -317,7 +322,7 @@ function OtpForm({ onComplete, onResend, resendWaitCount = 10, isError, messageE
                 <Trans i18nKey="login.MfaDetails" values={{ username: Ses.fullName, phoneNumber: Ses.phone }} />
             </Regular>
             <InputOTPField id="otp" error={isError} onComplete={onComplete} />
-            <Box display="flex" mt={1}>
+            <Box className="d-flex" sx={{ mt: 1 }}>
                 <Box>
                     <Regular sx={{ mb: 1 }} variant="body2">
                         {translate('login.resendMfa')}{' '}
@@ -352,13 +357,15 @@ function ResetForm(): JSX.Element {
 
     return (
         <>
-            <Regular marginBottom={1}>{translate('login.resetMessage')}</Regular>
-            <Bold marginBottom={1} textAlign="left" variant="body2">
+            <Regular sx={{ marginBottom: 1 }}>{translate('login.resetMessage')}</Regular>
+            <Bold sx={{ marginBottom: 1 }} className="text-left" variant="body2">
                 {translate('login.resetDetails')}
             </Bold>
             <Box component="form" onSubmit={null}>
                 <TextField
-                    InputProps={{ startAdornment: <EmailIcon color="primary" sx={{ marginRight: 1 }} /> }}
+                    slotProps={{
+                        input: { startAdornment: <EmailIcon color="primary" sx={{ marginRight: 1 }} /> },
+                    }}
                     margin="normal"
                     required
                     fullWidth
