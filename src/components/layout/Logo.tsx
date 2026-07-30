@@ -21,7 +21,7 @@ export default function Logo(): JSX.Element {
     // #endregion USEEFFECT --> ////////////////////////////////
 
     // #region RENDER --> //////////////////////////////////////
-    return <FullLogo width={"140px"} height={"unset"} />;
+    return <FullLogo width={"140px"} height={null} />;
     // #endregion RENDER --> ///////////////////////////////////
 }
 

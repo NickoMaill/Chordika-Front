@@ -38,7 +38,7 @@ type IGroupDraggable = {
     position: { x: number; y: number };
     onStop: (p: { x: number; y: number }) => void;
     children: ReactNode;
-    axis: "both" | "none" | "x" | "y"
+    axis: 'both' | 'none' | 'x' | 'y';
     className?: string;
 };
 // #endregion SINGLETON --> /////////////////////////////////
@@ -46,7 +46,17 @@ type IGroupDraggable = {
 const GroupDraggable = ({ dragger, position, onStop, children, parent, axis, className }: IGroupDraggable): JSX.Element => {
     const nodeRef = useRef<HTMLDivElement>(null);
     return (
-        <Draggable axis={axis} bounds={parent} nodeRef={nodeRef} handle={dragger} grid={[15, 15]} defaultClassName={className} scale={1} position={position} onStop={(_, data) => onStop({ x: data.x, y: data.y })}>
+        <Draggable
+            axis={axis}
+            bounds={parent}
+            nodeRef={nodeRef}
+            handle={dragger}
+            grid={[15, 15]}
+            defaultClassName={className}
+            scale={1}
+            position={position}
+            onStop={(_, data) => onStop({ x: data.x, y: data.y })}
+        >
             <div ref={nodeRef}>{children}</div>
         </Draggable>
     );
@@ -67,7 +77,7 @@ export default function EditorDisplay({ data, onClickDeleteGroup, onClickEditGro
     // #region METHODS --> /////////////////////////////////////
 
     const handleDragStop = (type: string, index: number, groupId: number, position: { x: number; y: number }): void => {
-        console.log(position)
+        console.log(position);
         setPositions((prev) => ({ ...prev, [groupId]: position }));
         onDragStop(type, index, groupId, position);
     };
@@ -119,14 +129,16 @@ export default function EditorDisplay({ data, onClickDeleteGroup, onClickEditGro
                                         parent={`#content-page-${page.index}`}
                                         dragger={`#dragger-${g.index}`}
                                         position={{ x: g.position?.x || 0, y: g.position?.y || 0 }}
-                                        onStop={(p) => handleDragStop("bar", g.index, g.index, p)}
+                                        onStop={(p) => handleDragStop('bar', g.index, g.index, p)}
                                         axis="y"
                                     >
                                         <Grid container id={`score-groups-${g.index}`} direction={'row'} spacing={2} alignItems={'center'} className="position-relative" sx={{ width: '100%' }}>
                                             {/* Score Bars */}
                                             {g.title && (
-                                                <Grid size={1}>
-                                                    <Bold className="text-center">{g.title.replaceAll(' ', '\n')}</Bold>
+                                                <Grid size={1.3}>
+                                                    <Bold className="text-center">
+                                                        <HTMLParser>{g.title.replaceAll(' ', '<br/>')}</HTMLParser>
+                                                    </Bold>
                                                 </Grid>
                                             )}
                                             <Grid size={g.title ? 10 : 12}>
@@ -170,13 +182,23 @@ export default function EditorDisplay({ data, onClickDeleteGroup, onClickEditGro
                                         position={{ x: t.position?.x || 0, y: t.position?.y || 0 }}
                                         axis="both"
                                         className="w-fit-content"
-                                        onStop={(p) => handleDragStop("text", t.index, 0, p)}
+                                        onStop={(p) => handleDragStop('text', t.index, 0, p)}
                                     >
-                                        <AppResizableElement width={t.size?.width} height={t.size?.height} onResize={(w, h) => onResizeText({ width: w, height: h }, t.index)} onMouseOver={(e) => setFocusedText(e ? t.index : null)} className="position-relative p-2">
+                                        <AppResizableElement
+                                            width={t.size?.width}
+                                            height={t.size?.height}
+                                            onResize={(w, h) => onResizeText({ width: w, height: h }, t.index)}
+                                            onMouseOver={(e) => setFocusedText(e ? t.index : null)}
+                                            className="position-relative p-2"
+                                        >
                                             <Box component={'div'} rich-text-container="true">
                                                 <HTMLParser>{decodeURIComponent(t.content)}</HTMLParser>
                                             </Box>
-                                            <Box id="groupActions" sx={{ zIndex: 3 }} className={`position-absolute top-50 translate-middle d-flex flex-column end-0 ${focusedText === t.index ? "" : "d-none"}`}>
+                                            <Box
+                                                id="groupActions"
+                                                sx={{ zIndex: 3 }}
+                                                className={`position-absolute top-50 translate-middle d-flex flex-column end-0 ${focusedText === t.index ? '' : 'd-none'}`}
+                                            >
                                                 <IconButton id={`dragger-text-${t.index}`} size="small" outline="true" className="dragger p-1 w-auto h-auto">
                                                     <AppIcon name="ControlCameraRounded" />
                                                 </IconButton>
@@ -214,6 +236,6 @@ interface IEditor {
     onDragStop: (type: string, index: number, groupId: number, position: { x: number; y: number }) => void;
     onUpdateBar: (payload: { gi: number; bi: number; data: ScoreBarPayload }) => void;
     onUpdateChord: ({ gi, bi, ci, c }: { gi: number; bi: number; ci: number; c: string }) => void;
-    onResizeText: (e: { width: number, height: number }, index: number) => void;
+    onResizeText: (e: { width: number; height: number }, index: number) => void;
 }
 // #enderegion IPROPS --> //////////////////////////////////

@@ -40,7 +40,7 @@ export default function EditorFontSizeMenu(): JSX.Element {
             >
                 <Box className="p-3">
                     <Bold>Réglez la taille de la police</Bold>
-                    <Slider defaultValue={state.data.fontSize} step={5} valueLabelDisplay="auto" marks min={10} max={45} onChange={(e) => setFontSize(Number((e.target as HTMLInputElement).value))} />
+                    <Slider defaultValue={state.data.fontSize} step={2} valueLabelDisplay="auto" marks min={10} max={45} onChange={(e) => setFontSize(Number((e.target as HTMLInputElement).value))} />
                 </Box>
             </Popover>
         </>

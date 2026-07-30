@@ -3,6 +3,7 @@ import { Grid } from '@mui/material';
 import { JSX } from 'react';
 import LastScoreUpdated from './LastScoreUpdated';
 import HomeViewActions from './HomeViewActions';
+import RepertoiresView from './RepertoiresView';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
@@ -29,6 +30,9 @@ export default function HomeView(): JSX.Element {
             </Grid>
             <Grid size={{ lg: 3, xs: 12, md: 12 }}>
                 <HomeViewActions />
+            </Grid>
+            <Grid size={{ xs: 12 }}>
+                <RepertoiresView />
             </Grid>
         </Grid>
     );
