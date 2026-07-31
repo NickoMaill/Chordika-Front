@@ -18,6 +18,7 @@ export default function Editor(): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
     const [searchParams] = useSearchParams();
     const [isChecking, setIsChecking] = useState<boolean>(true);
+    const [isPrintMode, setIsPrintMode] = useState(false);
     // #endregion STATE --> ////////////////////////////////////
 
     // #region HOOKS --> ///////////////////////////////////////
@@ -37,7 +38,7 @@ export default function Editor(): JSX.Element {
             setIsNoAccess(true);
             return;
         }
-
+        setIsPrintMode(true);
         const token = searchParams.get('printToken');
         checkPrintToken(token, scoreId).then((res) => {
             if (res.success) {
@@ -62,7 +63,7 @@ export default function Editor(): JSX.Element {
         } else {
             return (
                 <EditorProvider>
-                    <EditorMain scoreId={Number(scoreId)} />
+                    <EditorMain isPrintMode={isPrintMode} scoreId={Number(scoreId)} />
                 </EditorProvider>
             );
         }

@@ -4,7 +4,7 @@ import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import { JSX, lazy, MouseEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { JSX, lazy, useEffect, useMemo, useRef } from 'react';
 import { IconNameType } from '~/components/common/AppIcon';
 import useEditorContext from '~/context/EditorContext';
 import EditorDisplay from './EditorDisplay';
@@ -18,20 +18,17 @@ import EditorTextForm from './forms/EditorTextForm';
 import useScoreService from '~/hooks/services/useScoreService';
 import { Helmet } from 'react-helmet';
 import AppProgressBar from '../common/AppProgressBar';
-import AppMenuList from '../common/AppMenuList';
-import { Popover, Slider } from '@mui/material';
-import { Bold } from '../common/Text';
 import EditorFontSizeMenu from './EditorFontSizeMenu';
+import EditorDrawer from './EditorDrawer';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
 const AppIcon = lazy(() => import('~/components/common/AppIcon'));
 // #endregion SINGLETON --> /////////////////////////////////
 
-export default function EditorMain({ scoreId }: { scoreId: number }): JSX.Element {
+export default function EditorMain({ scoreId, isPrintMode }: { scoreId: number, isPrintMode: boolean }): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
     const formRef = useRef<HTMLFormElement>(null);
-    const [isFormSubmitLoading, setIsFormSubmitLoading] = useState<boolean>(false);
 
     const menu: { id: string; title?: string; icon?: IconNameType; Component?: ({ key }: { key: number }) => JSX.Element }[] = useMemo(
         () => [
@@ -48,11 +45,6 @@ export default function EditorMain({ scoreId }: { scoreId: number }): JSX.Elemen
             {
                 id: 'fontSize',
                 Component: EditorFontSizeMenu,
-            },
-            {
-                id: 'symbols',
-                title: 'Ajouter un symbole',
-                icon: 'Segno',
             },
             { id: 'divider' },
             {
@@ -72,7 +64,7 @@ export default function EditorMain({ scoreId }: { scoreId: number }): JSX.Elemen
 
     // #region HOOKS --> ///////////////////////////////////////
     const { state, dispatch } = useEditorContext();
-    const { loadScore, addBars, deleteGroup, saveContent, updateBar, updateChord, updateGroup, addText, updateText, updateSizeText } = useEditorActions();
+    const { loadScore, addBars, deleteGroup, saveContent, updateBar, updateGroup, addText, updateText, updateSizeText } = useEditorActions();
     const { openModal, closeModal } = useModal();
     const { exportScore } = useScoreService();
 
@@ -80,18 +72,32 @@ export default function EditorMain({ scoreId }: { scoreId: number }): JSX.Elemen
 
     // #region METHODS --> /////////////////////////////////////
     const handleDragStop = (type: string, index: number, groupId: number, position: { x: number; y: number }): void => {
-        const datas = state.data;
+        const page = state.data.content[0];
+        let updatedPage = page;
+
         switch (type) {
             case 'bar':
-                datas.content[0].content[index].position = position;
+                updatedPage = {
+                    ...page,
+                    content: page.content.map((group, groupIndex) => (groupIndex === index ? { ...group, position } : group)),
+                };
                 break;
             case 'text':
-                datas.content[0].texts[index].position = position;
+                updatedPage = {
+                    ...page,
+                    texts: page.texts.map((text, textIndex) => (textIndex === index ? { ...text, position } : text)),
+                };
                 break;
             default:
                 return;
         }
-        dispatch({ type: 'SET_DATA', payload: datas });
+        dispatch({
+            type: 'SET_DATA',
+            payload: {
+                ...state.data,
+                content: state.data.content.map((item, pageIndex) => (pageIndex === 0 ? updatedPage : item)),
+            },
+        });
     };
 
     const submitBars = (index?: number): void => {
@@ -185,7 +191,13 @@ export default function EditorMain({ scoreId }: { scoreId: number }): JSX.Elemen
 
     // #region RENDER --> //////////////////////////////////////
     return (
-        <>
+        <Box
+            sx={{
+                display: 'flex',
+                width: '100%',
+                alignItems: 'stretch',
+            }}
+        >
             <Helmet>
                 <title>{state.data?.title ?? 'Chordika'}</title>
             </Helmet>
@@ -227,12 +239,12 @@ export default function EditorMain({ scoreId }: { scoreId: number }): JSX.Elemen
                         onClickDeleteText={null}
                         onDragStop={handleDragStop}
                         onUpdateBar={updateBar}
-                        onUpdateChord={updateChord}
                         onResizeText={(e, i) => updateSizeText(e, i)}
                     />
                 </ContentLayout>
             </Container>
-        </>
+            {!isPrintMode && <EditorDrawer />}
+        </Box>
     );
     // #endregion RENDER --> ///////////////////////////////////
 }

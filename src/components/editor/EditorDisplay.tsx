@@ -15,6 +15,8 @@ import EditorBarForm from './forms/EditorBarForm';
 import appTool from '~/helpers/appTool';
 import AppResizableElement from '../common/AppResizableElement';
 import HTMLParser from '../common/HTMLParser';
+import useEditorContext from '~/context/EditorContext';
+import useEditorActions from '~/hooks/useEditorActions';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
@@ -62,23 +64,21 @@ const GroupDraggable = ({ dragger, position, onStop, children, parent, axis, cla
     );
 };
 
-export default function EditorDisplay({ data, onClickDeleteGroup, onClickEditGroup, onDragStop, onUpdateBar, onUpdateChord, onClickEditText, onClickDeleteText, onResizeText }: IEditor): JSX.Element {
+export default function EditorDisplay({ data, onClickDeleteGroup, onClickEditGroup, onDragStop, onUpdateBar, onClickEditText, onClickDeleteText, onResizeText }: IEditor): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
-    const [positions, setPositions] = useState<Record<number, { x: number; y: number }>>({});
-    const [isModalSubmitLoading, setIsModalSubmitLoading] = useState<boolean>(false);
     const [focusedText, setFocusedText] = useState<number>(null);
     const barRef = useRef<HTMLFormElement>(null);
     // #endregion STATE --> ////////////////////////////////////
 
     // #region HOOKS --> ///////////////////////////////////////
     const { openModal, closeModal } = useModal();
+    const { state, dispatch } = useEditorContext();
+    const { handleClickOnPart } = useEditorActions();
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////
 
     const handleDragStop = (type: string, index: number, groupId: number, position: { x: number; y: number }): void => {
-        console.log(position);
-        setPositions((prev) => ({ ...prev, [groupId]: position }));
         onDragStop(type, index, groupId, position);
     };
 
@@ -91,7 +91,7 @@ export default function EditorDisplay({ data, onClickDeleteGroup, onClickEditGro
                 modalActionLabel: 'Modifier',
                 modalAction: () => initUpdateBar(gi, bi),
                 modalDismissLabel: 'Annuler',
-                modalActionLoading: isModalSubmitLoading,
+                modalActionLoading: false,
             },
         };
         openModal(options);
@@ -104,7 +104,6 @@ export default function EditorDisplay({ data, onClickDeleteGroup, onClickEditGro
         onUpdateBar({ gi, bi, data: obj as unknown as ScoreBarPayload });
         closeModal();
     };
-
     const handleDeleteBar = (gi: number, bi: number): void => {};
     // #endregion METHODS --> //////////////////////////////////
 
@@ -117,7 +116,7 @@ export default function EditorDisplay({ data, onClickDeleteGroup, onClickEditGro
             {data &&
                 /* Score Pages */
                 data.content.map((page) => (
-                    <Paper key={page.index} className={`editor-page editor-page-${data.orientation === ScoreOrientation.LANDSCAPE ? 'landscape' : 'portrait'}`} elevation={3}>
+                    <Paper key={page.index} className={`editor-page position-relative editor-page-${data.orientation === ScoreOrientation.LANDSCAPE ? 'landscape' : 'portrait'}`} elevation={3}>
                         <Box className="position-relative h-100">
                             {/* HEADER */}
                             {page.index === 0 && <EditorHeader data={data} />}
@@ -125,7 +124,7 @@ export default function EditorDisplay({ data, onClickDeleteGroup, onClickEditGro
                                 {/* Score Bar Groups */}
                                 {page.content.map((g) => (
                                     <GroupDraggable
-                                        key={g.index}
+                                        key={g.id}
                                         parent={`#content-page-${page.index}`}
                                         dragger={`#dragger-${g.index}`}
                                         position={{ x: g.position?.x || 0, y: g.position?.y || 0 }}
@@ -135,7 +134,13 @@ export default function EditorDisplay({ data, onClickDeleteGroup, onClickEditGro
                                         <Grid container id={`score-groups-${g.index}`} direction={'row'} spacing={2} className="position-relative align-items-center" sx={{ width: '100%' }}>
                                             {/* Score Bars */}
                                             {g.title && (
-                                                <Grid size={1.3}>
+                                                <Grid
+                                                    size={1.3}
+                                                    component={'div'}
+                                                    className="cursor-pointer hover-el rounded d-flex align-items-center justify-content-center border"
+                                                    sx={{ height: 'stretch' }}
+                                                    onClick={() => handleClickOnPart('bars', g.id)}
+                                                >
                                                     <Bold className="text-center">
                                                         <HTMLParser>{g.title.replaceAll(' ', '<br/>')}</HTMLParser>
                                                     </Bold>
@@ -143,24 +148,38 @@ export default function EditorDisplay({ data, onClickDeleteGroup, onClickEditGro
                                             )}
                                             <Grid size={g.title ? 10 : 12}>
                                                 <Box
-                                                    sx={{ display: 'grid', width: 'fit-content', gridTemplateColumns: [...new Array(g.maxLength).keys()].map((_) => '1fr').join(' '), gap: 0 }}
-                                                    className="position-relative"
+                                                    sx={{
+                                                        display: 'grid',
+                                                        width: 'fit-content',
+                                                        gridTemplateColumns: [...new Array(g.maxLength).keys()].map((_) => '1fr').join(' '),
+                                                        gap: 0,
+                                                        border: state.currentSelected?.id === g.id ? '3px solid var(--mui-palette-primary-main)' : null,
+                                                    }}
+                                                    className="position-relative rounded"
                                                 >
                                                     {g.content.map((b) => (
                                                         <EditorBar
-                                                            key={b.index}
+                                                            key={b.id}
                                                             bar={b}
                                                             group={g}
                                                             isFirstBar={isFirstBar}
                                                             isLastBar={isLastBar}
                                                             onClickUpdate={() => handleUpdateBar(g.index, b.index, b)}
                                                             onClickDelete={() => handleDeleteBar(g.index, b.index)}
-                                                            onUpdateCord={(ci, c) => onUpdateChord({ gi: g.index, bi: b.index, ci, c })}
                                                         />
                                                     ))}
                                                 </Box>
                                             </Grid>
-                                            <Box id="groupActions" className="position-absolute top-50 translate-middle d-flex flex-column end-0">
+                                            <Box
+                                                sx={{
+                                                    position: 'absolute',
+                                                    top: '50%',
+                                                    left: 'calc(100% + 5mm)',
+                                                    zIndex: 1000,
+                                                    transform: 'translate(-50%, -50%)',
+                                                }}
+                                                className="group-actions d-flex flex-column"
+                                            >
                                                 <IconButton id={`dragger-${g.index}`} size="small" outline="true" className="dragger p-1 w-auto h-auto">
                                                     <AppIcon name="ControlCameraRounded" />
                                                 </IconButton>
@@ -189,15 +208,14 @@ export default function EditorDisplay({ data, onClickDeleteGroup, onClickEditGro
                                             height={t.size?.height}
                                             onResize={(w, h) => onResizeText({ width: w, height: h }, t.index)}
                                             onMouseOver={(e) => setFocusedText(e ? t.index : null)}
-                                            className="position-relative p-2"
+                                            className="position-relative p-2 rounded border-secondary border-2"
                                         >
                                             <Box component={'div'} rich-text-container="true">
                                                 <HTMLParser>{decodeURIComponent(t.content)}</HTMLParser>
                                             </Box>
                                             <Box
-                                                id="groupActions"
+                                                className={`group-actions position-absolute top-50 translate-middle d-flex flex-column end-0 ${focusedText === t.index ? '' : 'd-none'}`}
                                                 sx={{ zIndex: 3 }}
-                                                className={`position-absolute top-50 translate-middle d-flex flex-column end-0 ${focusedText === t.index ? '' : 'd-none'}`}
                                             >
                                                 <IconButton id={`dragger-text-${t.index}`} size="small" outline="true" className="dragger p-1 w-auto h-auto">
                                                     <AppIcon name="ControlCameraRounded" />
@@ -213,7 +231,7 @@ export default function EditorDisplay({ data, onClickDeleteGroup, onClickEditGro
                                     </GroupDraggable>
                                 ))}
                             </Box>
-                            <Box className="position-absolute bottom-0">
+                            <Box className="position-absolute bottom-0 start-0">
                                 <Regular variant="caption">
                                     Powered by Chordika — Page {page.index + 1}/{data.content.length}
                                 </Regular>
@@ -235,7 +253,6 @@ interface IEditor {
     onClickDeleteText: (index: number) => void;
     onDragStop: (type: string, index: number, groupId: number, position: { x: number; y: number }) => void;
     onUpdateBar: (payload: { gi: number; bi: number; data: ScoreBarPayload }) => void;
-    onUpdateChord: ({ gi, bi, ci, c }: { gi: number; bi: number; ci: number; c: string }) => void;
     onResizeText: (e: { width: number; height: number }, index: number) => void;
 }
 // #enderegion IPROPS --> //////////////////////////////////

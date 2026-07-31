@@ -5,6 +5,8 @@
  *          => Score info
  */
 
+import { MusicSymbol } from "~/types/musicSymbol";
+
 /**
  * @description Conteneur de la Grille (Page)
  */
@@ -17,6 +19,7 @@ export interface Score {
     composer: string;
     version?: string;
     key: string;
+    keyType: string;
     tempo: number;
     nume: string;
     denom: string;
@@ -31,13 +34,15 @@ export type ScorePayload = {
     userId: number;
     title: string;
     composer: string;
-    nume: number;
-    denom: number;
+    isFavorite: boolean;
+    timeSig: string;
     key: string;
+    keyType: string;
     tempo: number;
     comment?: string;
-    fontStyle?: string;
+    fontSize?: number;
     orientation: ScoreOrientation;
+    version?: string;
 };
 /**
  * @description Information sur le document
@@ -96,7 +101,8 @@ export type ScoreBar = {
     tempo?: number;
     key?: string;
     mesureNumber?: number;
-    isRepeat?: boolean;
+    isRepeatStart?: boolean;
+    isRepeatEnd?: boolean;
     content: ScoreBarContent[];
     isTheEnd?: boolean;
 };
@@ -109,7 +115,7 @@ export type ScoreBarPayload = {
     };
     tempo?: number;
     key?: string;
-    isRepeat?: boolean;
+    repeat?: 'start' | 'end' | null;
 };
 
 /**
@@ -117,9 +123,9 @@ export type ScoreBarPayload = {
  */
 export type ScoreBarContent = {
     chordName: string;
-    chordID: string;
+    id: string;
     index: number;
-    symbols?: string;
+    symbols?: keyof typeof MusicSymbol;
 };
 
 /**

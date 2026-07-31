@@ -18,19 +18,19 @@ export function Regular(props: TypographyProps): JSX.Element {
 }
 
 export function Bold(props: TypographyProps): JSX.Element {
-    return <Typography {...props} sx={{ fontWeight: 'bold' }} />;
+    return <Typography {...props} sx={{...props.sx, fontWeight: 'bold' }} />;
 }
 
 export function Bolder(props: TypographyProps): JSX.Element {
-    return <Typography {...props} sx={{ fontWeight: 'bolder' }} />;
+    return <Typography {...props} sx={{...props.sx, fontWeight: 'bolder' }} />;
 }
 
 export function Thin(props: TypographyProps): JSX.Element {
-    return <Typography {...props} sx={{ fontWeight: 'thin' }} />;
+    return <Typography {...props} sx={{...props.sx, fontWeight: 'thin' }} />;
 }
 
 export function Italic(props: TypographyProps): JSX.Element {
-    return <Typography {...props} sx={{ fontStyle: 'italic' }} />;
+    return <Typography {...props} sx={{...props.sx, fontStyle: 'italic' }} />;
 }
 
 interface IText {

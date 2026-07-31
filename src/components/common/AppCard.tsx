@@ -37,7 +37,12 @@ export default function AppCard({ children, title, icon, sx, id, className, divi
                 action={action}
                 style={{ paddingBottom: 10, width: '100%' }}
                 slotProps={{
-                    title: { fontSize: 22 },
+                    title: { 
+                        sx:{
+                            fontSize: 22,
+                        },
+                        variant: "h5"
+                    },
                     action: {
                         className: 'd-flex align-items-center',
                         sx: { height: 'stretch' },

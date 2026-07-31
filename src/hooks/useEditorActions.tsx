@@ -1,10 +1,11 @@
 // #region IMPORTS -> /////////////////////////////////////
 import useEditorContext from '~/context/EditorContext';
 import useScoreService from './services/useScoreService';
-import { BarsPayload, BarTypeEnum, ScoreBarGroup, ScoreBarPayload, ScorePageText } from '~/models/Score';
+import { BarsPayload, BarTypeEnum, Score, ScoreBarGroup, ScoreBarPayload, ScorePage, ScorePageText } from '~/models/Score';
 import useToast from './useToast';
 import appTool from '~/helpers/appTool';
 import useNavigation from './useNavigation';
+import { MusicSymbol } from '~/types/musicSymbol';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
@@ -22,22 +23,29 @@ export default function useEditorActions(): IUseEditorActions {
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////
+    const replaceFirstPage = (page: ScorePage): Score => ({
+        ...state.data,
+        content: state.data.content.map((item, index) => (index === 0 ? page : item)),
+    });
+
     const loadScore = async (id: number): Promise<void> => {
         dispatch({ type: 'SET_DATA_LOADING_ON' });
         await getScore(id, pathname.endsWith('/print'))
             .then((res) => {
-                if (res) dispatch({ type: 'SET_DATA', payload: res });
+                if (res) {
+                    dispatch({ type: 'SET_DATA', payload: res });
+                }
             })
             .finally(() => dispatch({ type: 'SET_DATA_LOADING_OFF' }));
     };
 
     const addBars = (obj: BarsPayload): void => {
-        const datas = state.data;
-        const lastBar = datas.content[0].content.last();
+        const page = state.data.content[0];
+        const lastBar = page.content.last();
         const bars: ScoreBarGroup = {
             id: appTool.uuidv4(),
             title: obj.title,
-            index: datas.content[0].content.length,
+            index: page.content.length,
             maxLength: obj.perLines === '' ? Number(obj.nb) : Number(obj.perLines),
             position: {
                 x: 0,
@@ -55,85 +63,105 @@ export default function useEditorActions(): IUseEditorActions {
                 key: state.data.key,
                 mesureNumber: null,
                 isRepeat: false,
-                content: [{ chordName: null, chordID: null, index: 0, symbols: null }],
+                content: [{ chordName: null, id: appTool.uuidv4(), index: 0, symbols: null }],
                 isTheEnd: false,
             })),
         };
 
-        datas.content[0].content.push(bars);
+        const updatedPage = {
+            ...page,
+            content: [...page.content, bars],
+        };
         dispatch({
             type: 'SET_DATA',
-            payload: datas,
+            payload: replaceFirstPage(updatedPage),
         });
         dispatch({ type: 'IS_FORM_BAR_OPEN', payload: false });
     };
 
     const updateGroup = async (index: number, obj: BarsPayload): Promise<void> => {
-        const datas = state.data;
+        const page = state.data.content[0];
         const nb = Number(obj.nb);
         const perLines = Number(obj.perLines);
-        datas.content[0].content[index].title = obj.title;
-        datas.content[0].content[index].maxLength = perLines;
-        const group = datas.content[0].content[index];
-        if (nb !== group.content.length) {
-            if (nb < group.content.length) {
-                group.content = group.content.slice(0, nb);
-            } else if (nb > group.content.length) {
-                const diff = nb - group.content.length;
-                const newBars = [...Array(diff).keys()].map((d, i) => ({
-                    type: BarTypeEnum.B4T,
-                    id: appTool.uuidv4(),
-                    index: i,
-                    timeBar: {
-                        nume: Number(datas.nume),
-                        denom: Number(datas.denom),
-                    },
-                    tempo: datas.tempo,
-                    key: datas.key,
-                    mesureNumber: null,
-                    isRepeat: false,
-                    content: [{ chordName: null, chordID: null, index: 0, symbols: null }],
-                    isTheEnd: false,
-                }));
-                group.content = [...group.content, ...newBars];
+        const currentGroup = page.content[index];
+        let content = currentGroup.content;
+
+        if (nb !== currentGroup.content.length) {
+            if (nb < currentGroup.content.length) {
+                content = currentGroup.content.slice(0, nb);
+            } else if (nb > currentGroup.content.length) {
+                const diff = nb - currentGroup.content.length;
+                const newBars = [...Array(diff).keys()].map((d, i) => {
+                    return {
+                        type: BarTypeEnum.B4T,
+                        id: appTool.uuidv4(),
+                        index: currentGroup.content.length + i,
+                        timeBar: {
+                            nume: Number(state.data.nume),
+                            denom: Number(state.data.denom),
+                        },
+                        tempo: state.data.tempo,
+                        key: state.data.key,
+                        mesureNumber: null,
+                        isRepeat: false,
+                        content: [{ chordName: null, id: appTool.uuidv4(), index: 0, symbols: null }],
+                        isTheEnd: false,
+                    };
+                });
+                content = [...currentGroup.content, ...newBars].sort((a, b) => a.index - b.index);
             }
         }
-        datas.content[0].content[index] = group;
+
+        const updatedGroup = {
+            ...currentGroup,
+            title: obj.title,
+            maxLength: perLines,
+            content,
+        };
+        const updatedPage = {
+            ...page,
+            content: page.content.map((group, groupIndex) => (groupIndex === index ? updatedGroup : group)),
+        };
         dispatch({
             type: 'SET_DATA',
-            payload: datas,
+            payload: replaceFirstPage(updatedPage),
         });
     };
 
     const deleteGroup = (index: number): void => {
-        const datas = state.data;
-        datas.content[0].content = datas.content[0].content.filter((c) => c.index !== index);
-        datas.content[0].content.forEach((c, i) => {
-            c.index = i;
-        });
+        const page = state.data.content[0];
+        const groups = page.content.filter((group) => group.index !== index).map((group, groupIndex) => ({ ...group, index: groupIndex }));
+        const updatedPage = {
+            ...page,
+            content: groups,
+        };
         dispatch({
             type: 'SET_DATA',
-            payload: datas,
+            payload: replaceFirstPage(updatedPage),
         });
     };
 
+    const saveContentInfo = async (score: Score = state.data): Promise<{ success: boolean }> => {
+        const form = new FormData();
+        form.append('userId', String(score.userId));
+        form.append('title', String(score.title));
+        form.append('composer', String(score.composer));
+        form.append('isFavorite', String(score.isFavorite));
+        form.append('timeSig', `${score.nume}-${score.denom}`);
+        form.append('key', String(score.key));
+        form.append('keyType', String(score.keyType));
+        form.append('tempo', String(score.tempo));
+        form.append('comment', String(score.comment));
+        form.append('fontSize', String(score.fontSize));
+        form.append('orientation', String(score.orientation));
+        form.append('version', String(score.version ?? ''));
+        return await saveScoreInfo(score.id, form);
+    };
     const saveContent = async (): Promise<void> => {
         dispatch({ type: 'SET_SAVING_ON' });
-        const datas = state.data;
-        const form = new FormData();
-        form.append('userId', String(state.data.userId));
-        form.append('title', String(state.data.title));
-        form.append('composer', String(state.data.composer));
-        form.append('isFavorite', String(state.data.isFavorite));
-        form.append('timeSig', `${state.data.nume}-${state.data.denom}`);
-        form.append('key', String(state.data.key));
-        form.append('tempo', String(state.data.tempo));
-        form.append('comment', String(state.data.comment));
-        form.append('fontSize', String(state.data.fontSize));
-        form.append('orientation', String(state.data.orientation));
-        form.append('version', String(state.data.version));
+        const score = state.data;
         try {
-            const [content, info] = await Promise.all([saveScore(datas.id, datas.content), saveScoreInfo(datas.id, form)]);
+            const [content, info] = await Promise.all([saveScore(score.id, score.content), saveContentInfo(score)]);
             if (content.success && info.success) {
                 success('Grille sauvegardée avec succès !');
             }
@@ -143,56 +171,83 @@ export default function useEditorActions(): IUseEditorActions {
     };
 
     const updateBar = ({ gi, bi, data }: { gi: number; bi: number; data: ScoreBarPayload }): void => {
-        const datas = state.data;
+        const page = state.data.content[0];
+        const group = page.content[gi];
+        const bar = group.content[bi];
         const nbToCreate = data.type.split('-').length;
-        const nb = datas.content[0].content[gi].content[bi].type.split('-').length;
-        if (nbToCreate !== nb) {
-            const bar = datas.content[0].content[gi].content[bi];
-            if (nbToCreate > nb) {
-                const newContent = new Set(bar.content);
-                let i = newContent.size;
-                while (i < nbToCreate) {
-                    newContent.add({ chordName: null, chordID: null, index: i, symbols: null });
-                    i++;
-                }
-                bar.content = [...newContent];
-            } else {
-                bar.content = bar.content.slice(0, nbToCreate);
-            }
-            bar.content.sort((a, b) => a.index - b.index);
-            datas.content[0].content[gi].content[bi] = bar;
+        const nb = bar.type.split('-').length;
+        let content = bar.content;
+
+        if (nbToCreate > nb) {
+            const newContent = [...Array(nbToCreate - nb).keys()].map((_, index) => ({
+                chordName: null,
+                id: appTool.uuidv4(),
+                index: bar.content.length + index,
+                symbols: null,
+            }));
+            content = [...bar.content, ...newContent].sort((a, b) => a.index - b.index);
+        } else if (nbToCreate < nb) {
+            content = bar.content.slice(0, nbToCreate);
         }
-        datas.content[0].content[gi].content[bi].type = data.type;
-        dispatch({ type: 'SET_DATA', payload: datas });
+
+        const updatedBar = {
+            ...bar,
+            type: data.type,
+            isRepeatStart: data.repeat === "start",
+            isRepeatEnd: data.repeat === "end",
+            content,
+        };
+        const updatedGroup = {
+            ...group,
+            content: group.content.map((item, index) => (index === bi ? updatedBar : item)),
+        };
+        const updatedPage = {
+            ...page,
+            content: page.content.map((item, index) => (index === gi ? updatedGroup : item)),
+        };
+
+        dispatch({ type: 'SET_DATA', payload: replaceFirstPage(updatedPage) });
     };
 
-    const updateChord = async ({ gi, bi, ci, c }: { gi: number; bi: number; ci: number; c: string }): Promise<void> => {
-        const datas = state.data;
-        // const res = await searchByCode(c, '?type=chord');
-        // if (c.length < 1) {
-        //     error('Accord non valide');
-        //     return;
-        // }
-        const chord = datas.content[0].content[gi].content[bi].content[ci];
-        chord.chordID = null;
-        chord.chordName = (c ?? '').trim() === '' ? null : c.trim();
-        datas.content[0].content[gi].content[bi].content[ci] = chord;
-        dispatch({ type: 'SET_DATA', payload: datas });
+    const updateChord = async ({ gi, bi, ci, c }: { gi: number; bi: number; ci: number; c: { chord?: string; symbol?: keyof typeof MusicSymbol | "" } }): Promise<void> => {
+        const page = state.data.content[0];
+        const group = page.content[gi];
+        const bar = group.content[bi];
+        const chord = { ...bar.content[ci] };
+        if (c.chord || c.chord === "") {
+            chord.chordName = (c.chord ?? '').trim() === '' ? null : c.chord.trim();
+            chord.symbols = null;
+        }
+        if (c.symbol || c.symbol === "") {
+            chord.symbols = c.symbol === "" ? null : c.symbol;
+            chord.chordName = null;
+        }
+        const updatedBar = {
+            ...bar,
+            content: bar.content.map((item, index) => (index === ci ? chord : item)),
+        };
+        const updatedGroup = {
+            ...group,
+            content: group.content.map((item, index) => (index === bi ? updatedBar : item)),
+        };
+        const updatedPage = {
+            ...page,
+            content: page.content.map((item, index) => (index === gi ? updatedGroup : item)),
+        };
+        dispatch({ type: 'SET_DATA', payload: replaceFirstPage(updatedPage) });
     };
 
     const setFontSize = (fs: number): void => {
-        const d = state.data;
-        d.fontSize = fs;
-        dispatch({ type: 'SET_DATA', payload: d });
+        dispatch({ type: 'SET_DATA', payload: { ...state.data, fontSize: fs } });
     };
 
     const addText = (text: string): void => {
-        const datas = state.data;
-        const lastBar = datas.content[0].content.last();
+        const page = state.data.content[0];
+        const lastBar = page.content.last();
 
         const t: ScorePageText = {
             content: text,
-            index: datas.content[0].texts.length,
+            index: page.texts.length,
             position: {
                 x: 0,
                 y: lastBar ? lastBar.position.y + 15 : 15,
@@ -203,21 +258,37 @@ export default function useEditorActions(): IUseEditorActions {
                 height: 150,
             },
         };
-        datas.content[0].texts.push(t);
-        dispatch({ type: 'SET_DATA', payload: datas });
+        const updatedPage = {
+            ...page,
+            texts: [...page.texts, t],
+        };
+        dispatch({ type: 'SET_DATA', payload: replaceFirstPage(updatedPage) });
     };
 
     const updateText = (text: string, index: number): void => {
-        const datas = state.data;
-        datas.content[0].texts[index].content = text;
-        console.log(text, index);
-        dispatch({ type: 'SET_DATA', payload: datas });
+        const page = state.data.content[0];
+        const updatedPage = {
+            ...page,
+            texts: page.texts.map((item, itemIndex) => (itemIndex === index ? { ...item, content: text } : item)),
+        };
+        dispatch({ type: 'SET_DATA', payload: replaceFirstPage(updatedPage) });
     };
 
     const updateSizeText = (size: { width: number; height: number }, index: number): void => {
-        const datas = state.data;
-        datas.content[0].texts[index].size = size;
-        dispatch({ type: 'SET_DATA', payload: datas });
+        const page = state.data.content[0];
+        const updatedPage = {
+            ...page,
+            texts: page.texts.map((item, itemIndex) => (itemIndex === index ? { ...item, size } : item)),
+        };
+        dispatch({ type: 'SET_DATA', payload: replaceFirstPage(updatedPage) });
+    };
+
+    const handleClickOnPart = (type: 'bars' | 'bar' | 'chord', id: string): void => {
+        if (state.currentSelected?.id === id) {
+            dispatch({ type: 'SET_SELECTED', payload: null });
+        } else {
+            dispatch({ type: 'SET_SELECTED', payload: { type, id } });
+        }
     };
     // #endregion METHODS --> //////////////////////////////////
 
@@ -229,6 +300,7 @@ export default function useEditorActions(): IUseEditorActions {
         loadScore,
         addBars,
         saveContent,
+        saveContentInfo,
         updateGroup,
         deleteGroup,
         updateBar,
@@ -237,6 +309,7 @@ export default function useEditorActions(): IUseEditorActions {
         addText,
         updateText,
         updateSizeText,
+        handleClickOnPart,
     };
     // #endregion RENDER --> ///////////////////////////////////
 }
@@ -248,11 +321,13 @@ interface IUseEditorActions {
     deleteGroup: (index: number) => void;
     updateGroup: (index: number, obj: BarsPayload) => Promise<void>;
     saveContent: () => Promise<void>;
+    saveContentInfo: (score?: Score) => Promise<{ success: boolean }>;
     updateBar: (payload: { gi: number; bi: number; data: ScoreBarPayload }) => void;
-    updateChord: ({ gi, bi, ci, c }: { gi: number; bi: number; ci: number; c: string }) => Promise<void>;
+    updateChord: ({ gi, bi, ci, c }: { gi: number; bi: number; ci: number; c: { chord?: string; symbol: keyof typeof MusicSymbol } }) => Promise<void>;
     setFontSize: (fs: number) => void;
     addText: (text: string) => void;
     updateText: (text: string, index: number) => void;
     updateSizeText: (size: { width: number; height: number }, index: number) => void;
+    handleClickOnPart: (type: 'bars' | 'bar' | 'chord', id: string) => void;
 }
 // #enderegion IPROPS --> //////////////////////////////////

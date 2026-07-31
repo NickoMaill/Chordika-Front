@@ -20,7 +20,7 @@ export default function useDataTextService(): IUseDataTextService {
     // #region METHODS --> /////////////////////////////////////
     const search = async (q: string, urlExtension: string = ''): Promise<QueryResult<DataText>> => {
         const query = new URLSearchParams();
-        query.append('q', q);
+        if (q !== "") query.append('q', q);
         if (urlExtension.includes('?')) {
             const p = urlExtension.split('?')[1].split('&');
             p.forEach((x) => query.append(x.split('=')[0], x.split('=')[1]));

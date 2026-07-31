@@ -272,12 +272,14 @@ export const colorSchemes = {
                 main: brand[500],
                 dark: brand[600],
                 contrastText: brand[50],
+                subtle: brand[200]
             },
             secondary: {
                 light: gray[400],
                 main: gray[500],
                 dark: gray[800],
                 contrastText: gray[50],
+                subtle: gray[200],
             },
             info: {
                 light: brand[200],
@@ -333,6 +335,7 @@ export const colorSchemes = {
                 main: gray[600],
                 dark: gray[800],
                 contrastText: gray[50],
+                subtle: gray[600],
             },
             info: {
                 contrastText: brand[300],

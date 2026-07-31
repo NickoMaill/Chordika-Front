@@ -1,14 +1,16 @@
 // #region IMPORTS -> /////////////////////////////////////
 import { JSX, RefObject, useMemo } from 'react';
-import FormMaker from '../../formMaker/FormMaker';
+import FormMaker, { FormMakerChange } from '../../formMaker/FormMaker';
 import { FormMakerPartEnum, FormMakerType } from '~/types/FormMakerCoreTypes';
-import { BarTypeEnum, ScoreBarPayload } from '~/models/Score';
+import { BarTypeEnum, ScoreBar, ScoreBarPayload } from '~/models/Score';
+import { Button } from '@mui/material';
+import AppIcon from '~/components/common/AppIcon';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
 // #endregion SINGLETON --> /////////////////////////////////
 
-export default function EditorBarForm({ data, ref }: IEditorBarForm): JSX.Element {
+export default function EditorBarForm({ data, ref, onChange }: IEditorBarForm): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
     // #endregion STATE --> ////////////////////////////////////
 
@@ -16,7 +18,7 @@ export default function EditorBarForm({ data, ref }: IEditorBarForm): JSX.Elemen
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////
-    const struct: FormMakerType<FormMakerPartEnum.SEARCH> = useMemo(
+    const struct: FormMakerType<FormMakerPartEnum.SEARCH> = useMemo<FormMakerType<FormMakerPartEnum.SEARCH>>(
         () => [
             {
                 title: '',
@@ -41,7 +43,19 @@ export default function EditorBarForm({ data, ref }: IEditorBarForm): JSX.Elemen
                         size: 12,
                         index: 1,
                         value: data.type,
-                    },
+                    }, 
+                    {
+                        id: "repeat",
+                        label: "Répétition",
+                        type: "select",
+                        selectOptions: [
+                            { label: "Début", value: "start" },
+                            { label: "Fin", value: "end" },
+                        ],
+                        index: 1,
+                        size: 12,
+                        value: data?.isRepeatStart ? "start" : data?.isRepeatEnd ? "end" : null
+                    }
                 ],
             },
         ],
@@ -53,13 +67,14 @@ export default function EditorBarForm({ data, ref }: IEditorBarForm): JSX.Elemen
     // #endregion USEEFFECT --> ////////////////////////////////
 
     // #region RENDER --> //////////////////////////////////////
-    return <FormMaker structure={struct} showBottom={false} formRef={ref} />;
+    return <FormMaker structure={struct} showBottom={false} formRef={ref} onChange={onChange} />;
     // #endregion RENDER --> ///////////////////////////////////
 }
 
 // #region IPROPS -->  /////////////////////////////////////
 interface IEditorBarForm {
-    data: ScoreBarPayload;
-    ref: RefObject<HTMLFormElement>;
+    data: ScoreBar;
+    ref?: RefObject<HTMLFormElement>;
+    onChange?: (e: FormMakerChange) => void;
 }
 // #enderegion IPROPS --> //////////////////////////////////

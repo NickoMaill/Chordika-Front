@@ -1,12 +1,15 @@
 import { createContext, Dispatch, useContext } from 'react';
 import { Score } from '~/models/Score';
 
+export type SelectedEditorElement = { type: "bars" | "bar" | "chord", id: string; };
+
 export type EditorState = {
     isBarFormOpen: boolean;
     isDataLoading: boolean;
     isPrintMode: boolean;
     isDataSaving: boolean;
     data: Score;
+    currentSelected: SelectedEditorElement;
 };
 
 export type EditorStateAction =
@@ -18,6 +21,7 @@ export type EditorStateAction =
     | { type: 'SET_PRINT_OFF' }
     | { type: 'SET_SAVING_ON' }
     | { type: 'SET_SAVING_OFF' }
+    | { type: 'SET_SELECTED', payload: SelectedEditorElement }
     | { type: 'RESET' };
 
 export const EditorInitialState = {
@@ -29,6 +33,7 @@ export const EditorInitialState = {
     isDataLoading: true,
     isPrintMode: false,
     isDataSaving: false,
+    currentSelected: null
 };
 
 export const editorReducer = (state: EditorState, action: EditorStateAction): EditorState => {
@@ -49,6 +54,8 @@ export const editorReducer = (state: EditorState, action: EditorStateAction): Ed
             return { ...state, isDataSaving: true };
         case 'SET_SAVING_OFF':
             return { ...state, isDataSaving: false };
+        case 'SET_SELECTED':
+            return { ...state, currentSelected: action.payload };
         case 'RESET':
             return EditorInitialState;
         default:

@@ -176,9 +176,9 @@ div[rich-text-container] {
     // background-color: unset;
     transition: background-color 0.4s ease-in-out;
 
-    &:focus,
+    // &:focus,
     &:hover {
-        background-color: $bs-secondary-bg-subtle;
+        background-color: var(--mui-palette-secondary-subtle);
     }
 
     &:active {
@@ -383,6 +383,10 @@ td:hover .col-action {
     #Editor {
         overflow-x: auto;
     }
+
+    .editor-page-content {
+        overflow: visible;
+    }
 }
 
 .ProseMirror {
@@ -459,10 +463,11 @@ td:hover .col-action {
     nav,
     button,
     #sidebarContainer,
-    #groupActions,
+    .group-actions,
     .bar-edit,
     .dragger,
     #poweredBy,
+    #EditorDrawer,
     #nprogress {
         /* cache aussi la barre de chargement */
         display: none !important;

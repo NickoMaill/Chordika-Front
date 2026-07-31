@@ -1,16 +1,14 @@
 // #region IMPORTS -> /////////////////////////////////////
 import React, { JSX, RefObject, useMemo } from 'react';
-
 import { FormMakerPartEnum, FormMakerType } from '~/types/FormMakerCoreTypes';
-import FormMaker from '../../formMaker/FormMaker';
-
+import FormMaker, { FormMakerChange } from '../../formMaker/FormMaker';
 import { BarsPayload, ScoreBarGroup } from '~/models/Score';
 // #endregion IMPORTS -> //////////////////////////////////
 
 // #region SINGLETON --> ////////////////////////////////////
 // #endregion SINGLETON --> /////////////////////////////////
 
-export default function EditorGroupForm({ formRef, data }: IEditorAddBars): JSX.Element {
+export default function EditorGroupForm({ formRef, data, onChange }: IEditorAddBars): JSX.Element {
     // #region STATE --> ///////////////////////////////////////
     // #endregion STATE --> ////////////////////////////////////
 
@@ -18,7 +16,7 @@ export default function EditorGroupForm({ formRef, data }: IEditorAddBars): JSX.
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////
-    const formStruct: FormMakerType<FormMakerPartEnum.SEARCH> = useMemo(
+    const formStruct: FormMakerType<FormMakerPartEnum.SEARCH> = useMemo<FormMakerType<FormMakerPartEnum.SEARCH>>(
         () => [
             {
                 title: '',
@@ -60,13 +58,14 @@ export default function EditorGroupForm({ formRef, data }: IEditorAddBars): JSX.
     // #endregion USEEFFECT --> ////////////////////////////////
 
     // #region RENDER --> //////////////////////////////////////
-    return <FormMaker<BarsPayload> structure={formStruct} formRef={formRef} showBottom={false} grammar="Grille" />;
+    return <FormMaker<BarsPayload> structure={formStruct} formRef={formRef} showBottom={false} grammar="Grille" onChange={onChange} />;
     // #endregion RENDER --> ///////////////////////////////////
 }
 
 // #region IPROPS -->  /////////////////////////////////////
 interface IEditorAddBars {
-    formRef: RefObject<HTMLFormElement>;
+    formRef?: RefObject<HTMLFormElement>;
     data?: ScoreBarGroup;
+    onChange?: (e: FormMakerChange) => void;
 }
 // #enderegion IPROPS --> //////////////////////////////////

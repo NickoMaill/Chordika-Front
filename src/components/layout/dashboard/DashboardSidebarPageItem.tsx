@@ -11,11 +11,10 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import type {} from '@mui/material/themeCssVarsAugmentation';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Link } from 'react-router';
 import DashboardSidebarContext from '~/context/DashboardSidebarContext';
 import { Fragment, JSX, ReactNode, useCallback, useContext, useMemo, useState } from 'react';
 import { MINI_DRAWER_WIDTH } from '~/constants';
-import { To } from 'react-router-dom';
+import { Link, To } from 'react-router-dom';
 
 export interface DashboardSidebarPageItemProps {
     id: string;

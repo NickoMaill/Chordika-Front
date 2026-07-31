@@ -46,8 +46,9 @@ const AppCenter = lazy(() => import('../center/AppCenter'));
 const noInputBase: InputType[] = ['hidden'];
 const elementSpacing = 2;
 // #endregion SINGLETON --> /////////////////////////////////
-export default function FormMaker<T>({
+export default function FormMaker<T, P = unknown>({
     onSubmit,
+    onChange,
     structure,
     data,
     outputType = 'formData',
@@ -85,7 +86,7 @@ export default function FormMaker<T>({
     // #endregion HOOKS --> ////////////////////////////////////
 
     // #region METHODS --> /////////////////////////////////////
-    const handleSubmit = (e: ChangeEvent<HTMLFormElement>): FormData | T => {
+    const handleSubmit = (e: ChangeEvent<HTMLFormElement>): FormData | T | P => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
         if (outputType === 'JSON') {
@@ -327,6 +328,7 @@ export default function FormMaker<T>({
                 }
 
                 setValue(element.id, nextValue);
+                onChange?.({ id: element.id, value: nextValue });
 
                 if (element.onChange) {
                     element.onChange(inputValue, args);
@@ -484,6 +486,7 @@ export default function FormMaker<T>({
                         {...baseProps}
                         onChange={(e) => {
                             setValue(element.id, e);
+                            onChange?.({ id: element.id, value: e });
                             setFile(e as File);
                             setFileFields(baseProps.id);
                             if (element.onChange) {
@@ -512,6 +515,7 @@ export default function FormMaker<T>({
                 return translate('common.add') as string;
         }
     };
+
     // #endregion METHODS --> //////////////////////////////////
 
     // #region USEEFFECT --> ///////////////////////////////////
@@ -564,8 +568,14 @@ export default function FormMaker<T>({
 }
 
 // #region IPROPS -->  /////////////////////////////////////
-export interface IFormMaker<T> {
-    onSubmit?: (f: FormData | T) => void;
+export interface FormMakerChange {
+    id: string;
+    value: FormMakerValue;
+}
+
+export interface IFormMaker<T, P = unknown> {
+    onSubmit?: (f: FormData | T | P) => void;
+    onChange?: (change: FormMakerChange) => void;
     onBackPress?: () => void;
     structure: FormMakerType<FormMakerPartEnum>;
     data?: T;

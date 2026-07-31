@@ -8,7 +8,6 @@ import Typography from '@mui/material/Typography';
 import MenuIcon from '@mui/icons-material/Menu';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import Stack from '@mui/material/Stack';
-import { Link } from 'react-router';
 import { JSX, ReactNode, useCallback } from 'react';
 import SetupMenu from '../header/SetupMenu';
 import { LevelAccessEnum } from '~/models/Session';
@@ -16,6 +15,7 @@ import NavigationResource from '~/resources/navigationResources';
 import useSessionContext from '~/context/sessionContext';
 import NotificationMenu from '../header/NotificationMenu';
 import configManager from '~/managers/configManager';
+import { Link } from 'react-router-dom';
 
 const AppBar = styled(MuiAppBar)(({ theme }) => ({
     borderWidth: 0,

@@ -100,6 +100,144 @@ export type MusicSymbolItem = {
 export type MusicSymbolName = keyof typeof MusicSymbol;
 export type MusicSymbolValue = (typeof MusicSymbol)[MusicSymbolName];
 
+export type MusicSymbolOption = {
+    label: string;
+    value: MusicSymbolValue;
+};
+
+export type MusicSymbolCategory = {
+    label: string;
+    symbols: MusicSymbolOption[];
+};
+
+export const MusicSymbolCategories: MusicSymbolCategory[] = [
+    {
+        label: 'Notes',
+        symbols: [
+            { label: "Point d'augmentation", value: MusicSymbol.augmentationDot },
+            { label: 'Ronde', value: MusicSymbol.metNoteWhole },
+            { label: 'Blanche', value: MusicSymbol.noteHalfUp },
+            { label: 'Noire', value: MusicSymbol.noteQuarterUp },
+            { label: 'Croche', value: MusicSymbol.note8thUp },
+        ],
+    },
+    {
+        label: 'Silences',
+        symbols: [
+            { label: 'Pause', value: MusicSymbol.restWholeLegerLine },
+            { label: 'Demi-pause', value: MusicSymbol.restHalfLegerLine },
+            { label: 'Soupir', value: MusicSymbol.restQuarter },
+            { label: 'Demi-soupir', value: MusicSymbol.rest8th },
+        ],
+    },
+    {
+        label: 'Clés',
+        symbols: [
+            { label: 'Clé de sol', value: MusicSymbol.gClef },
+            { label: 'Clé de fa', value: MusicSymbol.fClef },
+            { label: "Clé d'ut", value: MusicSymbol.cClef },
+        ],
+    },
+    {
+        label: 'Nuances',
+        symbols: [
+            { label: 'Pianissimo × 6', value: MusicSymbol.dynamicPPPPPP },
+            { label: 'Pianissimo × 5', value: MusicSymbol.dynamicPPPPP },
+            { label: 'Pianissimo × 4', value: MusicSymbol.dynamicPPPP },
+            { label: 'Pianissimo × 3', value: MusicSymbol.dynamicPPP },
+            { label: 'Pianissimo', value: MusicSymbol.dynamicPP },
+            { label: 'Piano', value: MusicSymbol.dynamicPiano },
+            { label: 'Piano petit', value: MusicSymbol.dynamicPianoSmall },
+            { label: 'Mezzo-piano', value: MusicSymbol.dynamicMP },
+            { label: 'Mezzo', value: MusicSymbol.dynamicMezzo },
+            { label: 'Mezzo petit', value: MusicSymbol.dynamicMezzoSmall },
+            { label: 'Mezzo-forte', value: MusicSymbol.dynamicMF },
+            { label: 'Forte', value: MusicSymbol.dynamicForte },
+            { label: 'Forte petit', value: MusicSymbol.dynamicForteSmall },
+            { label: 'Fortissimo', value: MusicSymbol.dynamicFF },
+            { label: 'Fortissimo × 3', value: MusicSymbol.dynamicFFF },
+            { label: 'Fortissimo × 4', value: MusicSymbol.dynamicFFFF },
+            { label: 'Fortissimo × 5', value: MusicSymbol.dynamicFFFFF },
+            { label: 'Fortissimo × 6', value: MusicSymbol.dynamicFFFFFF },
+            { label: 'Piano-forte', value: MusicSymbol.dynamicPF },
+            { label: 'Forte-piano', value: MusicSymbol.dynamicFortePiano },
+            { label: 'Forzando', value: MusicSymbol.dynamicForzando },
+            { label: 'Messa di voce', value: MusicSymbol.dynamicMessaDiVoce },
+        ],
+    },
+    {
+        label: 'Indications de mesure',
+        symbols: [
+            { label: 'Chiffre 0', value: MusicSymbol.timeSig0 },
+            { label: 'Chiffre 1', value: MusicSymbol.timeSig1 },
+            { label: 'Chiffre 2', value: MusicSymbol.timeSig2 },
+            { label: 'Chiffre 3', value: MusicSymbol.timeSig3 },
+            { label: 'Chiffre 4', value: MusicSymbol.timeSig4 },
+            { label: 'Chiffre 5', value: MusicSymbol.timeSig5 },
+            { label: 'Chiffre 6', value: MusicSymbol.timeSig6 },
+            { label: 'Chiffre 7', value: MusicSymbol.timeSig7 },
+            { label: 'Chiffre 8', value: MusicSymbol.timeSig8 },
+            { label: 'Chiffre 9', value: MusicSymbol.timeSig9 },
+            { label: 'Numérateur 0', value: MusicSymbol.timeSig0Numerator },
+            { label: 'Numérateur 1', value: MusicSymbol.timeSig1Numerator },
+            { label: 'Numérateur 2', value: MusicSymbol.timeSig2Numerator },
+            { label: 'Numérateur 3', value: MusicSymbol.timeSig3Numerator },
+            { label: 'Numérateur 4', value: MusicSymbol.timeSig4Numerator },
+            { label: 'Numérateur 5', value: MusicSymbol.timeSig5Numerator },
+            { label: 'Numérateur 6', value: MusicSymbol.timeSig6Numerator },
+            { label: 'Numérateur 7', value: MusicSymbol.timeSig7Numerator },
+            { label: 'Numérateur 8', value: MusicSymbol.timeSig8Numerator },
+            { label: 'Numérateur 9', value: MusicSymbol.timeSig9Numerator },
+            { label: 'Dénominateur 0', value: MusicSymbol.timeSig0Denominator },
+            { label: 'Dénominateur 1', value: MusicSymbol.timeSig1Denominator },
+            { label: 'Dénominateur 2', value: MusicSymbol.timeSig2Denominator },
+            { label: 'Dénominateur 3', value: MusicSymbol.timeSig3Denominator },
+            { label: 'Dénominateur 4', value: MusicSymbol.timeSig4Denominator },
+            { label: 'Dénominateur 5', value: MusicSymbol.timeSig5Denominator },
+            { label: 'Dénominateur 6', value: MusicSymbol.timeSig6Denominator },
+            { label: 'Dénominateur 7', value: MusicSymbol.timeSig7Denominator },
+            { label: 'Dénominateur 8', value: MusicSymbol.timeSig8Denominator },
+            { label: 'Dénominateur 9', value: MusicSymbol.timeSig9Denominator },
+            { label: 'Mesure 2/2', value: MusicSymbol.timeSig2over2 },
+            { label: 'Mesure 2/4', value: MusicSymbol.timeSig2over4 },
+            { label: 'Mesure 3/2', value: MusicSymbol.timeSig3over2 },
+            { label: 'Mesure 3/4', value: MusicSymbol.timeSig3over4 },
+            { label: 'Mesure 3/8', value: MusicSymbol.timeSig3over8 },
+            { label: 'Mesure 4/4', value: MusicSymbol.timeSig4over4 },
+            { label: 'Mesure 5/4', value: MusicSymbol.timeSig5over4 },
+            { label: 'Mesure 5/8', value: MusicSymbol.timeSig5over8 },
+            { label: 'Mesure 6/4', value: MusicSymbol.timeSig6over4 },
+            { label: 'Mesure 6/8', value: MusicSymbol.timeSig6over8 },
+            { label: 'Mesure 7/8', value: MusicSymbol.timeSig7over8 },
+            { label: 'Mesure 9/8', value: MusicSymbol.timeSig9over8 },
+            { label: 'Mesure 12/8', value: MusicSymbol.timeSig12over8 },
+        ],
+    },
+    {
+        label: 'Reprises et navigation',
+        symbols: [
+            { label: 'Barre de reprise gauche', value: MusicSymbol.repeatLeft },
+            { label: 'Barre de reprise droite', value: MusicSymbol.repeatRight },
+            { label: "Répétition d'une mesure", value: MusicSymbol.repeat1Bar },
+            { label: 'Coda', value: MusicSymbol.coda },
+            { label: 'Coda carrée', value: MusicSymbol.codaSquare },
+            { label: 'Da capo', value: MusicSymbol.daCapo },
+        ],
+    },
+    {
+        label: "Points d'orgue et respirations",
+        symbols: [
+            { label: 'Césure épaisse', value: MusicSymbol.caesuraThick },
+            { label: "Point d'orgue supérieur", value: MusicSymbol.fermataAbove },
+            { label: "Point d'orgue inférieur", value: MusicSymbol.fermataBelow },
+            { label: "Point d'orgue long supérieur", value: MusicSymbol.fermataLongAbove },
+            { label: "Point d'orgue long inférieur", value: MusicSymbol.fermataLongBelow },
+            { label: "Point d'orgue long Henze supérieur", value: MusicSymbol.fermataLongHenzeAbove },
+            { label: "Point d'orgue long Henze inférieur", value: MusicSymbol.fermataLongHenzeBelow },
+        ],
+    },
+];
+
 export const getMusicSymbol = (name: MusicSymbolName): MusicSymbolValue => MusicSymbol[name];
 const getSymbolCategory = (name: string): string => {
     const match = name.match(/^[a-z]+/i);

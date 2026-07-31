@@ -31,10 +31,11 @@ export default defineConfig(({ command }) => {
                 { find: '~', replacement: path.resolve(__dirname, 'src') },
                 { find: '$', replacement: path.resolve(__dirname, '.') },
             ],
+            dedupe: ['react', 'react-dom'],
         },
         build: {
             minify: 'esbuild',
-            rollupOptions: {
+            rolldownOptions: {
                 output: {
                     assetFileNames: (assetInfo) => {
                         if (assetInfo.name?.endsWith('.css')) {

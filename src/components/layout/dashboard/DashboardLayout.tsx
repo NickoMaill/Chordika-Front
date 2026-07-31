@@ -2,7 +2,6 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import { Outlet } from 'react-router';
 import DashboardHeader from './DashboardHeader';
 import DashboardSidebar from './DashboardSidebar';
 import { JSX, useCallback, useRef, useState } from 'react';
@@ -13,7 +12,7 @@ import LayoutFallback from '../LayoutFallback';
 import ErrorBoundaryWrapper from '../ErrorBoundaryWrapper';
 import useSessionContext from '~/context/sessionContext';
 import useAppContext from '~/context/appContext';
-import configManager from '~/managers/configManager';
+import { Outlet } from 'react-router-dom';
 // import SitemarkIcon from "./SitemarkIcon";
 
 export default function DashboardLayout(): JSX.Element {

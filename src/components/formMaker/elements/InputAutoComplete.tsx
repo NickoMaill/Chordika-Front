@@ -167,7 +167,6 @@ export default function InputAutoComplete({
     }, [value]);
 
     useEffect(() => {
-        console.log(resetSignal);
         if (previousResetSignal.current !== resetSignal) {
             previousResetSignal.current = resetSignal;
             ignoreExternalValueUntilEmpty.current = true;

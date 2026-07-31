@@ -1,23 +1,13 @@
-<?xml version="1.0" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
- "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
- width="35.000000pt" height="101.000000pt" viewBox="0 0 35.000000 101.000000"
- preserveAspectRatio="xMidYMid meet">
-
-<g transform="translate(0.000000,101.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
-    <path d="M0 505 l0 -505 55 0 55 0 0 505 0 505 -55 0 -55 0 0 -505z"/>
-
-    <path d="M170 505 c0 -330 3 -505 10 -505 7 0 10 175 10 505 0 330 -3 505 -10
-    505 -7 0 -10 -175 -10 -505z"/>
-
-    <path transform="translate(-100 0)"
-        d="M360 659 c-26 -47 25 -100 69 -72 20 13 26 60 10 79 -18 22 -66 18
-        -79 -7z"/>
-
-    <path transform="translate(-100 0)"
-        d="M361 406 c-26 -48 19 -93 68 -66 24 12 29 58 9 78 -21 21 -63 14 -77
-        -12z"/>
-</g>
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="101"
+    viewBox="14 0 20 101"
+    fill="currentColor"
+    role="img"
+    aria-label="Début de répétition"
+>
+    <rect x="18" width="3" height="101" />
+    <circle cx="29" cy="30" r="5" />
+    <circle cx="29" cy="70" r="5" />
 </svg>

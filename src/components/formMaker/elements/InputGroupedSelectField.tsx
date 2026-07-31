@@ -6,6 +6,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import ListSubheader from '@mui/material/ListSubheader';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import HTMLParser from '~/components/common/HTMLParser';
 const AppIcon = lazy(() => import('~/components/common/AppIcon'));
 
 export default function InputGroupedSelectField({ disabled, id, value, onChange, required, error, groups, icon, isLoading, success, warning, readOnly, isSearchForm }: IInputSelectField): JSX.Element {
@@ -70,7 +71,7 @@ export default function InputGroupedSelectField({ disabled, id, value, onChange,
                 <ListSubheader key={`header-${i}`}>{group.label}</ListSubheader>,
                 ...group.options.map((opt) => (
                     <MenuItem key={opt.value as string} value={isSearchForm ? `${opt.value}¤${opt.label}` : (opt.value ?? '').toString()}>
-                        {opt.label}
+                        {opt.label.startsWith('++') ? <HTMLParser>{opt.label.replace('++', '')}</HTMLParser> : opt.label}
                     </MenuItem>
                 )),
             ])}
